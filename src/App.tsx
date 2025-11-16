@@ -13,7 +13,11 @@ import ReporterIncidents from "./pages/reporter/Incidents";
 import NewIncident from "./pages/reporter/NewIncident";
 import IncidentDetails from "./pages/reporter/IncidentDetails";
 import ReviewerDashboard from "./pages/reviewer/Dashboard";
-import GenericDashboard from "./pages/GenericDashboard";
+import LicenseeAdminDashboard from "./pages/licenseeAdmin/Dashboard";
+import ValidatorDashboard from "./pages/validator/Dashboard";
+import InvestigatorDashboard from "./pages/investigator/Dashboard";
+import SystemAdminDashboard from "./pages/admin/Dashboard";
+import SuperAdminDashboard from "./pages/superAdmin/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,22 +52,22 @@ const App = () => (
                 <Route path="/reporter/incidents/:id" element={<ProtectedRoute><IncidentDetails /></ProtectedRoute>} />
                 
                 {/* Licensee Admin Routes */}
-                <Route path="/licensee-admin/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                <Route path="/licensee-admin/dashboard" element={<ProtectedRoute><LicenseeAdminDashboard /></ProtectedRoute>} />
                 
                 {/* Reviewer Routes */}
                 <Route path="/reviewer/dashboard" element={<ProtectedRoute><ReviewerDashboard /></ProtectedRoute>} />
                 
                 {/* Validator Routes */}
-                <Route path="/validator/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                <Route path="/validator/dashboard" element={<ProtectedRoute><ValidatorDashboard /></ProtectedRoute>} />
                 
                 {/* Investigator Routes */}
-                <Route path="/investigator/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                <Route path="/investigator/dashboard" element={<ProtectedRoute><InvestigatorDashboard /></ProtectedRoute>} />
                 
                 {/* System Admin Routes */}
-                <Route path="/admin/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                <Route path="/admin/dashboard" element={<ProtectedRoute><SystemAdminDashboard /></ProtectedRoute>} />
                 
                 {/* Super Admin Routes */}
-                <Route path="/super-admin/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                <Route path="/super-admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
