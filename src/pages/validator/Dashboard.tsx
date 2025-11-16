@@ -1,13 +1,51 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Clock, AlertTriangle, FileText, XCircle, BarChart3 } from 'lucide-react';
+import { CheckCircle, Clock, AlertTriangle, FileText, XCircle, BarChart3, Home, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 
 export default function ValidatorDashboard() {
+  const navigate = useNavigate();
+
+  // Severity distribution data
+  const severityData = [
+    { severity: 'Critical', count: 4, percentage: 22 },
+    { severity: 'High', count: 7, percentage: 39 },
+    { severity: 'Medium', count: 5, percentage: 28 },
+    { severity: 'Low', count: 2, percentage: 11 },
+  ];
+
+  // Colors for severity levels
+  const severityColors: Record<string, string> = {
+    'Critical': 'hsl(var(--destructive))',
+    'High': 'hsl(25 95% 53%)',
+    'Medium': 'hsl(48 96% 53%)',
+    'Low': 'hsl(142 76% 36%)',
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Validator Dashboard</h1>
-        <p className="text-muted-foreground">MCMC Validator / Approver workspace</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Validator Dashboard</h1>
+          <p className="text-muted-foreground">MCMC Validator / Approver workspace</p>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/')}
+          >
+            <Home className="mr-2 h-4 w-4" />
+            Home
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/choose-role')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Change Role
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -111,15 +149,68 @@ export default function ValidatorDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Severity Distribution (Pending)</CardTitle>
+          <CardTitle>Severity Distribution (Pending Approval)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-12">
-            <BarChart3 className="h-16 w-16 text-muted-foreground/30" />
+          <div className="space-y-6">
+            {/* Bar Chart */}
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={severityData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="severity" 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                />
+                <YAxis 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                  }}
+                  labelStyle={{ color: 'hsl(var(--foreground))' }}
+                />
+                <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+                  {severityData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={severityColors[entry.severity]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+
+            {/* Summary Stats */}
+            <div className="grid grid-cols-4 gap-4">
+              {severityData.map((item) => (
+                <div key={item.severity} className="text-center space-y-1">
+                  <div className="flex items-center justify-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: severityColors[item.severity] }}
+                    />
+                    <p className="text-sm font-medium">{item.severity}</p>
+                  </div>
+                  <p className="text-2xl font-bold" style={{ color: severityColors[item.severity] }}>
+                    {item.count}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{item.percentage}% of total</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Total */}
+            <div className="pt-4 border-t">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Total Pending Approval</span>
+                <span className="text-2xl font-bold text-primary">
+                  {severityData.reduce((sum, item) => sum + item.count, 0)}
+                </span>
+              </div>
+            </div>
           </div>
-          <p className="text-center text-sm text-muted-foreground">
-            Breakdown by severity level
-          </p>
         </CardContent>
       </Card>
     </div>
