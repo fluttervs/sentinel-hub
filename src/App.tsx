@@ -14,6 +14,9 @@ import NewIncident from "./pages/reporter/NewIncident";
 import IncidentDetails from "./pages/reporter/IncidentDetails";
 import ReviewerDashboard from "./pages/reviewer/Dashboard";
 import LicenseeAdminDashboard from "./pages/licenseeAdmin/Dashboard";
+import LicenseeAdminIncidents from "./pages/licenseeAdmin/Incidents";
+import LicenseeAdminUsers from "./pages/licenseeAdmin/Users";
+import LicenseeAdminProfile from "./pages/licenseeAdmin/Profile";
 import ValidatorDashboard from "./pages/validator/Dashboard";
 import InvestigatorDashboard from "./pages/investigator/Dashboard";
 import SystemAdminDashboard from "./pages/admin/Dashboard";
@@ -53,6 +56,9 @@ const App = () => (
                 
                 {/* Licensee Admin Routes */}
                 <Route path="/licensee-admin/dashboard" element={<ProtectedRoute><LicenseeAdminDashboard /></ProtectedRoute>} />
+                <Route path="/licensee-admin/incidents" element={<ProtectedRoute><LicenseeAdminIncidents /></ProtectedRoute>} />
+                <Route path="/licensee-admin/users" element={<ProtectedRoute><LicenseeAdminUsers /></ProtectedRoute>} />
+                <Route path="/licensee-admin/profile" element={<ProtectedRoute><LicenseeAdminProfile /></ProtectedRoute>} />
                 
                 {/* Reviewer Routes */}
                 <Route path="/reviewer/dashboard" element={<ProtectedRoute><ReviewerDashboard /></ProtectedRoute>} />

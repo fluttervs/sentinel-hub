@@ -1,8 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Users, AlertCircle, BarChart3, Plus, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function LicenseeAdminDashboard() {
+  const navigate = useNavigate();
+  
   return (
     <div className="space-y-6">
       <div>
@@ -11,7 +14,10 @@ export default function LicenseeAdminDashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-primary/20">
+        <Card 
+          className="border-primary/20 cursor-pointer hover:border-primary/40 transition-all"
+          onClick={() => navigate('/licensee-admin/incidents')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Incidents</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -22,7 +28,10 @@ export default function LicenseeAdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-role-validator/20">
+        <Card 
+          className="border-role-validator/20 cursor-pointer hover:border-role-validator/40 transition-all"
+          onClick={() => navigate('/licensee-admin/incidents')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Open Incidents</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
@@ -33,7 +42,10 @@ export default function LicenseeAdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-status-rfi/20">
+        <Card 
+          className="border-status-rfi/20 cursor-pointer hover:border-status-rfi/40 transition-all"
+          onClick={() => navigate('/licensee-admin/incidents')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">RFIs Pending</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
@@ -44,7 +56,10 @@ export default function LicenseeAdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-role-licensee-admin/20">
+        <Card 
+          className="border-role-licensee-admin/20 cursor-pointer hover:border-role-licensee-admin/40 transition-all"
+          onClick={() => navigate('/licensee-admin/users')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -62,19 +77,35 @@ export default function LicenseeAdminDashboard() {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => navigate('/reporter/incidents/new')}
+            >
               <Plus className="mr-2 h-4 w-4" />
               New Incident
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => navigate('/licensee-admin/incidents')}
+            >
               <FileText className="mr-2 h-4 w-4" />
               View All Incidents
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => navigate('/licensee-admin/users')}
+            >
               <Users className="mr-2 h-4 w-4" />
               Manage Users
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => navigate('/licensee-admin/profile')}
+            >
               <Settings className="mr-2 h-4 w-4" />
               Organisation Profile
             </Button>
