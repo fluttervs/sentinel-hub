@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Progress } from '@/components/ui/progress';
+import MalaysiaIncidentMap from '@/components/MalaysiaIncidentMap';
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
@@ -129,6 +130,19 @@ export default function SuperAdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Malaysia Incident Map */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Map className="h-5 w-5 text-role-super-admin" />
+            Malaysia Incident Heatmap
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <MalaysiaIncidentMap />
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
