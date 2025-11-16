@@ -21,6 +21,10 @@ import LicenseeAdminProfile from "./pages/licenseeAdmin/Profile";
 import ValidatorDashboard from "./pages/validator/Dashboard";
 import InvestigatorDashboard from "./pages/investigator/Dashboard";
 import SystemAdminDashboard from "./pages/admin/Dashboard";
+import AdminUsers from "./pages/admin/Users";
+import AdminOrganisations from "./pages/admin/Organisations";
+import MasterData from "./pages/admin/MasterData";
+import AuditLogs from "./pages/admin/AuditLogs";
 import SuperAdminDashboard from "./pages/superAdmin/Dashboard";
 import NotFound from "./pages/NotFound";
 
@@ -73,6 +77,10 @@ const App = () => (
                 
                 {/* System Admin Routes */}
                 <Route path="/admin/dashboard" element={<ProtectedRoute><SystemAdminDashboard /></ProtectedRoute>} />
+                <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
+                <Route path="/admin/organisations" element={<ProtectedRoute><AdminOrganisations /></ProtectedRoute>} />
+                <Route path="/admin/master-data" element={<ProtectedRoute><MasterData /></ProtectedRoute>} />
+                <Route path="/admin/audit-logs" element={<ProtectedRoute><AuditLogs /></ProtectedRoute>} />
                 
                 {/* Super Admin Routes */}
                 <Route path="/super-admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />
