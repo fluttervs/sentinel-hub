@@ -1,10 +1,36 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Users, AlertCircle, BarChart3, Plus, Settings } from 'lucide-react';
+import { FileText, Users, AlertCircle, Plus, Settings, TrendingUp, TrendingDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function LicenseeAdminDashboard() {
   const navigate = useNavigate();
+
+  // Last 6 months incident data
+  const incidentTrendData = [
+    { month: 'Aug 2024', total: 6, high: 2, medium: 3, low: 1, critical: 0 },
+    { month: 'Sep 2024', total: 8, high: 3, medium: 3, low: 2, critical: 0 },
+    { month: 'Oct 2024', total: 12, high: 4, medium: 5, low: 2, critical: 1 },
+    { month: 'Nov 2024', total: 9, high: 3, medium: 4, low: 2, critical: 0 },
+    { month: 'Dec 2024', total: 7, high: 2, medium: 3, low: 2, critical: 0 },
+    { month: 'Jan 2025', total: 5, high: 1, medium: 2, low: 2, critical: 0 },
+  ];
+
+  // Category breakdown for current month
+  const categoryData = [
+    { name: 'Loss', count: 15, percentage: 32 },
+    { name: 'Theft', count: 12, percentage: 26 },
+    { name: 'Tampering', count: 8, percentage: 17 },
+    { name: 'Fraud', count: 7, percentage: 15 },
+    { name: 'Others', count: 5, percentage: 10 },
+  ];
+
+  // Calculate trend
+  const lastMonth = incidentTrendData[incidentTrendData.length - 1].total;
+  const previousMonth = incidentTrendData[incidentTrendData.length - 2].total;
+  const trendPercentage = ((lastMonth - previousMonth) / previousMonth * 100).toFixed(1);
+  const isIncreasing = lastMonth > previousMonth;
   
   return (
     <div className="space-y-6">
@@ -138,15 +164,125 @@ export default function LicenseeAdminDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Organisation Incident Trend</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>Organisation Incident Trend</CardTitle>
+            <div className="flex items-center gap-2 text-sm">
+              {isIncreasing ? (
+                <>
+                  <TrendingUp className="h-4 w-4 text-destructive" />
+                  <span className="text-destructive font-medium">+{trendPercentage}%</span>
+                </>
+              ) : (
+                <>
+                  <TrendingDown className="h-4 w-4 text-green-400" />
+                  <span className="text-green-400 font-medium">{trendPercentage}%</span>
+                </>
+              )}
+              <span className="text-muted-foreground">vs last month</span>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-12">
-            <BarChart3 className="h-16 w-16 text-muted-foreground/30" />
+          <div className="space-y-6">
+            {/* Line Chart - Incident Trends */}
+            <div>
+              <h4 className="text-sm font-medium mb-4">Monthly Incident Volume (Last 6 Months)</h4>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={incidentTrendData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis 
+                    dataKey="month" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="total" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={2}
+                    name="Total Incidents"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="critical" 
+                    stroke="#ef4444" 
+                    strokeWidth={2}
+                    name="Critical"
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="high" 
+                    stroke="#f97316" 
+                    strokeWidth={2}
+                    name="High"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Bar Chart - Category Breakdown */}
+            <div>
+              <h4 className="text-sm font-medium mb-4">Incident Type Distribution</h4>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={categoryData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="hsl(var(--primary))" 
+                    radius={[8, 8, 0, 0]}
+                    name="Incidents"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Key Insights */}
+            <div className="grid md:grid-cols-3 gap-4 pt-4 border-t">
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">Peak Month</p>
+                <p className="text-lg font-bold">Oct 2024</p>
+                <p className="text-xs text-muted-foreground">12 incidents</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">Most Common Type</p>
+                <p className="text-lg font-bold">Loss (32%)</p>
+                <p className="text-xs text-muted-foreground">15 incidents this period</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">6-Month Average</p>
+                <p className="text-lg font-bold">7.8 incidents</p>
+                <p className="text-xs text-muted-foreground">per month</p>
+              </div>
+            </div>
           </div>
-          <p className="text-center text-sm text-muted-foreground">
-            Last 6 months incident trend chart
-          </p>
         </CardContent>
       </Card>
     </div>
