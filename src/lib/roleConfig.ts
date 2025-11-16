@@ -1,4 +1,5 @@
 import { Role } from './auth';
+import { LucideIcon, FileText, Building2, ClipboardCheck, BadgeCheck, Search, Settings, Crown } from 'lucide-react';
 
 export interface RoleConfig {
   id: Role;
@@ -7,6 +8,7 @@ export interface RoleConfig {
   color: string;
   glowClass: string;
   basePath: string;
+  icon: LucideIcon;
 }
 
 export const roleConfigs: Record<Role, RoleConfig> = {
@@ -17,6 +19,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: 'hsl(191 100% 50%)',
     glowClass: 'glow-cyan',
     basePath: '/reporter',
+    icon: FileText,
   },
   'licensee-admin': {
     id: 'licensee-admin',
@@ -25,6 +28,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: 'hsl(271 76% 53%)',
     glowClass: 'glow-purple',
     basePath: '/licensee-admin',
+    icon: Building2,
   },
   'reviewer': {
     id: 'reviewer',
@@ -33,6 +37,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: 'hsl(203 89% 53%)',
     glowClass: 'glow-blue',
     basePath: '/reviewer',
+    icon: ClipboardCheck,
   },
   'validator': {
     id: 'validator',
@@ -41,6 +46,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: 'hsl(38 92% 50%)',
     glowClass: 'glow-amber',
     basePath: '/validator',
+    icon: BadgeCheck,
   },
   'investigator': {
     id: 'investigator',
@@ -49,6 +55,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: 'hsl(0 78% 62%)',
     glowClass: 'glow-red',
     basePath: '/investigator',
+    icon: Search,
   },
   'system-admin': {
     id: 'system-admin',
@@ -57,6 +64,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: 'hsl(168 76% 42%)',
     glowClass: 'glow-teal',
     basePath: '/admin',
+    icon: Settings,
   },
   'super-admin': {
     id: 'super-admin',
@@ -65,6 +73,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     color: 'hsl(45 93% 47%)',
     glowClass: 'glow-gold',
     basePath: '/super-admin',
+    icon: Crown,
   },
 };
 
