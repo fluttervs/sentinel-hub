@@ -1,13 +1,38 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Folder, AlertTriangle, Clock, FileSearch, TrendingUp, Activity } from 'lucide-react';
+import { Folder, AlertTriangle, Clock, FileSearch, TrendingUp, Activity, Home, ArrowLeftRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function InvestigatorDashboard() {
+  const navigate = useNavigate();
+
+  const trendData = [
+    { month: 'Jan', cases: 12, avgResolutionDays: 8 },
+    { month: 'Feb', cases: 15, avgResolutionDays: 7 },
+    { month: 'Mar', cases: 10, avgResolutionDays: 9 },
+    { month: 'Apr', cases: 18, avgResolutionDays: 6 },
+    { month: 'May', cases: 14, avgResolutionDays: 7 },
+    { month: 'Jun', cases: 16, avgResolutionDays: 5 },
+  ];
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Investigator Dashboard</h1>
-        <p className="text-muted-foreground">MCMC Investigator workspace</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Investigator Dashboard</h1>
+          <p className="text-muted-foreground">MCMC Investigator workspace</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => navigate('/')}>
+            <Home className="h-4 w-4 mr-2" />
+            Home
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/choose-role')}>
+            <ArrowLeftRight className="h-4 w-4 mr-2" />
+            Change Role
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -114,12 +139,50 @@ export default function InvestigatorDashboard() {
           <CardTitle>Investigation Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center py-12">
-            <TrendingUp className="h-16 w-16 text-muted-foreground/30" />
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={trendData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="month" className="text-xs" />
+                <YAxis yAxisId="left" className="text-xs" />
+                <YAxis yAxisId="right" orientation="right" className="text-xs" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px'
+                  }}
+                />
+                <Legend />
+                <Line 
+                  yAxisId="left"
+                  type="monotone" 
+                  dataKey="cases" 
+                  stroke="hsl(var(--role-investigator))" 
+                  strokeWidth={2}
+                  name="Case Volume"
+                />
+                <Line 
+                  yAxisId="right"
+                  type="monotone" 
+                  dataKey="avgResolutionDays" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
+                  name="Avg Resolution (days)"
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-          <p className="text-center text-sm text-muted-foreground">
-            Case volume and resolution time trends
-          </p>
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-role-investigator">85</p>
+              <p className="text-xs text-muted-foreground">Total Cases (6 months)</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-primary">7.0</p>
+              <p className="text-xs text-muted-foreground">Avg Resolution Time (days)</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
