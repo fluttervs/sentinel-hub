@@ -140,23 +140,97 @@ export default function LicenseeAdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>AI Insights For Your Organisation</CardTitle>
+            <CardTitle>AI-Powered Analytics & Insights</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="text-sm">
-              <p className="text-muted-foreground">
-                Most frequent incident type: <span className="text-foreground font-medium">Loss</span>
-              </p>
+          <CardContent className="space-y-6">
+            {/* Performance Metrics Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Reporting Speed */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">Reporting Speed</p>
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-primary">60%</span>
+                  <span className="text-sm text-muted-foreground">faster</span>
+                </div>
+                <div className="w-full bg-secondary rounded-full h-2">
+                  <div className="bg-primary h-2 rounded-full" style={{ width: '60%' }} />
+                </div>
+                <p className="text-xs text-muted-foreground">vs industry average</p>
+              </div>
+
+              {/* Resolution Rate */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">Resolution Rate</p>
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-role-validator">87%</span>
+                  <span className="text-sm text-muted-foreground">closed</span>
+                </div>
+                <div className="w-full bg-secondary rounded-full h-2">
+                  <div className="bg-role-validator h-2 rounded-full" style={{ width: '87%' }} />
+                </div>
+                <p className="text-xs text-muted-foreground">last 30 days</p>
+              </div>
             </div>
-            <div className="text-sm">
-              <p className="text-muted-foreground">
-                Your average reporting time is faster than <span className="text-foreground font-medium">60%</span> of licensees
-              </p>
+
+            {/* Incident Type Distribution Mini Chart */}
+            <div className="space-y-3">
+              <p className="text-sm font-medium">Top Incident Categories</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm">Loss</span>
+                      <span className="text-sm font-medium text-primary">32%</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-1.5">
+                      <div className="bg-primary h-1.5 rounded-full" style={{ width: '32%' }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm">Theft</span>
+                      <span className="text-sm font-medium text-destructive">26%</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-1.5">
+                      <div className="bg-destructive h-1.5 rounded-full" style={{ width: '26%' }} />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm">Tampering</span>
+                      <span className="text-sm font-medium text-status-rfi">17%</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-1.5">
+                      <div className="bg-status-rfi h-1.5 rounded-full" style={{ width: '17%' }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="text-sm">
-              <p className="text-muted-foreground">
-                AI suggests reviewing packaging SOPs for high-value items
-              </p>
+
+            {/* AI Recommendations */}
+            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <div className="flex gap-2 items-start">
+                <div className="mt-0.5">
+                  <AlertCircle className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium text-primary">AI Recommendation</p>
+                  <p className="text-xs text-muted-foreground">
+                    Review packaging SOPs for high-value items. Loss incidents increased by 15% in the past 2 weeks for shipments over RM5,000.
+                  </p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
