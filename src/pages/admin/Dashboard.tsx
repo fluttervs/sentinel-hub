@@ -1,17 +1,44 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Building2, FileText, Activity, Settings, Database, Bell, Shield } from 'lucide-react';
+import { Users, Building2, FileText, Activity, Settings, Database, Bell, Shield, Home, ArrowLeftRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SystemAdminDashboard() {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleQuickAction = (action: string) => {
+    toast({
+      title: `${action}`,
+      description: "This feature is coming soon.",
+    });
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">System Admin Dashboard</h1>
-        <p className="text-muted-foreground">MCMC System Administration</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">System Admin Dashboard</h1>
+          <p className="text-muted-foreground">MCMC System Administration</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => navigate('/')}>
+            <Home className="h-4 w-4 mr-2" />
+            Home
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => navigate('/choose-role')}>
+            <ArrowLeftRight className="h-4 w-4 mr-2" />
+            Change Role
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-role-system-admin/20">
+        <Card 
+          className="border-role-system-admin/20 cursor-pointer hover:border-role-system-admin/40 transition-colors"
+          onClick={() => handleQuickAction('View Licensees')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Licensees</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -22,7 +49,10 @@ export default function SystemAdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-primary/20">
+        <Card 
+          className="border-primary/20 cursor-pointer hover:border-primary/40 transition-colors"
+          onClick={() => handleQuickAction('View Users')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -33,7 +63,10 @@ export default function SystemAdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-role-reviewer/20">
+        <Card 
+          className="border-role-reviewer/20 cursor-pointer hover:border-role-reviewer/40 transition-colors"
+          onClick={() => handleQuickAction('View All Incidents')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Incidents</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -44,7 +77,10 @@ export default function SystemAdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-status-closed/20">
+        <Card 
+          className="border-status-closed/20 cursor-pointer hover:border-status-closed/40 transition-colors"
+          onClick={() => handleQuickAction('View System Health')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">System Health</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
@@ -62,27 +98,51 @@ export default function SystemAdminDashboard() {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => handleQuickAction('Manage Users')}
+            >
               <Users className="mr-2 h-4 w-4" />
               Manage Users
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => handleQuickAction('Manage Organisations')}
+            >
               <Building2 className="mr-2 h-4 w-4" />
               Manage Organisations
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => handleQuickAction('Master Data')}
+            >
               <Database className="mr-2 h-4 w-4" />
               Master Data
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => handleQuickAction('Workflow Config')}
+            >
               <Settings className="mr-2 h-4 w-4" />
               Workflow Config
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => handleQuickAction('Notifications')}
+            >
               <Bell className="mr-2 h-4 w-4" />
               Notifications
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => handleQuickAction('Audit Logs')}
+            >
               <Shield className="mr-2 h-4 w-4" />
               Audit Logs
             </Button>
