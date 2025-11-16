@@ -10,6 +10,7 @@ import {
 } from './ui/dropdown-menu';
 import { getCurrentUser, logout } from '@/lib/auth';
 import { RoleChip } from './RoleChip';
+import { getRoleConfig } from '@/lib/roleConfig';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -99,16 +100,3 @@ export const Header = () => {
     </header>
   );
 };
-
-function getRoleConfig(role: string) {
-  const configs: Record<string, { basePath: string }> = {
-    'reporter': { basePath: '/reporter' },
-    'licensee-admin': { basePath: '/licensee-admin' },
-    'reviewer': { basePath: '/reviewer' },
-    'validator': { basePath: '/validator' },
-    'investigator': { basePath: '/investigator' },
-    'system-admin': { basePath: '/admin' },
-    'super-admin': { basePath: '/super-admin' },
-  };
-  return configs[role] || { basePath: '/' };
-}

@@ -9,6 +9,11 @@ import Landing from "./pages/Landing";
 import ChooseRole from "./pages/ChooseRole";
 import Login from "./pages/Login";
 import ReporterDashboard from "./pages/reporter/Dashboard";
+import ReporterIncidents from "./pages/reporter/Incidents";
+import NewIncident from "./pages/reporter/NewIncident";
+import IncidentDetails from "./pages/reporter/IncidentDetails";
+import ReviewerDashboard from "./pages/reviewer/Dashboard";
+import GenericDashboard from "./pages/GenericDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,14 +42,28 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 
                 {/* Reporter Routes */}
-                <Route
-                  path="/reporter/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <ReporterDashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                <Route path="/reporter/dashboard" element={<ProtectedRoute><ReporterDashboard /></ProtectedRoute>} />
+                <Route path="/reporter/incidents" element={<ProtectedRoute><ReporterIncidents /></ProtectedRoute>} />
+                <Route path="/reporter/incidents/new" element={<ProtectedRoute><NewIncident /></ProtectedRoute>} />
+                <Route path="/reporter/incidents/:id" element={<ProtectedRoute><IncidentDetails /></ProtectedRoute>} />
+                
+                {/* Licensee Admin Routes */}
+                <Route path="/licensee-admin/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                
+                {/* Reviewer Routes */}
+                <Route path="/reviewer/dashboard" element={<ProtectedRoute><ReviewerDashboard /></ProtectedRoute>} />
+                
+                {/* Validator Routes */}
+                <Route path="/validator/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                
+                {/* Investigator Routes */}
+                <Route path="/investigator/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                
+                {/* System Admin Routes */}
+                <Route path="/admin/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
+                
+                {/* Super Admin Routes */}
+                <Route path="/super-admin/dashboard" element={<ProtectedRoute><GenericDashboard /></ProtectedRoute>} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
