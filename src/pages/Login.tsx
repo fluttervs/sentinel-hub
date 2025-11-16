@@ -20,6 +20,11 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleAutoFill = () => {
+    setEmail('demo@mcmc.gov.my');
+    setPassword('demo123');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -79,9 +84,10 @@ export default function Login() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder="Click to auto-fill demo credentials"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onFocus={handleAutoFill}
                   required
                 />
               </div>
@@ -113,7 +119,7 @@ export default function Login() {
                 </a>
               </div>
               <div className="text-xs text-muted-foreground text-center pt-4 border-t">
-                For demo purposes, any email/password will log you in as the selected role.
+                For demo purposes, click the email field to auto-fill credentials, then click Login.
               </div>
             </form>
           </CardContent>
