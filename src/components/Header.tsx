@@ -13,6 +13,7 @@ import { RoleChip } from './RoleChip';
 import { getRoleConfig } from '@/lib/roleConfig';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import mcmcLogo from '@/assets/mcmc-logo.png';
 
 export const Header = () => {
   const user = getCurrentUser();
@@ -30,12 +31,11 @@ export const Header = () => {
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold">
-              P
-            </div>
-            <span className="font-semibold text-lg">PSIRP</span>
-          </div>
+          <img 
+            src={mcmcLogo} 
+            alt="MCMC Logo" 
+            className="h-12 w-auto object-contain"
+          />
         </div>
 
         <div className="flex items-center gap-4">
