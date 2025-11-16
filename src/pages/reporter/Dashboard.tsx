@@ -28,7 +28,10 @@ export default function ReporterDashboard() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <Card className="border-primary/20 hover:border-primary/40 transition-all">
+        <Card 
+          className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer"
+          onClick={() => navigate('/reporter/incidents')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Drafts</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -38,7 +41,10 @@ export default function ReporterDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-role-reviewer/20 hover:border-role-reviewer/40 transition-all">
+        <Card 
+          className="border-role-reviewer/20 hover:border-role-reviewer/40 transition-all cursor-pointer"
+          onClick={() => navigate('/reporter/incidents')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Submitted (30d)</CardTitle>
             <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
@@ -48,7 +54,10 @@ export default function ReporterDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-role-validator/20 hover:border-role-validator/40 transition-all">
+        <Card 
+          className="border-role-validator/20 hover:border-role-validator/40 transition-all cursor-pointer"
+          onClick={() => navigate('/reporter/incidents')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Open Incidents</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
@@ -58,7 +67,10 @@ export default function ReporterDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-destructive/20 hover:border-destructive/40 transition-all">
+        <Card 
+          className="border-destructive/20 hover:border-destructive/40 transition-all cursor-pointer"
+          onClick={() => navigate('/reporter/incidents')}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Needs Action</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
