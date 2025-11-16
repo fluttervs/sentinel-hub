@@ -51,9 +51,9 @@ export default function ChooseRole() {
                     backgroundColor: `${config.color}20`,
                   }}
                 >
-                  <div
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: config.color }}
+                  <config.icon
+                    className="h-6 w-6"
+                    style={{ color: config.color }}
                   />
                 </div>
                 <CardTitle
