@@ -13,6 +13,7 @@ import ReporterIncidents from "./pages/reporter/Incidents";
 import NewIncident from "./pages/reporter/NewIncident";
 import IncidentDetails from "./pages/reporter/IncidentDetails";
 import ReviewerDashboard from "./pages/reviewer/Dashboard";
+import ReviewerIncidents from "./pages/reviewer/Incidents";
 import LicenseeAdminDashboard from "./pages/licenseeAdmin/Dashboard";
 import LicenseeAdminIncidents from "./pages/licenseeAdmin/Incidents";
 import LicenseeAdminUsers from "./pages/licenseeAdmin/Users";
@@ -62,6 +63,7 @@ const App = () => (
                 
                 {/* Reviewer Routes */}
                 <Route path="/reviewer/dashboard" element={<ProtectedRoute><ReviewerDashboard /></ProtectedRoute>} />
+                <Route path="/reviewer/incidents" element={<ProtectedRoute><ReviewerIncidents /></ProtectedRoute>} />
                 
                 {/* Validator Routes */}
                 <Route path="/validator/dashboard" element={<ProtectedRoute><ValidatorDashboard /></ProtectedRoute>} />
