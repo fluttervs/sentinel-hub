@@ -8,11 +8,8 @@ export default function SystemAdminDashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleQuickAction = (action: string) => {
-    toast({
-      title: `${action}`,
-      description: "This feature is coming soon.",
-    });
+  const handleNavigation = (path: string) => {
+    navigate(path);
   };
 
   return (
@@ -37,7 +34,7 @@ export default function SystemAdminDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card 
           className="border-role-system-admin/20 cursor-pointer hover:border-role-system-admin/40 transition-colors"
-          onClick={() => handleQuickAction('View Licensees')}
+          onClick={() => handleNavigation('/admin/organisations')}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Licensees</CardTitle>
@@ -51,7 +48,7 @@ export default function SystemAdminDashboard() {
 
         <Card 
           className="border-primary/20 cursor-pointer hover:border-primary/40 transition-colors"
-          onClick={() => handleQuickAction('View Users')}
+          onClick={() => handleNavigation('/admin/users')}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Users</CardTitle>
@@ -65,7 +62,7 @@ export default function SystemAdminDashboard() {
 
         <Card 
           className="border-role-reviewer/20 cursor-pointer hover:border-role-reviewer/40 transition-colors"
-          onClick={() => handleQuickAction('View All Incidents')}
+          onClick={() => handleNavigation('/reviewer/incidents')}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Incidents</CardTitle>
@@ -79,7 +76,7 @@ export default function SystemAdminDashboard() {
 
         <Card 
           className="border-status-closed/20 cursor-pointer hover:border-status-closed/40 transition-colors"
-          onClick={() => handleQuickAction('View System Health')}
+          onClick={() => handleNavigation('/admin/audit-logs')}
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">System Health</CardTitle>
@@ -101,7 +98,7 @@ export default function SystemAdminDashboard() {
             <Button 
               className="w-full justify-start" 
               variant="outline"
-              onClick={() => handleQuickAction('Manage Users')}
+              onClick={() => handleNavigation('/admin/users')}
             >
               <Users className="mr-2 h-4 w-4" />
               Manage Users
@@ -109,7 +106,7 @@ export default function SystemAdminDashboard() {
             <Button 
               className="w-full justify-start" 
               variant="outline"
-              onClick={() => handleQuickAction('Manage Organisations')}
+              onClick={() => handleNavigation('/admin/organisations')}
             >
               <Building2 className="mr-2 h-4 w-4" />
               Manage Organisations
@@ -117,7 +114,7 @@ export default function SystemAdminDashboard() {
             <Button 
               className="w-full justify-start" 
               variant="outline"
-              onClick={() => handleQuickAction('Master Data')}
+              onClick={() => handleNavigation('/admin/master-data')}
             >
               <Database className="mr-2 h-4 w-4" />
               Master Data
@@ -125,7 +122,7 @@ export default function SystemAdminDashboard() {
             <Button 
               className="w-full justify-start" 
               variant="outline"
-              onClick={() => handleQuickAction('Workflow Config')}
+              onClick={() => toast({ title: "Workflow Config", description: "Coming soon." })}
             >
               <Settings className="mr-2 h-4 w-4" />
               Workflow Config
@@ -133,7 +130,7 @@ export default function SystemAdminDashboard() {
             <Button 
               className="w-full justify-start" 
               variant="outline"
-              onClick={() => handleQuickAction('Notifications')}
+              onClick={() => toast({ title: "Notifications", description: "Coming soon." })}
             >
               <Bell className="mr-2 h-4 w-4" />
               Notifications
@@ -141,7 +138,7 @@ export default function SystemAdminDashboard() {
             <Button 
               className="w-full justify-start" 
               variant="outline"
-              onClick={() => handleQuickAction('Audit Logs')}
+              onClick={() => handleNavigation('/admin/audit-logs')}
             >
               <Shield className="mr-2 h-4 w-4" />
               Audit Logs
