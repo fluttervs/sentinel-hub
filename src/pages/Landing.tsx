@@ -109,7 +109,7 @@ export default function Landing() {
       <footer className="border-t border-border py-8 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>© 2025 PSIRP • v0.1</p>
+            <p>© 2025 MCMC • v0.1</p>
             <div className="flex gap-6">
               <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
               <a href="#" className="hover:text-foreground transition-colors">Terms</a>
