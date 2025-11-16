@@ -100,6 +100,7 @@ export default function ReporterDashboard() {
           <span>My Submissions</span>
         </Button>
         <Button
+          onClick={() => navigate('/reporter/incidents')}
           size="lg"
           variant="outline"
           className="h-auto py-6 flex-col gap-2"
