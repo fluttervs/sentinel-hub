@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Users, AlertCircle, Plus, Settings, TrendingUp, TrendingDown } from 'lucide-react';
+import { FileText, Users, AlertCircle, Plus, Settings, TrendingUp, TrendingDown, Home, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -34,9 +34,27 @@ export default function LicenseeAdminDashboard() {
   
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Licensee Admin Dashboard</h1>
-        <p className="text-muted-foreground">Manage your organisation's users and submissions</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Licensee Admin Dashboard</h1>
+          <p className="text-muted-foreground">Manage your organisation's users and submissions</p>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/')}
+          >
+            <Home className="mr-2 h-4 w-4" />
+            Home
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/choose-role')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Change Role
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
