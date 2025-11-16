@@ -2,12 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Download, Printer, FileText, Clock, User } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, Download, Printer, FileText, Clock, User, Paperclip, Send } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function IncidentDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [replyText, setReplyText] = useState('');
 
   const incident = {
     id: id || 'PSIRP-2025-0025',
@@ -22,6 +25,44 @@ export default function IncidentDetails() {
     submitted: '2025-01-15 10:30',
     lastUpdated: '2025-01-15 14:45',
     assigned: 'MCMC Reviewer',
+  };
+
+  const communications = [
+    {
+      id: 1,
+      type: 'rfi',
+      from: 'MCMC Reviewer',
+      fromRole: 'reviewer',
+      message: 'Please provide additional information regarding the exact time the package was last seen at the distribution center. Also, clarify if CCTV footage is available for the timeframe in question.',
+      timestamp: '2025-01-15 15:30',
+      urgent: true
+    },
+    {
+      id: 2,
+      type: 'reply',
+      from: 'Licensee Reporter',
+      fromRole: 'reporter',
+      message: 'The package was last scanned at 08:45 AM on January 15th. CCTV footage for the warehouse area from 08:00 AM to 10:00 AM has been secured and is available for review. We can provide the footage via secure file transfer.',
+      timestamp: '2025-01-15 16:15',
+      urgent: false
+    },
+    {
+      id: 3,
+      type: 'comment',
+      from: 'MCMC Reviewer',
+      fromRole: 'reviewer',
+      message: 'Thank you for the prompt response. Please upload the CCTV footage through the evidence section. Also, confirm if the package had insurance and its declared value.',
+      timestamp: '2025-01-15 16:45',
+      urgent: false
+    }
+  ];
+
+  const handleSendReply = () => {
+    if (replyText.trim()) {
+      // In a real app, this would send to backend
+      console.log('Sending reply:', replyText);
+      setReplyText('');
+    }
   };
 
   const timeline = [
@@ -150,8 +191,71 @@ export default function IncidentDetails() {
               </TabsContent>
 
               <TabsContent value="rfis" className="mt-6">
-                <div className="text-center py-8 text-muted-foreground">
-                  No RFIs or comments yet
+                <div className="space-y-4">
+                  {/* Communication Thread */}
+                  <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                    {communications.map((comm) => (
+                      <div
+                        key={comm.id}
+                        className={`flex ${comm.fromRole === 'reporter' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-[80%] rounded-lg p-4 ${
+                            comm.fromRole === 'reporter'
+                              ? 'bg-primary/10 border border-primary/20'
+                              : comm.type === 'rfi'
+                              ? 'bg-destructive/10 border border-destructive/20'
+                              : 'bg-muted border border-border'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-semibold">{comm.from}</p>
+                              {comm.type === 'rfi' && (
+                                <Badge variant="destructive" className="text-xs">
+                                  RFI
+                                </Badge>
+                              )}
+                              {comm.urgent && (
+                                <Badge variant="destructive" className="text-xs">
+                                  Action Required
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-sm leading-relaxed">{comm.message}</p>
+                          <p className="text-xs text-muted-foreground mt-2">{comm.timestamp}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Reply Box */}
+                  <div className="border-t pt-4 mt-4">
+                    <div className="space-y-3">
+                      <Textarea
+                        placeholder="Type your response or clarification..."
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        rows={4}
+                        className="resize-none"
+                      />
+                      <div className="flex items-center justify-between">
+                        <Button variant="outline" size="sm">
+                          <Paperclip className="h-4 w-4 mr-2" />
+                          Attach File
+                        </Button>
+                        <Button 
+                          onClick={handleSendReply}
+                          disabled={!replyText.trim()}
+                          className="glow-cyan"
+                        >
+                          <Send className="h-4 w-4 mr-2" />
+                          Send Reply
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </TabsContent>
 
