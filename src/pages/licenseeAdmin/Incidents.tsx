@@ -9,11 +9,11 @@ export default function LicenseeAdminIncidents() {
   const navigate = useNavigate();
 
   const incidents = [
-    { id: 'PSIRP-2025-0025', title: 'High-Value Package Theft', reporter: 'John Doe', status: 'In Review', severity: 'High', submitted: '2025-01-15' },
-    { id: 'PSIRP-2025-0024', title: 'Delayed Shipment', reporter: 'Jane Smith', status: 'Submitted', severity: 'Medium', submitted: '2025-01-14' },
-    { id: 'PSIRP-2025-0023', title: 'Damaged Package', reporter: 'Mike Johnson', status: 'RFI Sent', severity: 'Low', submitted: '2025-01-13' },
-    { id: 'PSIRP-2025-0022', title: 'Lost Consignment', reporter: 'Sarah Lee', status: 'Under Investigation', severity: 'High', submitted: '2025-01-12' },
-    { id: 'PSIRP-2025-0021', title: 'Fraud Attempt', reporter: 'Tom Brown', status: 'Closed', severity: 'Critical', submitted: '2025-01-11' },
+    { id: 'PSIRP-2025-0025', title: 'High-Value Package Theft', reporter: 'Ahmad bin Abdullah', status: 'In Review', severity: 'High', submitted: '2025-01-15' },
+    { id: 'PSIRP-2025-0024', title: 'Delayed Shipment', reporter: 'Siti Nurhaliza', status: 'Submitted', severity: 'Medium', submitted: '2025-01-14' },
+    { id: 'PSIRP-2025-0023', title: 'Damaged Package', reporter: 'Kamal Hassan', status: 'RFI Sent', severity: 'Low', submitted: '2025-01-13' },
+    { id: 'PSIRP-2025-0022', title: 'Lost Consignment', reporter: 'Fatimah Zahra', status: 'Under Investigation', severity: 'High', submitted: '2025-01-12' },
+    { id: 'PSIRP-2025-0021', title: 'Fraud Attempt', reporter: 'Azman Ali', status: 'Closed', severity: 'Critical', submitted: '2025-01-11' },
   ];
 
   const getStatusColor = (status: string) => {
