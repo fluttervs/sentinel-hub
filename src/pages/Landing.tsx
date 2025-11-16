@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, FileText, Activity, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import mcmcLogo from '@/assets/mcmc-logo.png';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -16,9 +17,11 @@ export default function Landing() {
           <div className="text-center space-y-8">
             <div className="inline-block">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center glow-cyan">
-                  <Shield className="h-8 w-8 text-primary" />
-                </div>
+                <img 
+                  src={mcmcLogo} 
+                  alt="MCMC Logo" 
+                  className="h-24 w-auto object-contain"
+                />
               </div>
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
                 Postal Security
