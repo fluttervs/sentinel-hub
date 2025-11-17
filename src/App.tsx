@@ -47,7 +47,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
         <div className="min-h-screen w-full flex flex-col">
-          {getCurrentUser() && <Header />}
+          <Header />
           <main className="flex-1">
             <div className="container mx-auto px-4 py-6">
               <Routes>
