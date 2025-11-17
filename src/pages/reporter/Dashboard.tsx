@@ -19,6 +19,12 @@ export default function ReporterDashboard() {
     { type: 'closed', message: 'Incident #PSIRP-2025-0019 has been closed', time: '1 day ago', urgent: false },
   ];
 
+  const announcements = [
+    { id: '1', title: 'System Maintenance Scheduled', message: 'The system will undergo maintenance this Saturday from 2 AM to 6 AM.', from: 'System Admin', time: '2 hours ago', priority: 'high' },
+    { id: '2', title: 'New Reporting Guidelines', message: 'Please review the updated incident reporting guidelines effective next month.', from: 'Licensee Admin', time: '1 day ago', priority: 'normal' },
+    { id: '3', title: 'Training Session Available', message: 'Join our monthly training session on best practices for incident documentation.', from: 'Licensee Admin', time: '3 days ago', priority: 'normal' },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -183,25 +189,29 @@ export default function ReporterDashboard() {
           </CardContent>
         </Card>
 
-        {/* AI Assistance */}
+        {/* Announcements */}
         <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle className="text-primary">AI Assistance</CardTitle>
+            <CardTitle className="text-primary">Announcements</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              AI can suggest severity and category based on your description.
-            </p>
-            <div className="space-y-3">
-              <div className="p-3 rounded-lg bg-secondary/30 border border-border">
-                <p className="text-sm font-medium mb-1">Last Suggestion</p>
-                <p className="text-xs text-muted-foreground">Severity: High • Category: Theft</p>
+          <CardContent className="space-y-3">
+            {announcements.map((announcement) => (
+              <div
+                key={announcement.id}
+                className={`p-3 rounded-lg border transition-all ${
+                  announcement.priority === 'high'
+                    ? 'border-destructive/40 bg-destructive/5'
+                    : 'border-border bg-secondary/30'
+                }`}
+              >
+                <p className="text-sm font-medium mb-1">{announcement.title}</p>
+                <p className="text-xs text-muted-foreground mb-2">{announcement.message}</p>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>From: {announcement.from}</span>
+                  <span>{announcement.time}</span>
+                </div>
               </div>
-              <div className="p-3 rounded-lg bg-secondary/30 border border-border">
-                <p className="text-sm font-medium mb-1">Pattern Detected</p>
-                <p className="text-xs text-muted-foreground">Similar incidents in your area increased 15% this month</p>
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
       </div>
