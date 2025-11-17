@@ -1,4 +1,4 @@
-import { Bell, User, LogOut } from 'lucide-react';
+import { Bell, User, LogOut, Moon, Sun } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -13,11 +13,13 @@ import { RoleChip } from './RoleChip';
 import { getRoleConfig } from '@/lib/roleConfig';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useTheme } from 'next-themes';
 import mcmcLogo from '@/assets/mcmc-logo.png';
 
 export const Header = () => {
   const user = getCurrentUser();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [language, setLanguage] = useState<'EN' | 'BM'>('EN');
 
   const handleLogout = () => {
@@ -58,6 +60,18 @@ export const Header = () => {
               EN
             </button>
           </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
 
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
