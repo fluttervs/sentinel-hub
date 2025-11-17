@@ -83,10 +83,7 @@ export const Header = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center gap-3 h-auto py-2">
-                    <div className="flex flex-col items-end text-sm">
-                      <span className="font-medium">{user.name}</span>
-                      <RoleChip role={user.role} className="mt-1" />
-                    </div>
+                    <span className="font-medium text-sm">{user.name}</span>
                     <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
                       <User className="h-4 w-4 text-primary" />
                     </div>
