@@ -51,7 +51,7 @@ export default function ReporterDashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card 
           className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer"
           onClick={() => navigate('/reporter/incidents')}
