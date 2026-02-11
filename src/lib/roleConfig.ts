@@ -32,7 +32,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
   },
   'reviewer': {
     id: 'reviewer',
-    name: 'MCMC Reviewer',
+    name: 'MCMC Case Officer',
     description: 'Review and process incident submissions.',
     color: 'hsl(203 89% 53%)',
     glowClass: 'glow-blue',
