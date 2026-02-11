@@ -7,9 +7,9 @@ export default function ReporterDashboard() {
   const navigate = useNavigate();
 
   const drafts = [
-    { id: 'draft-1', title: 'Theft of High-Value Package', updated: '2 hours ago' },
-    { id: 'draft-2', title: 'Tampered Shipment', updated: '1 day ago' },
-    { id: 'draft-3', title: 'Lost Consignment', updated: '3 days ago' },
+    { id: 'draft-1', title: 'Theft of High-Value Package', updated: '2 hours ago', daysLeft: 5 },
+    { id: 'draft-2', title: 'Tampered Shipment', updated: '1 day ago', daysLeft: 3 },
+    { id: 'draft-3', title: 'Lost Consignment', updated: '3 days ago', daysLeft: 1 },
   ];
 
   const activities = [
@@ -159,7 +159,18 @@ export default function ReporterDashboard() {
                 >
                   <div className="flex-1">
                     <p className="font-medium">{draft.title}</p>
-                    <p className="text-sm text-muted-foreground">Last updated: {draft.updated}</p>
+                    <div className="flex items-center gap-3 mt-1">
+                      <p className="text-sm text-muted-foreground">Last updated: {draft.updated}</p>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                        draft.daysLeft <= 2 
+                          ? 'bg-destructive/15 text-destructive' 
+                          : draft.daysLeft <= 4 
+                            ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400' 
+                            : 'bg-primary/15 text-primary'
+                      }`}>
+                        {draft.daysLeft} {draft.daysLeft === 1 ? 'day' : 'days'} left
+                      </span>
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     <Button 
