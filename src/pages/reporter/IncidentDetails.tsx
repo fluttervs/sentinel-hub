@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Download, Printer, FileText, Clock, User, Paperclip, Send } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function IncidentDetails() {
   const navigate = useNavigate();
@@ -66,11 +66,26 @@ export default function IncidentDetails() {
   };
 
   const timeline = [
-    { event: 'Incident Submitted', actor: 'Licensee Reporter', time: '2025-01-15 10:30' },
-    { event: 'Acknowledged', actor: 'MCMC System', time: '2025-01-15 10:32' },
-    { event: 'Assigned to Reviewer', actor: 'MCMC System', time: '2025-01-15 11:00' },
-    { event: 'Under Review', actor: 'MCMC Reviewer', time: '2025-01-15 14:45' },
+    { event: 'Incident Submitted', actor: 'Licensee Reporter', time: '2025-01-15 10:30', dueIn: new Date('2025-01-22T10:30:00') },
+    { event: 'Acknowledged', actor: 'MCMC System', time: '2025-01-15 10:32', dueIn: new Date('2025-01-22T10:32:00') },
+    { event: 'Assigned to Reviewer', actor: 'MCMC System', time: '2025-01-15 11:00', dueIn: new Date('2025-01-22T11:00:00') },
+    { event: 'Under Review', actor: 'MCMC Reviewer', time: '2025-01-15 14:45', dueIn: new Date('2025-01-22T14:45:00') },
   ];
+
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatCountdown = (due: Date) => {
+    const diff = due.getTime() - now.getTime();
+    if (diff <= 0) return '00:00:00';
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
@@ -184,6 +199,16 @@ export default function IncidentDetails() {
                         <p className="font-medium">{item.event}</p>
                         <p className="text-sm text-muted-foreground">{item.actor}</p>
                         <p className="text-xs text-muted-foreground mt-1">{item.time}</p>
+                        <div className={`flex items-center gap-1.5 mt-1.5 text-xs font-mono font-medium ${
+                          item.dueIn.getTime() - now.getTime() <= 86400000 
+                            ? 'text-destructive' 
+                            : item.dueIn.getTime() - now.getTime() <= 259200000 
+                              ? 'text-amber-500' 
+                              : 'text-primary'
+                        }`}>
+                          <Clock className="h-3 w-3" />
+                          <span>Due in: {formatCountdown(item.dueIn)}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
