@@ -41,7 +41,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
   },
   'validator': {
     id: 'validator',
-    name: 'MCMC Validator / Approver',
+    name: 'MCMC Supervisor',
     description: 'Approve and finalize incident decisions.',
     color: 'hsl(38 92% 50%)',
     glowClass: 'glow-amber',
