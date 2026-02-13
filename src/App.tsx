@@ -27,6 +27,7 @@ import AdminOrganisations from "./pages/admin/Organisations";
 import MasterData from "./pages/admin/MasterData";
 import AuditLogs from "./pages/admin/AuditLogs";
 import SuperAdminDashboard from "./pages/superAdmin/Dashboard";
+import LEADashboard from "./pages/lea/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -86,6 +87,9 @@ const App = () => (
                 
                 {/* Super Admin Routes */}
                 <Route path="/super-admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />
+                
+                {/* LEA Routes */}
+                <Route path="/lea/dashboard" element={<ProtectedRoute><LEADashboard /></ProtectedRoute>} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

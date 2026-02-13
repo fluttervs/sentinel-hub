@@ -1,5 +1,5 @@
 import { Role } from './auth';
-import { LucideIcon, FileText, Building2, ClipboardCheck, BadgeCheck, Search, Settings, Crown } from 'lucide-react';
+import { LucideIcon, FileText, Building2, ClipboardCheck, BadgeCheck, Search, Settings, Crown, Shield } from 'lucide-react';
 
 export interface RoleConfig {
   id: Role;
@@ -74,6 +74,15 @@ export const roleConfigs: Record<Role, RoleConfig> = {
     glowClass: 'glow-gold',
     basePath: '/super-admin',
     icon: Crown,
+  },
+  'lea-viewer': {
+    id: 'lea-viewer',
+    name: 'LEA Case Viewer',
+    description: 'View and investigate escalated cases from MCMC.',
+    color: 'hsl(220 70% 50%)',
+    glowClass: 'glow-indigo',
+    basePath: '/lea',
+    icon: Shield,
   },
 };
 
