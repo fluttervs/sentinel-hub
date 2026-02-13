@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, AlertCircle, MessageSquare, Clock, Home, ArrowLeft, Eye } from 'lucide-react';
+import { FileText, AlertCircle, MessageSquare, Clock, Eye, Inbox, ArrowUpRight, ShieldAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ReviewerDashboard() {
@@ -11,8 +11,20 @@ export default function ReviewerDashboard() {
     { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', licensee: 'Express Courier Sdn Bhd', severity: 'Critical', sla: '2h remaining', status: 'Pending Review' },
     { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', licensee: 'Swift Logistics Sdn Bhd', severity: 'High', sla: '5h remaining', status: 'Pending Review' },
     { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', licensee: 'Express Courier Sdn Bhd', severity: 'High', sla: '8h remaining', status: 'RFI Sent' },
-    { id: 'PSIRP-2025-0025', title: 'Lost Consignment Claim', licensee: 'Fast Delivery Enterprise', severity: 'Medium', sla: '12h remaining', status: 'Pending Review' },
     { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', licensee: 'Express Courier Sdn Bhd', severity: 'High', sla: '3h remaining', status: 'RFI Sent' },
+  ];
+
+  const slaAlerts = [
+    { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', remaining: '2h', breached: false },
+    { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', remaining: '3h', breached: false },
+    { id: 'PSIRP-2025-0021', title: 'Delayed Goods — Route 7', remaining: '0h', breached: true },
+  ];
+
+  const recentUpdates = [
+    { message: 'Clarification response received for #PSIRP-2025-0026', time: '15 min ago' },
+    { message: 'New case assigned: #PSIRP-2025-0028', time: '1 hour ago' },
+    { message: 'Escalation approved for #PSIRP-2025-0022', time: '3 hours ago' },
+    { message: 'Supervisor rejected escalation for #PSIRP-2025-0020', time: '5 hours ago' },
   ];
 
   const getSeverityColor = (severity: string) => {
@@ -35,186 +47,138 @@ export default function ReviewerDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Reviewer Dashboard</h1>
-          <p className="text-muted-foreground">MCMC Reviewer workspace</p>
-        </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline"
-            onClick={() => navigate('/')}
-          >
-            <Home className="mr-2 h-4 w-4" />
-            Home
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate('/choose-role')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Change Role
-          </Button>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Case Officer Dashboard</h1>
+        <p className="text-muted-foreground">Personal work overview — MCMC Case Officer</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card 
-          className="border-primary/20 cursor-pointer hover:border-primary/40 transition-all"
-          onClick={() => navigate('/reviewer/incidents')}
-        >
+      {/* KPI Cards */}
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+        <Card className="border-role-reviewer/20 hover:border-role-reviewer/40 transition-all cursor-pointer" onClick={() => navigate('/reviewer/inbox')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">New Today</CardTitle>
+            <CardTitle className="text-sm font-medium">Assigned Cases</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">8</div>
-            <p className="text-xs text-muted-foreground mt-1">Awaiting review</p>
+            <div className="text-2xl font-bold text-role-reviewer">15</div>
           </CardContent>
         </Card>
 
-        <Card 
-          className="border-role-validator/20 cursor-pointer hover:border-role-validator/40 transition-all"
-          onClick={() => navigate('/reviewer/incidents')}
-        >
+        <Card className="border-destructive/20 hover:border-destructive/40 transition-all cursor-pointer" onClick={() => navigate('/reviewer/inbox')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
+            <CardTitle className="text-sm font-medium">High Severity</CardTitle>
+            <ShieldAlert className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-destructive">5</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-status-in-review/20 hover:border-status-in-review/40 transition-all cursor-pointer" onClick={() => navigate('/reviewer/inbox')}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Near SLA Breach</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-role-validator">15</div>
-            <p className="text-xs text-muted-foreground mt-1">In your queue</p>
+            <div className="text-2xl font-bold text-status-in-review">3</div>
           </CardContent>
         </Card>
 
-        <Card 
-          className="border-status-rfi/20 cursor-pointer hover:border-status-rfi/40 transition-all"
-          onClick={() => navigate('/reviewer/incidents')}
-        >
+        <Card className="border-status-rfi/20 hover:border-status-rfi/40 transition-all cursor-pointer" onClick={() => navigate('/reviewer/inbox')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">RFIs Pending</CardTitle>
+            <CardTitle className="text-sm font-medium">Escalation Pending</CardTitle>
+            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-status-rfi">2</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer" onClick={() => navigate('/reviewer/inbox')}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Clarification Pending</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-status-rfi">6</div>
-            <p className="text-xs text-muted-foreground mt-1">Awaiting response</p>
+            <div className="text-2xl font-bold text-primary">6</div>
           </CardContent>
         </Card>
+      </div>
 
-        <Card 
-          className="border-destructive/20 cursor-pointer hover:border-destructive/40 transition-all"
-          onClick={() => navigate('/reviewer/incidents')}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">SLA at Risk</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
+      {/* Go to Inbox */}
+      <Button onClick={() => navigate('/reviewer/inbox')} size="lg" className="w-full h-auto py-5 text-lg glow-blue">
+        <Inbox className="mr-3 h-6 w-6" />
+        Go to Assignment Inbox
+      </Button>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Recent Assigned */}
+        <Card className="lg:col-span-2">
+          <CardHeader><CardTitle>Recent Assigned Cases</CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">3</div>
-            <p className="text-xs text-muted-foreground mt-1">Urgent attention</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-              onClick={() => navigate('/reviewer/incidents')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              View All Incidents
-            </Button>
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-              onClick={() => navigate('/reviewer/incidents')}
-            >
-              <Clock className="mr-2 h-4 w-4" />
-              Priority Queue
-            </Button>
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-              onClick={() => navigate('/reviewer/incidents')}
-            >
-              <MessageSquare className="mr-2 h-4 w-4" />
-              RFI Management
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Today's Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Reviewed Today</span>
-              <span className="text-sm font-medium">12 incidents</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">RFIs Sent</span>
-              <span className="text-sm font-medium">4 requests</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Escalated</span>
-              <span className="text-sm font-medium">2 cases</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Avg. Review Time</span>
-              <span className="text-sm font-medium">1.5 hours</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Priority Queue</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {priorityIncidents.map((incident) => (
-              <div 
-                key={incident.id}
-                className="flex items-center justify-between p-4 rounded-lg border border-border hover:border-primary/40 transition-all cursor-pointer"
-                onClick={() => navigate(`/reporter/incidents/${incident.id}`)}
-              >
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm text-primary">{incident.id}</span>
-                    <Badge variant="outline" className={getSeverityColor(incident.severity)}>
-                      {incident.severity}
-                    </Badge>
-                    <Badge variant="outline" className={getStatusColor(incident.status)}>
-                      {incident.status}
-                    </Badge>
+            <div className="space-y-3">
+              {priorityIncidents.map((incident) => (
+                <div
+                  key={incident.id}
+                  className="flex items-center justify-between p-4 rounded-lg border border-border hover:border-role-reviewer/40 transition-all cursor-pointer"
+                  onClick={() => navigate(`/reviewer/cases/${incident.id}`)}
+                >
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-sm text-role-reviewer">{incident.id}</span>
+                      <Badge variant="outline" className={getSeverityColor(incident.severity)}>{incident.severity}</Badge>
+                      <Badge variant="outline" className={getStatusColor(incident.status)}>{incident.status}</Badge>
+                    </div>
+                    <p className="font-medium">{incident.title}</p>
+                    <p className="text-sm text-muted-foreground">{incident.licensee}</p>
                   </div>
-                  <p className="font-medium">{incident.title}</p>
-                  <p className="text-sm text-muted-foreground">{incident.licensee}</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
+                  <div className="flex items-center gap-4">
                     <p className={`text-sm font-medium ${incident.sla.includes('2h') || incident.sla.includes('3h') ? 'text-destructive' : 'text-muted-foreground'}`}>
                       {incident.sla}
                     </p>
+                    <Button size="sm" variant="outline"><Eye className="mr-2 h-4 w-4" />Review</Button>
                   </div>
-                  <Button size="sm" variant="outline">
-                    <Eye className="mr-2 h-4 w-4" />
-                    Review
-                  </Button>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* SLA Alerts */}
+        <div className="space-y-6">
+          <Card className="border-destructive/20">
+            <CardHeader><CardTitle className="text-destructive flex items-center gap-2"><AlertCircle className="h-5 w-5" />SLA Alerts</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              {slaAlerts.map((alert) => (
+                <div key={alert.id} className={`p-3 rounded-lg border ${alert.breached ? 'border-destructive/50 bg-destructive/10' : 'border-status-in-review/30 bg-status-in-review/5'}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-mono text-xs text-role-reviewer">{alert.id}</span>
+                    <Badge variant="outline" className={alert.breached ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-status-in-review/20 text-status-in-review border-status-in-review/30'}>
+                      {alert.breached ? 'BREACHED' : alert.remaining}
+                    </Badge>
+                  </div>
+                  <p className="text-sm font-medium">{alert.title}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Recently Updated</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              {recentUpdates.map((update, i) => (
+                <div key={i} className="flex items-start gap-2 p-2">
+                  <div className="h-2 w-2 rounded-full bg-role-reviewer mt-1.5 shrink-0" />
+                  <div>
+                    <p className="text-sm">{update.message}</p>
+                    <p className="text-xs text-muted-foreground">{update.time}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
