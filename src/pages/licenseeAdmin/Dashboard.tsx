@@ -1,378 +1,233 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { FileText, Users, AlertCircle, Plus, Settings, TrendingUp, TrendingDown, Home, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  Users, FileText, AlertTriangle, CheckCircle2, Clock, TrendingUp, TrendingDown,
+  Shield, Activity
+} from 'lucide-react';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  PieChart, Pie, Cell, BarChart, Bar,
+} from 'recharts';
+
+const kpiCards = [
+  { label: 'Total Reporters', value: 12, change: +8.3, icon: Users, color: 'text-role-licensee-admin' },
+  { label: 'Active Reporters', value: 10, change: +5.0, icon: Activity, color: 'text-status-closed' },
+  { label: 'Total Incidents', value: 47, change: +12.5, icon: FileText, color: 'text-primary' },
+  { label: 'Under Review', value: 8, change: -15.0, icon: Clock, color: 'text-status-in-review' },
+  { label: 'Escalated Cases', value: 5, change: +25.0, icon: AlertTriangle, color: 'text-destructive' },
+  { label: 'Closed Cases', value: 30, change: +10.0, icon: CheckCircle2, color: 'text-status-closed' },
+  { label: 'Avg Submission', value: '2.4h', change: -18.0, icon: TrendingDown, color: 'text-primary' },
+  { label: 'Compliance Score', value: '92%', change: +3.2, icon: Shield, color: 'text-role-licensee-admin' },
+];
+
+const submissionTrend = [
+  { month: 'Aug', current: 6, previous: 4 },
+  { month: 'Sep', current: 8, previous: 5 },
+  { month: 'Oct', current: 12, previous: 7 },
+  { month: 'Nov', current: 9, previous: 8 },
+  { month: 'Dec', current: 7, previous: 10 },
+  { month: 'Jan', current: 5, previous: 6 },
+];
+
+const statusDistribution = [
+  { name: 'Draft', value: 3, color: 'hsl(var(--status-draft))' },
+  { name: 'Submitted', value: 8, color: 'hsl(var(--status-submitted))' },
+  { name: 'Under Review', value: 6, color: 'hsl(var(--status-in-review))' },
+  { name: 'Escalated', value: 5, color: 'hsl(var(--status-investigation))' },
+  { name: 'Closed', value: 25, color: 'hsl(var(--status-closed))' },
+];
+
+const reporterPerformance = [
+  { name: 'Ahmad Abdullah', submissions: 14, avgTime: 1.8, escalation: 7 },
+  { name: 'Mastura Hassan', submissions: 11, avgTime: 2.1, escalation: 9 },
+  { name: 'Kamal Hassan', submissions: 9, avgTime: 3.2, escalation: 22 },
+  { name: 'Fatimah Zahra', submissions: 8, avgTime: 2.5, escalation: 12 },
+  { name: 'Azman Ali', submissions: 5, avgTime: 4.1, escalation: 40 },
+];
+
+const caseTypeByMonth = [
+  { month: 'Aug', theft: 2, suspicious: 1, prohibited: 1, breach: 1, others: 1 },
+  { month: 'Sep', theft: 3, suspicious: 2, prohibited: 1, breach: 1, others: 1 },
+  { month: 'Oct', theft: 4, suspicious: 3, prohibited: 2, breach: 2, others: 1 },
+  { month: 'Nov', theft: 3, suspicious: 2, prohibited: 2, breach: 1, others: 1 },
+  { month: 'Dec', theft: 2, suspicious: 2, prohibited: 1, breach: 1, others: 1 },
+  { month: 'Jan', theft: 1, suspicious: 1, prohibited: 1, breach: 1, others: 1 },
+];
+
+const chartTooltipStyle = {
+  backgroundColor: 'hsl(var(--card))',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: '8px',
+  color: 'hsl(var(--foreground))',
+};
 
 export default function LicenseeAdminDashboard() {
-  const navigate = useNavigate();
+  const escalationRatio = ((5 / 47) * 100).toFixed(1);
 
-  // Last 6 months incident data
-  const incidentTrendData = [
-    { month: 'Aug 2024', total: 6, high: 2, medium: 3, low: 1, critical: 0 },
-    { month: 'Sep 2024', total: 8, high: 3, medium: 3, low: 2, critical: 0 },
-    { month: 'Oct 2024', total: 12, high: 4, medium: 5, low: 2, critical: 1 },
-    { month: 'Nov 2024', total: 9, high: 3, medium: 4, low: 2, critical: 0 },
-    { month: 'Dec 2024', total: 7, high: 2, medium: 3, low: 2, critical: 0 },
-    { month: 'Jan 2025', total: 5, high: 1, medium: 2, low: 2, critical: 0 },
-  ];
-
-  // Category breakdown for current month
-  const categoryData = [
-    { name: 'Loss', count: 15, percentage: 32 },
-    { name: 'Theft', count: 12, percentage: 26 },
-    { name: 'Tampering', count: 8, percentage: 17 },
-    { name: 'Fraud', count: 7, percentage: 15 },
-    { name: 'Others', count: 5, percentage: 10 },
-  ];
-
-  // Calculate trend
-  const lastMonth = incidentTrendData[incidentTrendData.length - 1].total;
-  const previousMonth = incidentTrendData[incidentTrendData.length - 2].total;
-  const trendPercentage = ((lastMonth - previousMonth) / previousMonth * 100).toFixed(1);
-  const isIncreasing = lastMonth > previousMonth;
-  
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Licensee Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage your organisation's users and submissions</p>
-        </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline"
-            onClick={() => navigate('/')}
-          >
-            <Home className="mr-2 h-4 w-4" />
-            Home
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate('/choose-role')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Change Role
-          </Button>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
+        <p className="text-muted-foreground">Organisational overview — Express Courier Sdn Bhd</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card 
-          className="border-primary/20 cursor-pointer hover:border-primary/40 transition-all"
-          onClick={() => navigate('/licensee-admin/incidents')}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Incidents</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">47</div>
-            <p className="text-xs text-muted-foreground mt-1">Organisation-wide</p>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className="border-role-validator/20 cursor-pointer hover:border-role-validator/40 transition-all"
-          onClick={() => navigate('/licensee-admin/incidents')}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Open Incidents</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-role-validator">12</div>
-            <p className="text-xs text-muted-foreground mt-1">Across all statuses</p>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className="border-status-rfi/20 cursor-pointer hover:border-status-rfi/40 transition-all"
-          onClick={() => navigate('/licensee-admin/incidents')}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">RFIs Pending</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-status-rfi">3</div>
-            <p className="text-xs text-muted-foreground mt-1">Awaiting response</p>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className="border-role-licensee-admin/20 cursor-pointer hover:border-role-licensee-admin/40 transition-all"
-          onClick={() => navigate('/licensee-admin/users')}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-role-licensee-admin">8</div>
-            <p className="text-xs text-muted-foreground mt-1">In your organisation</p>
-          </CardContent>
-        </Card>
+      {/* KPI Cards */}
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        {kpiCards.map((kpi) => (
+          <Card key={kpi.label} className="hover:shadow-lg transition-shadow duration-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-muted-foreground">{kpi.label}</span>
+                <kpi.icon className={`h-4 w-4 ${kpi.color}`} />
+              </div>
+              <div className="text-2xl font-bold">{kpi.value}</div>
+              <div className="flex items-center gap-1 mt-1">
+                {kpi.change > 0 ? (
+                  <TrendingUp className="h-3 w-3 text-status-closed" />
+                ) : (
+                  <TrendingDown className="h-3 w-3 text-primary" />
+                )}
+                <span className={`text-xs font-medium ${kpi.change > 0 ? 'text-status-closed' : 'text-primary'}`}>
+                  {kpi.change > 0 ? '+' : ''}{kpi.change}%
+                </span>
+                <span className="text-xs text-muted-foreground">vs last month</span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* Charts Row 1 */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Submission Trend */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle className="text-base">Incident Submission Trend</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-              onClick={() => navigate('/reporter/incidents/new')}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              New Incident
-            </Button>
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-              onClick={() => navigate('/licensee-admin/incidents')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              View All Incidents
-            </Button>
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-              onClick={() => navigate('/licensee-admin/users')}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Manage Users
-            </Button>
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-              onClick={() => navigate('/licensee-admin/profile')}
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              Organisation Profile
-            </Button>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={submissionTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip contentStyle={chartTooltipStyle} />
+                <Legend />
+                <Line type="monotone" dataKey="current" stroke="hsl(var(--role-licensee-admin))" strokeWidth={2} name="Current" dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="previous" stroke="hsl(var(--muted-foreground))" strokeWidth={2} strokeDasharray="5 5" name="Previous" dot={{ r: 3 }} />
+              </LineChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
+        {/* Status Distribution Donut */}
         <Card>
           <CardHeader>
-            <CardTitle>AI-Powered Analytics & Insights</CardTitle>
+            <CardTitle className="text-base">Case Status Distribution</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Performance Metrics Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* Reporting Speed */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">Reporting Speed</p>
-                  <TrendingUp className="h-4 w-4 text-green-400" />
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-primary">60%</span>
-                  <span className="text-sm text-muted-foreground">faster</span>
-                </div>
-                <div className="w-full bg-secondary rounded-full h-2">
-                  <div className="bg-primary h-2 rounded-full" style={{ width: '60%' }} />
-                </div>
-                <p className="text-xs text-muted-foreground">vs industry average</p>
-              </div>
-
-              {/* Resolution Rate */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">Resolution Rate</p>
-                  <TrendingUp className="h-4 w-4 text-green-400" />
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-role-validator">87%</span>
-                  <span className="text-sm text-muted-foreground">closed</span>
-                </div>
-                <div className="w-full bg-secondary rounded-full h-2">
-                  <div className="bg-role-validator h-2 rounded-full" style={{ width: '87%' }} />
-                </div>
-                <p className="text-xs text-muted-foreground">last 30 days</p>
-              </div>
-            </div>
-
-            {/* Incident Type Distribution Mini Chart */}
-            <div className="space-y-3">
-              <p className="text-sm font-medium">Top Incident Categories</p>
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm">Loss</span>
-                      <span className="text-sm font-medium text-primary">32%</span>
-                    </div>
-                    <div className="w-full bg-secondary rounded-full h-1.5">
-                      <div className="bg-primary h-1.5 rounded-full" style={{ width: '32%' }} />
-                    </div>
+          <CardContent>
+            <div className="flex items-center">
+              <ResponsiveContainer width="60%" height={280}>
+                <PieChart>
+                  <Pie
+                    data={statusDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {statusDistribution.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number, name: string) => [`${value} (${((value / 47) * 100).toFixed(0)}%)`, name]} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="w-[40%] space-y-2">
+                {statusDistribution.map((s) => (
+                  <div key={s.name} className="flex items-center gap-2 text-sm">
+                    <span className="h-3 w-3 rounded-sm shrink-0" style={{ backgroundColor: s.color }} />
+                    <span className="text-muted-foreground">{s.name}</span>
+                    <span className="ml-auto font-medium">{s.value}</span>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm">Theft</span>
-                      <span className="text-sm font-medium text-destructive">26%</span>
-                    </div>
-                    <div className="w-full bg-secondary rounded-full h-1.5">
-                      <div className="bg-destructive h-1.5 rounded-full" style={{ width: '26%' }} />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm">Tampering</span>
-                      <span className="text-sm font-medium text-status-rfi">17%</span>
-                    </div>
-                    <div className="w-full bg-secondary rounded-full h-1.5">
-                      <div className="bg-status-rfi h-1.5 rounded-full" style={{ width: '17%' }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Recommendations */}
-            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <div className="flex gap-2 items-start">
-                <div className="mt-0.5">
-                  <AlertCircle className="h-4 w-4 text-primary" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium text-primary">AI Recommendation</p>
-                  <p className="text-xs text-muted-foreground">
-                    Review packaging SOPs for high-value items. Loss incidents increased by 15% in the past 2 weeks for shipments over RM5,000.
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Charts Row 2 */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Reporter Performance */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Reporter Performance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={reporterPerformance} layout="vertical" margin={{ left: 30 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" fontSize={11} width={110} />
+                <Tooltip contentStyle={chartTooltipStyle} />
+                <Bar dataKey="submissions" fill="hsl(var(--role-licensee-admin))" radius={[0, 4, 4, 0]} name="Submissions" />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="mt-3 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-1">
+                <TrendingUp className="h-3 w-3 text-status-closed" />
+                <span className="text-status-closed font-medium">Top: Ahmad Abdullah</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <TrendingDown className="h-3 w-3 text-destructive" />
+                <span className="text-destructive font-medium">Lowest: Azman Ali</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Case Type Analysis Stacked Bar */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Case Type Analysis</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={caseTypeByMonth}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip contentStyle={chartTooltipStyle} />
+                <Legend />
+                <Bar dataKey="theft" stackId="a" fill="hsl(var(--destructive))" name="Theft" />
+                <Bar dataKey="suspicious" stackId="a" fill="hsl(var(--status-in-review))" name="Suspicious Parcel" />
+                <Bar dataKey="prohibited" stackId="a" fill="hsl(var(--status-rfi))" name="Prohibited Items" />
+                <Bar dataKey="breach" stackId="a" fill="hsl(var(--status-investigation))" name="Security Breach" />
+                <Bar dataKey="others" stackId="a" fill="hsl(var(--muted-foreground))" name="Others" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Escalation Ratio */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Organisation Incident Trend</CardTitle>
-            <div className="flex items-center gap-2 text-sm">
-              {isIncreasing ? (
-                <>
+        <CardContent className="p-6">
+          <div className="flex items-center gap-6">
+            <div className="h-16 w-16 rounded-full border-4 border-destructive/30 flex items-center justify-center bg-destructive/10">
+              <AlertTriangle className="h-7 w-7 text-destructive" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Escalation Ratio to LEA</p>
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl font-bold">{escalationRatio}%</span>
+                <div className="flex items-center gap-1">
                   <TrendingUp className="h-4 w-4 text-destructive" />
-                  <span className="text-destructive font-medium">+{trendPercentage}%</span>
-                </>
-              ) : (
-                <>
-                  <TrendingDown className="h-4 w-4 text-green-400" />
-                  <span className="text-green-400 font-medium">{trendPercentage}%</span>
-                </>
-              )}
-              <span className="text-muted-foreground">vs last month</span>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {/* Line Chart - Incident Trends */}
-            <div>
-              <h4 className="text-sm font-medium mb-4">Monthly Incident Volume (Last 6 Months)</h4>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={incidentTrendData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="month" 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--background))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px',
-                    }}
-                  />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="total" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth={2}
-                    name="Total Incidents"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="critical" 
-                    stroke="#ef4444" 
-                    strokeWidth={2}
-                    name="Critical"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="high" 
-                    stroke="#f97316" 
-                    strokeWidth={2}
-                    name="High"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Bar Chart - Category Breakdown */}
-            <div>
-              <h4 className="text-sm font-medium mb-4">Incident Type Distribution</h4>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={categoryData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--background))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px',
-                    }}
-                  />
-                  <Bar 
-                    dataKey="count" 
-                    fill="hsl(var(--primary))" 
-                    radius={[8, 8, 0, 0]}
-                    name="Incidents"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Key Insights */}
-            <div className="grid md:grid-cols-3 gap-4 pt-4 border-t">
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground">Peak Month</p>
-                <p className="text-lg font-bold">Oct 2024</p>
-                <p className="text-xs text-muted-foreground">12 incidents</p>
+                  <span className="text-sm text-destructive font-medium">+2.1% from last month</span>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground">Most Common Type</p>
-                <p className="text-lg font-bold">Loss (32%)</p>
-                <p className="text-xs text-muted-foreground">15 incidents this period</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground">6-Month Average</p>
-                <p className="text-lg font-bold">7.8 incidents</p>
-                <p className="text-xs text-muted-foreground">per month</p>
-              </div>
+              <p className="text-xs text-muted-foreground mt-1">5 out of 47 total incidents escalated</p>
             </div>
           </div>
         </CardContent>
