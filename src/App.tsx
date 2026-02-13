@@ -62,7 +62,12 @@ import AdminOrganisations from "./pages/admin/Organisations";
 import MasterData from "./pages/admin/MasterData";
 import AuditLogs from "./pages/admin/AuditLogs";
 import SuperAdminDashboard from "./pages/superAdmin/Dashboard";
+import LEALayout from "./components/lea/LEALayout";
 import LEADashboard from "./pages/lea/Dashboard";
+import LEACaseList from "./pages/lea/CaseList";
+import LEACaseDetail from "./pages/lea/CaseDetail";
+import LEANotifications from "./pages/lea/Notifications";
+import LEASecurity from "./pages/lea/Security";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -165,8 +170,14 @@ const App = () => (
                 {/* Super Admin Routes */}
                 <Route path="/super-admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />
                 
-                {/* LEA Routes */}
-                <Route path="/lea/dashboard" element={<ProtectedRoute><LEADashboard /></ProtectedRoute>} />
+                {/* LEA Routes - with sidebar layout */}
+                <Route path="/lea" element={<ProtectedRoute><LEALayout /></ProtectedRoute>}>
+                  <Route path="dashboard" element={<LEADashboard />} />
+                  <Route path="cases" element={<LEACaseList />} />
+                  <Route path="cases/:id" element={<LEACaseDetail />} />
+                  <Route path="notifications" element={<LEANotifications />} />
+                  <Route path="security" element={<LEASecurity />} />
+                </Route>
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
