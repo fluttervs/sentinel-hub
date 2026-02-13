@@ -33,8 +33,9 @@ export default function Login() {
     setTimeout(() => {
       try {
         login(email, password, role);
-        toast.success('Login successful');
-        navigate(`${config.basePath}/dashboard`);
+        const otp = String(Math.floor(100000 + Math.random() * 900000));
+        toast.success('Credentials verified. Please complete MFA.');
+        navigate('/otp', { state: { role, otp } });
       } catch (error) {
         toast.error('Login failed');
       } finally {

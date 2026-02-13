@@ -9,6 +9,7 @@ import { getCurrentUser } from "./lib/auth";
 import Landing from "./pages/Landing";
 import ChooseRole from "./pages/ChooseRole";
 import Login from "./pages/Login";
+import OtpVerification from "./pages/OtpVerification";
 import ReporterLayout from "./components/reporter/ReporterLayout";
 import ReporterDashboard from "./pages/reporter/Dashboard";
 import ReporterIncidents from "./pages/reporter/Incidents";
@@ -95,6 +96,7 @@ const App = () => (
                 <Route path="/" element={<Landing />} />
                 <Route path="/choose-role" element={<ChooseRole />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/otp" element={<OtpVerification />} />
                 
                 {/* Reporter Routes - with sidebar layout */}
                 <Route path="/reporter" element={<ProtectedRoute><ReporterLayout /></ProtectedRoute>}>
