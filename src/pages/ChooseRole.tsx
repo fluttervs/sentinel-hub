@@ -6,6 +6,15 @@ import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { Role } from '@/lib/auth';
 
+const roleOrder: Role[] = [
+  'licensee-admin',
+  'reporter',
+  'reviewer',
+  'validator',
+  'investigator',
+  'lea-viewer',
+];
+
 export default function ChooseRole() {
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
@@ -35,7 +44,9 @@ export default function ChooseRole() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Object.values(roleConfigs).map((config: RoleConfig) => (
+          {roleOrder.map((roleId) => {
+            const config = roleConfigs[roleId];
+            return (
             <Card
               key={config.id}
               className="border-2 hover:scale-105 transition-all cursor-pointer bg-card/50 backdrop-blur"
@@ -80,7 +91,8 @@ export default function ChooseRole() {
                 </Button>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

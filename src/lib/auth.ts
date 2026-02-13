@@ -6,7 +6,8 @@ export type Role =
   | 'validator' 
   | 'investigator' 
   | 'system-admin' 
-  | 'super-admin';
+  | 'super-admin'
+  | 'lea-viewer';
 
 export interface User {
   id: string;
@@ -29,6 +30,7 @@ export const login = (email: string, password: string, role: Role): User => {
     'investigator': 'MCMC Investigator',
     'system-admin': 'MCMC System Admin',
     'super-admin': 'MCMC Super Admin',
+    'lea-viewer': 'LEA Case Viewer',
   };
 
   const user: User = {
