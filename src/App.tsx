@@ -46,7 +46,16 @@ import AuditCompliance from "./pages/validator/AuditCompliance";
 import SearchReports from "./pages/validator/SearchReports";
 import SupervisorNotifications from "./pages/validator/Notifications";
 import SupervisorSecurity from "./pages/validator/Security";
+import InvestigatorLayout from "./components/investigator/InvestigatorLayout";
 import InvestigatorDashboard from "./pages/investigator/Dashboard";
+import InvestigatorAnalytics from "./pages/investigator/Analytics";
+import InvestigatorAllCases from "./pages/investigator/AllCases";
+import InvestigatorCaseDetail from "./pages/investigator/CaseDetail";
+import InvestigatorPerformance from "./pages/investigator/Performance";
+import InvestigatorReports from "./pages/investigator/Reports";
+import InvestigatorAuditCompliance from "./pages/investigator/AuditCompliance";
+import InvestigatorNotifications from "./pages/investigator/Notifications";
+import InvestigatorSecurity from "./pages/investigator/Security";
 import SystemAdminDashboard from "./pages/admin/Dashboard";
 import AdminUsers from "./pages/admin/Users";
 import AdminOrganisations from "./pages/admin/Organisations";
@@ -133,8 +142,18 @@ const App = () => (
                   <Route path="security" element={<SupervisorSecurity />} />
                 </Route>
                 
-                {/* Investigator Routes */}
-                <Route path="/investigator/dashboard" element={<ProtectedRoute><InvestigatorDashboard /></ProtectedRoute>} />
+                {/* Investigator / MCMC Internal Routes - with sidebar layout */}
+                <Route path="/investigator" element={<ProtectedRoute><InvestigatorLayout /></ProtectedRoute>}>
+                  <Route path="dashboard" element={<InvestigatorDashboard />} />
+                  <Route path="analytics" element={<InvestigatorAnalytics />} />
+                  <Route path="cases" element={<InvestigatorAllCases />} />
+                  <Route path="cases/:id" element={<InvestigatorCaseDetail />} />
+                  <Route path="performance" element={<InvestigatorPerformance />} />
+                  <Route path="reports" element={<InvestigatorReports />} />
+                  <Route path="audit" element={<InvestigatorAuditCompliance />} />
+                  <Route path="notifications" element={<InvestigatorNotifications />} />
+                  <Route path="security" element={<InvestigatorSecurity />} />
+                </Route>
                 
                 {/* System Admin Routes */}
                 <Route path="/admin/dashboard" element={<ProtectedRoute><SystemAdminDashboard /></ProtectedRoute>} />
