@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Plus, MessageSquare, HelpCircle, Clock, AlertCircle, CheckCircle2, Trash2, Home, ArrowLeft } from 'lucide-react';
+import { FileText, Plus, MessageSquare, Clock, AlertCircle, CheckCircle2, Trash2, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ReporterDashboard() {
@@ -27,37 +27,16 @@ export default function ReporterDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, Licensee Reporter</p>
-        </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline"
-            onClick={() => navigate('/')}
-          >
-            <Home className="mr-2 h-4 w-4" />
-            Home
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={() => navigate('/choose-role')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Change Role
-          </Button>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+        <p className="text-muted-foreground">Welcome back, Licensee Reporter</p>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card 
-          className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer"
-          onClick={() => navigate('/reporter/incidents')}
-        >
+      {/* KPI Cards - 5 cards */}
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+        <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer" onClick={() => navigate('/reporter/incidents')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Drafts</CardTitle>
+            <CardTitle className="text-sm font-medium">My Drafts</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -65,84 +44,56 @@ export default function ReporterDashboard() {
           </CardContent>
         </Card>
 
-        <Card 
-          className="border-role-reviewer/20 hover:border-role-reviewer/40 transition-all cursor-pointer"
-          onClick={() => navigate('/reporter/incidents')}
-        >
+        <Card className="border-status-submitted/20 hover:border-status-submitted/40 transition-all cursor-pointer" onClick={() => navigate('/reporter/incidents')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Submitted (30d)</CardTitle>
+            <CardTitle className="text-sm font-medium">Submitted</CardTitle>
             <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-role-reviewer">12</div>
+            <div className="text-2xl font-bold text-status-submitted">12</div>
           </CardContent>
         </Card>
 
-        <Card 
-          className="border-role-validator/20 hover:border-role-validator/40 transition-all cursor-pointer"
-          onClick={() => navigate('/reporter/incidents')}
-        >
+        <Card className="border-status-in-review/20 hover:border-status-in-review/40 transition-all cursor-pointer" onClick={() => navigate('/reporter/incidents')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Open Incidents</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Under Review</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-role-validator">7</div>
+            <div className="text-2xl font-bold text-status-in-review">4</div>
           </CardContent>
         </Card>
 
-        <Card 
-          className="border-destructive/20 hover:border-destructive/40 transition-all cursor-pointer"
-          onClick={() => navigate('/reporter/incidents')}
-        >
+        <Card className="border-status-investigation/20 hover:border-status-investigation/40 transition-all cursor-pointer" onClick={() => navigate('/reporter/incidents')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Needs Action</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Escalated</CardTitle>
+            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">2</div>
-            <span className="text-xs text-muted-foreground">RFIs pending</span>
+            <div className="text-2xl font-bold text-status-investigation">2</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-status-closed/20 hover:border-status-closed/40 transition-all cursor-pointer" onClick={() => navigate('/reporter/incidents')}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Closed</CardTitle>
+            <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-status-closed">8</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Primary Actions */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Button
-          onClick={() => navigate('/reporter/incidents/new')}
-          size="lg"
-          className="h-auto py-6 flex-col gap-2 glow-cyan"
-        >
-          <Plus className="h-6 w-6" />
-          <span>New Incident</span>
-        </Button>
-        <Button
-          onClick={() => navigate('/reporter/incidents')}
-          size="lg"
-          variant="outline"
-          className="h-auto py-6 flex-col gap-2"
-        >
-          <FileText className="h-6 w-6" />
-          <span>My Submissions</span>
-        </Button>
-        <Button
-          onClick={() => navigate('/reporter/incidents')}
-          size="lg"
-          variant="outline"
-          className="h-auto py-6 flex-col gap-2"
-        >
-          <MessageSquare className="h-6 w-6" />
-          <span>Requests for Info</span>
-        </Button>
-        <Button
-          size="lg"
-          variant="outline"
-          className="h-auto py-6 flex-col gap-2"
-        >
-          <HelpCircle className="h-6 w-6" />
-          <span>Help</span>
-        </Button>
-      </div>
+      {/* Create New Incident */}
+      <Button
+        onClick={() => navigate('/reporter/incidents/new')}
+        size="lg"
+        className="w-full h-auto py-5 text-lg glow-cyan"
+      >
+        <Plus className="mr-3 h-6 w-6" />
+        Create New Incident
+      </Button>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* My Drafts */}
@@ -162,10 +113,10 @@ export default function ReporterDashboard() {
                     <div className="flex items-center gap-3 mt-1">
                       <p className="text-sm text-muted-foreground">Last updated: {draft.updated}</p>
                       <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                        draft.daysLeft <= 2 
-                          ? 'bg-destructive/15 text-destructive' 
-                          : draft.daysLeft <= 4 
-                            ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400' 
+                        draft.daysLeft <= 2
+                          ? 'bg-destructive/15 text-destructive'
+                          : draft.daysLeft <= 4
+                            ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
                             : 'bg-primary/15 text-primary'
                       }`}>
                         {draft.daysLeft} {draft.daysLeft === 1 ? 'day' : 'days'} left
@@ -173,11 +124,7 @@ export default function ReporterDashboard() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => navigate('/reporter/incidents/new')}
-                    >
+                    <Button size="sm" variant="outline" onClick={() => navigate('/reporter/incidents/new')}>
                       Continue
                     </Button>
                     <Button size="sm" variant="ghost" className="text-destructive">
@@ -217,10 +164,10 @@ export default function ReporterDashboard() {
         </Card>
       </div>
 
-      {/* Activity & Notifications */}
+      {/* Recent Activity */}
       <Card>
         <CardHeader>
-          <CardTitle>Activity & Notifications</CardTitle>
+          <CardTitle>Recent Activity</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

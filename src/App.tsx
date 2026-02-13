@@ -9,10 +9,14 @@ import { getCurrentUser } from "./lib/auth";
 import Landing from "./pages/Landing";
 import ChooseRole from "./pages/ChooseRole";
 import Login from "./pages/Login";
+import ReporterLayout from "./components/reporter/ReporterLayout";
 import ReporterDashboard from "./pages/reporter/Dashboard";
 import ReporterIncidents from "./pages/reporter/Incidents";
 import NewIncident from "./pages/reporter/NewIncident";
 import IncidentDetails from "./pages/reporter/IncidentDetails";
+import ReporterNotifications from "./pages/reporter/Notifications";
+import ReporterAnalytics from "./pages/reporter/Analytics";
+import ReporterProfileSecurity from "./pages/reporter/ProfileSecurity";
 import ReviewerDashboard from "./pages/reviewer/Dashboard";
 import ReviewerIncidents from "./pages/reviewer/Incidents";
 import LicenseeAdminLayout from "./components/licenseeAdmin/LicenseeAdminLayout";
@@ -60,11 +64,16 @@ const App = () => (
                 <Route path="/choose-role" element={<ChooseRole />} />
                 <Route path="/login" element={<Login />} />
                 
-                {/* Reporter Routes */}
-                <Route path="/reporter/dashboard" element={<ProtectedRoute><ReporterDashboard /></ProtectedRoute>} />
-                <Route path="/reporter/incidents" element={<ProtectedRoute><ReporterIncidents /></ProtectedRoute>} />
-                <Route path="/reporter/incidents/new" element={<ProtectedRoute><NewIncident /></ProtectedRoute>} />
-                <Route path="/reporter/incidents/:id" element={<ProtectedRoute><IncidentDetails /></ProtectedRoute>} />
+                {/* Reporter Routes - with sidebar layout */}
+                <Route path="/reporter" element={<ProtectedRoute><ReporterLayout /></ProtectedRoute>}>
+                  <Route path="dashboard" element={<ReporterDashboard />} />
+                  <Route path="incidents" element={<ReporterIncidents />} />
+                  <Route path="incidents/new" element={<NewIncident />} />
+                  <Route path="incidents/:id" element={<IncidentDetails />} />
+                  <Route path="notifications" element={<ReporterNotifications />} />
+                  <Route path="analytics" element={<ReporterAnalytics />} />
+                  <Route path="profile" element={<ReporterProfileSecurity />} />
+                </Route>
                 
                 {/* Licensee Admin Routes - with sidebar layout */}
                 <Route path="/licensee-admin" element={<ProtectedRoute><LicenseeAdminLayout /></ProtectedRoute>}>

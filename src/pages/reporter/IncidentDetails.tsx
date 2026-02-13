@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Download, Printer, FileText, Clock, User, Paperclip, Send } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ArrowLeft, Download, FileText, Clock, User, Paperclip, Send, MapPin, Package, ShieldAlert } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function IncidentDetails() {
   const navigate = useNavigate();
@@ -17,297 +18,251 @@ export default function IncidentDetails() {
     title: 'High-Value Package Theft',
     status: 'In Review',
     severity: 'High',
-    type: 'Theft',
-    category: 'High Value Items',
-    location: 'Kuala Lumpur Distribution Center',
-    organisation: 'Express Courier Sdn Bhd',
-    consignmentId: 'EC20250115-12345',
+    category: 'Theft',
+    description: 'A high-value package containing electronic goods was reported missing from the KL Distribution Center during the morning shift. The package was last scanned at 08:45 AM and could not be located during the 10:00 AM audit.',
+    incidentDate: '2025-01-15',
+    incidentTime: '08:45',
+    locationType: 'Hub / Distribution Center',
+    branchName: 'KL Main Distribution Center',
+    address: 'Lot 5, Jalan Teknologi, Taman Sains Selangor',
+    state: 'Selangor',
+    postalCode: '47810',
+    items: [
+      { tracking: 'EC20250115-12345', type: 'Parcel', sender: 'TechCo Sdn Bhd', receiver: 'Ahmad bin Ibrahim', description: 'Electronic goods - Laptop' },
+    ],
+    violationType: 'Postal Services Act 2012',
+    supportingExplanation: 'Internal CCTV review indicates the package was removed from the sorting area by an unidentified individual.',
+    documents: [
+      { name: 'CCTV_Footage_Screenshot.png', size: '2.4 MB' },
+      { name: 'Incident_Report_Internal.pdf', size: '1.1 MB' },
+    ],
     submitted: '2025-01-15 10:30',
     lastUpdated: '2025-01-15 14:45',
     assigned: 'MCMC Reviewer',
   };
 
+  const timeline = [
+    { event: 'Draft Created', actor: 'Reporter', time: '2025-01-15 09:00', type: 'system' },
+    { event: 'Incident Submitted', actor: 'Licensee Reporter', time: '2025-01-15 10:30', type: 'submission' },
+    { event: 'Acknowledged by System', actor: 'System', time: '2025-01-15 10:32', type: 'system' },
+    { event: 'Assigned to Reviewer', actor: 'System', time: '2025-01-15 11:00', type: 'system' },
+    { event: 'Clarification Requested', actor: 'MCMC Reviewer', time: '2025-01-15 15:30', type: 'rfi' },
+    { event: 'Clarification Responded', actor: 'Reporter', time: '2025-01-15 16:15', type: 'response' },
+    { event: 'Under Review', actor: 'MCMC Reviewer', time: '2025-01-15 14:45', type: 'update' },
+  ];
+
   const communications = [
-    {
-      id: 1,
-      type: 'rfi',
-      from: 'MCMC Reviewer',
-      fromRole: 'reviewer',
-      message: 'Please provide additional information regarding the exact time the package was last seen at the distribution center. Also, clarify if CCTV footage is available for the timeframe in question.',
-      timestamp: '2025-01-15 15:30',
-      urgent: true
-    },
-    {
-      id: 2,
-      type: 'reply',
-      from: 'Licensee Reporter',
-      fromRole: 'reporter',
-      message: 'The package was last scanned at 08:45 AM on January 15th. CCTV footage for the warehouse area from 08:00 AM to 10:00 AM has been secured and is available for review. We can provide the footage via secure file transfer.',
-      timestamp: '2025-01-15 16:15',
-      urgent: false
-    },
-    {
-      id: 3,
-      type: 'comment',
-      from: 'MCMC Reviewer',
-      fromRole: 'reviewer',
-      message: 'Thank you for the prompt response. Please upload the CCTV footage through the evidence section. Also, confirm if the package had insurance and its declared value.',
-      timestamp: '2025-01-15 16:45',
-      urgent: false
-    }
+    { id: 1, type: 'rfi', from: 'MCMC Reviewer', fromRole: 'reviewer', message: 'Please provide additional information regarding the exact time the package was last seen at the distribution center. Also, clarify if CCTV footage is available.', timestamp: '2025-01-15 15:30', urgent: true },
+    { id: 2, type: 'reply', from: 'Licensee Reporter', fromRole: 'reporter', message: 'The package was last scanned at 08:45 AM on January 15th. CCTV footage for the warehouse area from 08:00 AM to 10:00 AM has been secured.', timestamp: '2025-01-15 16:15', urgent: false },
+    { id: 3, type: 'comment', from: 'MCMC Reviewer', fromRole: 'reviewer', message: 'Thank you. Please upload the CCTV footage and confirm insurance and declared value.', timestamp: '2025-01-15 16:45', urgent: false },
   ];
 
   const handleSendReply = () => {
-    if (replyText.trim()) {
-      // In a real app, this would send to backend
-      console.log('Sending reply:', replyText);
-      setReplyText('');
-    }
-  };
-
-  const timeline = [
-    { event: 'Incident Submitted', actor: 'Licensee Reporter', time: '2025-01-15 10:30', dueIn: new Date('2025-01-22T10:30:00') },
-    { event: 'Acknowledged', actor: 'MCMC System', time: '2025-01-15 10:32', dueIn: new Date('2025-01-22T10:32:00') },
-    { event: 'Assigned to Reviewer', actor: 'MCMC System', time: '2025-01-15 11:00', dueIn: new Date('2025-01-22T11:00:00') },
-    { event: 'Under Review', actor: 'MCMC Reviewer', time: '2025-01-15 14:45', dueIn: new Date('2025-01-22T14:45:00') },
-  ];
-
-  const [now, setNow] = useState(new Date());
-  useEffect(() => {
-    const interval = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const formatCountdown = (due: Date) => {
-    const diff = due.getTime() - now.getTime();
-    if (diff <= 0) return '00:00:00';
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    if (replyText.trim()) { setReplyText(''); }
   };
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       'In Review': 'bg-status-in-review/20 text-status-in-review border-status-in-review/30',
+      'Submitted': 'bg-status-submitted/20 text-status-submitted border-status-submitted/30',
+      'Closed': 'bg-status-closed/20 text-status-closed border-status-closed/30',
+      'RFI Sent': 'bg-status-rfi/20 text-status-rfi border-status-rfi/30',
     };
     return colors[status] || 'bg-secondary';
   };
 
-  const getSeverityColor = (severity: string) => {
+  const getSeverityColor = (sev: string) => {
     const colors: Record<string, string> = {
+      'Low': 'bg-green-500/20 text-green-400 border-green-500/30',
+      'Medium': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
       'High': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+      'Critical': 'bg-red-500/20 text-red-400 border-red-500/30',
     };
-    return colors[severity] || 'bg-secondary';
+    return colors[sev] || 'bg-secondary';
+  };
+
+  const getTimelineDotColor = (type: string) => {
+    const c: Record<string, string> = { submission: 'bg-primary', rfi: 'bg-status-rfi', response: 'bg-status-closed', update: 'bg-status-in-review', system: 'bg-muted-foreground' };
+    return c[type] || 'bg-primary';
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" onClick={() => navigate('/reporter/incidents')}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Incidents
+          <ArrowLeft className="mr-2 h-4 w-4" />Back to Submissions
         </Button>
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold">{incident.title}</h1>
+          <p className="font-mono text-sm text-primary">{incident.id}</p>
+        </div>
+        <div className="flex gap-2">
+          <Badge variant="outline" className={getStatusColor(incident.status)}>{incident.status}</Badge>
+          <Badge variant="outline" className={getSeverityColor(incident.severity)}>{incident.severity}</Badge>
+        </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left Panel - Summary */}
-        <Card className="lg:w-1/3">
-          <CardHeader>
-            <CardTitle className="text-xl">Incident Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Incident ID</p>
-              <p className="font-mono text-primary">{incident.id}</p>
-            </div>
-
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Title</p>
-              <p className="font-semibold">{incident.title}</p>
-            </div>
-
-            <div className="flex gap-2">
-              <Badge variant="outline" className={getStatusColor(incident.status)}>
-                {incident.status}
-              </Badge>
-              <Badge variant="outline" className={getSeverityColor(incident.severity)}>
-                {incident.severity}
-              </Badge>
-            </div>
-
-            <div className="border-t pt-4 space-y-3">
-              <div className="flex items-start gap-2">
-                <FileText className="h-4 w-4 text-muted-foreground mt-1" />
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Type</p>
-                  <p className="text-sm font-medium">{incident.type}</p>
-                </div>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left - Read-only details */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Incident Info */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-primary" />Incident Information</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div><p className="text-xs text-muted-foreground">Category</p><p className="text-sm font-medium">{incident.category}</p></div>
+                <div><p className="text-xs text-muted-foreground">Date & Time</p><p className="text-sm font-medium">{incident.incidentDate} at {incident.incidentTime}</p></div>
               </div>
+              <div><p className="text-xs text-muted-foreground">Description</p><p className="text-sm text-muted-foreground leading-relaxed">{incident.description}</p></div>
+            </CardContent>
+          </Card>
 
-              <div className="flex items-start gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground mt-1" />
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Submitted</p>
-                  <p className="text-sm font-medium">{incident.submitted}</p>
-                </div>
+          {/* Location */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><MapPin className="h-5 w-5 text-primary" />Location Details</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div><p className="text-xs text-muted-foreground">Location Type</p><p className="text-sm font-medium">{incident.locationType}</p></div>
+                <div><p className="text-xs text-muted-foreground">Branch / Hub</p><p className="text-sm font-medium">{incident.branchName}</p></div>
+                <div><p className="text-xs text-muted-foreground">Address</p><p className="text-sm font-medium">{incident.address}</p></div>
+                <div><p className="text-xs text-muted-foreground">State / Postal Code</p><p className="text-sm font-medium">{incident.state}, {incident.postalCode}</p></div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="flex items-start gap-2">
-                <User className="h-4 w-4 text-muted-foreground mt-1" />
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Assigned To</p>
-                  <p className="text-sm font-medium">{incident.assigned}</p>
+          {/* Affected Items */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-primary" />Affected Items</CardTitle></CardHeader>
+            <CardContent>
+              {incident.items.map((item, i) => (
+                <div key={i} className="p-3 border border-border rounded-lg space-y-2">
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <div><p className="text-xs text-muted-foreground">Tracking</p><p className="text-sm font-mono">{item.tracking}</p></div>
+                    <div><p className="text-xs text-muted-foreground">Type</p><p className="text-sm font-medium">{item.type}</p></div>
+                    <div><p className="text-xs text-muted-foreground">Sender</p><p className="text-sm font-medium">{item.sender}</p></div>
+                    <div><p className="text-xs text-muted-foreground">Receiver</p><p className="text-sm font-medium">{item.receiver}</p></div>
+                  </div>
+                  <div><p className="text-xs text-muted-foreground">Description</p><p className="text-sm font-medium">{item.description}</p></div>
                 </div>
-              </div>
-            </div>
+              ))}
+            </CardContent>
+          </Card>
 
-            <div className="border-t pt-4 space-y-2">
-              <Button variant="outline" className="w-full">
-                <Download className="mr-2 h-4 w-4" />
-                Download PDF
-              </Button>
-              <Button variant="outline" className="w-full">
-                <Printer className="mr-2 h-4 w-4" />
-                Print
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Violation */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><ShieldAlert className="h-5 w-5 text-primary" />Violation Details</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div><p className="text-xs text-muted-foreground">Violation Type</p><p className="text-sm font-medium">{incident.violationType}</p></div>
+              <div><p className="text-xs text-muted-foreground">Supporting Explanation</p><p className="text-sm text-muted-foreground leading-relaxed">{incident.supportingExplanation}</p></div>
+            </CardContent>
+          </Card>
 
-        {/* Right Panel - Tabs */}
-        <Card className="flex-1">
-          <CardContent className="pt-6">
-            <Tabs defaultValue="timeline">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="timeline">Timeline</TabsTrigger>
-                <TabsTrigger value="rfis">RFIs & Comments</TabsTrigger>
-                <TabsTrigger value="ai">AI Insights</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="timeline" className="mt-6">
-                <div className="space-y-4">
-                  {timeline.map((item, index) => (
-                    <div key={index} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className="h-3 w-3 rounded-full bg-primary" />
-                        {index < timeline.length - 1 && (
-                          <div className="w-px h-full bg-border mt-2" />
-                        )}
-                      </div>
-                      <div className="flex-1 pb-4">
-                        <p className="font-medium">{item.event}</p>
-                        <p className="text-sm text-muted-foreground">{item.actor}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{item.time}</p>
-                        <div className={`flex items-center gap-1.5 mt-1.5 text-xs font-mono font-medium ${
-                          item.dueIn.getTime() - now.getTime() <= 86400000 
-                            ? 'text-destructive' 
-                            : item.dueIn.getTime() - now.getTime() <= 259200000 
-                              ? 'text-amber-500' 
-                              : 'text-primary'
-                        }`}>
-                          <Clock className="h-3 w-3" />
-                          <span>Due in: {formatCountdown(item.dueIn)}</span>
-                        </div>
+          {/* Documents */}
+          <Card>
+            <CardHeader><CardTitle>Supporting Documents</CardTitle></CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {incident.documents.map((doc, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center"><FileText className="h-5 w-5 text-primary" /></div>
+                      <div>
+                        <p className="text-sm font-medium">{doc.name}</p>
+                        <p className="text-xs text-muted-foreground">{doc.size}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </TabsContent>
+                    <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-2" />Download</Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-              <TabsContent value="rfis" className="mt-6">
-                <div className="space-y-4">
-                  {/* Communication Thread */}
-                  <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-                    {communications.map((comm) => (
-                      <div
-                        key={comm.id}
-                        className={`flex ${comm.fromRole === 'reporter' ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div
-                          className={`max-w-[80%] rounded-lg p-4 ${
-                            comm.fromRole === 'reporter'
-                              ? 'bg-primary/10 border border-primary/20'
-                              : comm.type === 'rfi'
-                              ? 'bg-destructive/10 border border-destructive/20'
-                              : 'bg-muted border border-border'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <p className="text-sm font-semibold">{comm.from}</p>
-                              {comm.type === 'rfi' && (
-                                <Badge variant="destructive" className="text-xs">
-                                  RFI
-                                </Badge>
-                              )}
-                              {comm.urgent && (
-                                <Badge variant="destructive" className="text-xs">
-                                  Action Required
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                          <p className="text-sm leading-relaxed">{comm.message}</p>
-                          <p className="text-xs text-muted-foreground mt-2">{comm.timestamp}</p>
+        {/* Right - Timeline & Tabs */}
+        <div className="space-y-6">
+          {/* Status Card */}
+          <Card className="border-primary/20">
+            <CardContent className="pt-6 space-y-4">
+              <div className="text-center">
+                <Badge variant="outline" className={`text-lg px-4 py-1 ${getStatusColor(incident.status)}`}>{incident.status}</Badge>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{incident.submitted}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Last Updated</span><span>{incident.lastUpdated}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Assigned To</span><span>{incident.assigned}</span></div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tabs */}
+          <Card>
+            <CardContent className="pt-6">
+              <Tabs defaultValue="timeline">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="timeline">Timeline</TabsTrigger>
+                  <TabsTrigger value="rfis">RFIs</TabsTrigger>
+                  <TabsTrigger value="ai">AI</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="timeline" className="mt-4">
+                  <div className="space-y-4">
+                    {timeline.map((item, index) => (
+                      <div key={index} className="flex gap-3">
+                        <div className="flex flex-col items-center">
+                          <div className={`h-3 w-3 rounded-full ${getTimelineDotColor(item.type)}`} />
+                          {index < timeline.length - 1 && <div className="w-px h-full bg-border mt-1" />}
+                        </div>
+                        <div className="pb-4">
+                          <p className="text-sm font-medium">{item.event}</p>
+                          <p className="text-xs text-muted-foreground">{item.actor}</p>
+                          <p className="text-xs text-muted-foreground">{item.time}</p>
                         </div>
                       </div>
                     ))}
                   </div>
+                </TabsContent>
 
-                  {/* Reply Box */}
-                  <div className="border-t pt-4 mt-4">
-                    <div className="space-y-3">
-                      <Textarea
-                        placeholder="Type your response or clarification..."
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        rows={4}
-                        className="resize-none"
-                      />
-                      <div className="flex items-center justify-between">
-                        <Button variant="outline" size="sm">
-                          <Paperclip className="h-4 w-4 mr-2" />
-                          Attach File
-                        </Button>
-                        <Button 
-                          onClick={handleSendReply}
-                          disabled={!replyText.trim()}
-                          className="glow-cyan"
-                        >
-                          <Send className="h-4 w-4 mr-2" />
-                          Send Reply
-                        </Button>
+                <TabsContent value="rfis" className="mt-4">
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+                    {communications.map((comm) => (
+                      <div key={comm.id} className={`flex ${comm.fromRole === 'reporter' ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[90%] rounded-lg p-3 ${
+                          comm.fromRole === 'reporter'
+                            ? 'bg-primary/10 border border-primary/20'
+                            : comm.type === 'rfi'
+                            ? 'bg-destructive/10 border border-destructive/20'
+                            : 'bg-muted border border-border'
+                        }`}>
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-xs font-semibold">{comm.from}</p>
+                            {comm.type === 'rfi' && <Badge variant="destructive" className="text-[10px] px-1 py-0">RFI</Badge>}
+                            {comm.urgent && <Badge variant="destructive" className="text-[10px] px-1 py-0">Action Required</Badge>}
+                          </div>
+                          <p className="text-xs leading-relaxed">{comm.message}</p>
+                          <p className="text-[10px] text-muted-foreground mt-1">{comm.timestamp}</p>
+                        </div>
                       </div>
+                    ))}
+                  </div>
+                  <div className="border-t pt-3 mt-3 space-y-2">
+                    <Textarea placeholder="Type your response..." value={replyText} onChange={(e) => setReplyText(e.target.value)} rows={3} className="resize-none text-sm" />
+                    <div className="flex justify-between">
+                      <Button variant="outline" size="sm"><Paperclip className="h-4 w-4 mr-1" />Attach</Button>
+                      <Button onClick={handleSendReply} disabled={!replyText.trim()} size="sm" className="glow-cyan"><Send className="h-4 w-4 mr-1" />Send</Button>
                     </div>
                   </div>
-                </div>
-              </TabsContent>
+                </TabsContent>
 
-              <TabsContent value="ai" className="mt-6">
-                <div className="space-y-4">
-                  <Card className="border-primary/20">
-                    <CardContent className="pt-4">
-                      <p className="text-sm font-medium mb-2">Similar Incidents</p>
-                      <p className="text-sm text-muted-foreground">3 similar incidents found in the past 30 days</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="border-primary/20">
-                    <CardContent className="pt-4">
-                      <p className="text-sm font-medium mb-2">Risk Pattern</p>
-                      <p className="text-sm text-muted-foreground">
-                        High-value items via Route X show increased risk
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <p className="text-xs text-muted-foreground text-center">
-                    AI insights are for demonstration purposes only
-                  </p>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
+                <TabsContent value="ai" className="mt-4 space-y-3">
+                  <Card className="border-primary/20"><CardContent className="pt-4"><p className="text-sm font-medium mb-1">Similar Incidents</p><p className="text-xs text-muted-foreground">3 similar incidents found in the past 30 days</p></CardContent></Card>
+                  <Card className="border-primary/20"><CardContent className="pt-4"><p className="text-sm font-medium mb-1">Risk Pattern</p><p className="text-xs text-muted-foreground">High-value items via Route X show increased risk</p></CardContent></Card>
+                  <p className="text-xs text-muted-foreground text-center">AI insights are for demonstration purposes only</p>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
