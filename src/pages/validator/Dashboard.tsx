@@ -1,218 +1,176 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Clock, AlertTriangle, FileText, XCircle, BarChart3, Home, ArrowLeft } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import {
+  FolderOpen, AlertTriangle, Clock, CheckCircle, XCircle, Shield, TrendingUp, Inbox,
+} from 'lucide-react';
 
-export default function ValidatorDashboard() {
+const escalationQueue = [
+  { id: 'PSIRP-2025-0045', title: 'High-value theft – KL hub', officer: 'Ahmad Razif', severity: 'Critical', days: 2 },
+  { id: 'PSIRP-2025-0052', title: 'Dangerous goods interception', officer: 'Nurul Hana', severity: 'High', days: 1 },
+  { id: 'PSIRP-2025-0058', title: 'Suspicious parcel pattern', officer: 'Lee Wei', severity: 'High', days: 3 },
+  { id: 'PSIRP-2025-0060', title: 'Cross-border contraband attempt', officer: 'Farah Amin', severity: 'Critical', days: 1 },
+  { id: 'PSIRP-2025-0063', title: 'Tampering at sorting centre', officer: 'Raj Kumar', severity: 'Medium', days: 4 },
+];
+
+const slaRiskCases = [
+  { id: 'PSIRP-2025-0039', officer: 'Ahmad Razif', daysOpen: 12, threshold: 14 },
+  { id: 'PSIRP-2025-0041', officer: 'Lee Wei', daysOpen: 13, threshold: 14 },
+  { id: 'PSIRP-2025-0044', officer: 'Nurul Hana', daysOpen: 10, threshold: 10 },
+];
+
+const recentClosed = [
+  { id: 'PSIRP-2025-0030', outcome: 'Closed – Action Taken', date: '2025-06-08' },
+  { id: 'PSIRP-2025-0028', outcome: 'Closed – No Further Action', date: '2025-06-07' },
+  { id: 'PSIRP-2025-0025', outcome: 'Closed – Referred to LEA', date: '2025-06-05' },
+];
+
+export default function SupervisorDashboard() {
   const navigate = useNavigate();
 
-  // Severity distribution data
-  const severityData = [
-    { severity: 'Critical', count: 4, percentage: 22 },
-    { severity: 'High', count: 7, percentage: 39 },
-    { severity: 'Medium', count: 5, percentage: 28 },
-    { severity: 'Low', count: 2, percentage: 11 },
+  const kpis = [
+    { label: 'Total Open Cases', value: 34, icon: FolderOpen, color: 'text-role-validator' },
+    { label: 'Escalation Pending', value: 5, icon: AlertTriangle, color: 'text-destructive' },
+    { label: 'Near SLA Breach', value: 3, icon: Clock, color: 'text-status-in-review' },
+    { label: 'SLA Breached', value: 1, icon: XCircle, color: 'text-destructive' },
+    { label: 'Closed This Month', value: 12, icon: CheckCircle, color: 'text-status-closed' },
+    { label: 'Escalated Cases', value: 8, icon: Shield, color: 'text-role-reviewer' },
+    { label: 'High Severity', value: 11, icon: TrendingUp, color: 'text-status-investigation' },
   ];
-
-  // Colors for severity levels
-  const severityColors: Record<string, string> = {
-    'Critical': 'hsl(var(--destructive))',
-    'High': 'hsl(25 95% 53%)',
-    'Medium': 'hsl(48 96% 53%)',
-    'Low': 'hsl(142 76% 36%)',
-  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Validator Dashboard</h1>
-          <p className="text-muted-foreground">MCMC Validator / Approver workspace</p>
+          <h1 className="text-3xl font-bold">Supervisor Dashboard</h1>
+          <p className="text-muted-foreground">Governance overview & escalation management</p>
         </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline"
-            onClick={() => navigate('/')}
-          >
-            <Home className="mr-2 h-4 w-4" />
-            Home
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate('/choose-role')}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Change Role
-          </Button>
-        </div>
+        <Button onClick={() => navigate('/validator/escalations')} className="bg-role-validator text-primary-foreground hover:bg-role-validator/90">
+          <Inbox className="mr-2 h-4 w-4" /> Escalation Queue
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-role-validator/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Approval</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-role-validator">9</div>
-            <p className="text-xs text-muted-foreground mt-1">Awaiting your review</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-status-closed/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ready To Close</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-status-closed">5</div>
-            <p className="text-xs text-muted-foreground mt-1">Completed investigations</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-destructive/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">High-Severity</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">4</div>
-            <p className="text-xs text-muted-foreground mt-1">Requiring approval</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-status-rfi/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Re-opened</CardTitle>
-            <XCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-status-rfi">2</div>
-            <p className="text-xs text-muted-foreground mt-1">Cases needing review</p>
-          </CardContent>
-        </Card>
+      {/* KPI Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+        {kpis.map((kpi) => (
+          <Card key={kpi.label} className="border-border/40">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-xs font-medium text-muted-foreground">{kpi.label}</CardTitle>
+              <kpi.icon className={cn('h-4 w-4', kpi.color)} />
+            </CardHeader>
+            <CardContent>
+              <div className={cn('text-2xl font-bold', kpi.color)}>{kpi.value}</div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Escalation Approval Queue */}
         <Card>
-          <CardHeader>
-            <CardTitle>Approval Queue</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Escalation Approval Queue</CardTitle>
+            <Badge variant="outline" className="bg-destructive/20 text-destructive border-destructive/30">{escalationQueue.length} pending</Badge>
           </CardHeader>
           <CardContent className="space-y-3">
-            {[
-              { id: 'PSIRP-2025-0045', title: 'High-value theft case', severity: 'High', from: 'Investigator A' },
-              { id: 'PSIRP-2025-0043', title: 'Dangerous goods incident', severity: 'Critical', from: 'Investigator B' },
-              { id: 'PSIRP-2025-0041', title: 'Package tampering report', severity: 'Medium', from: 'Reviewer C' },
-            ].map((item) => (
-              <div key={item.id} className="flex items-start justify-between p-3 border border-border/40 rounded-lg">
+            {escalationQueue.map((item) => (
+              <div key={item.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg hover:bg-accent/30 transition-colors">
                 <div className="space-y-1">
                   <p className="text-sm font-medium">{item.id}</p>
                   <p className="text-xs text-muted-foreground">{item.title}</p>
-                  <p className="text-xs text-muted-foreground">From: {item.from}</p>
+                  <p className="text-xs text-muted-foreground">Officer: {item.officer} · {item.days}d ago</p>
                 </div>
-                <Button size="sm" variant="outline">Review</Button>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={item.severity === 'Critical' ? 'border-destructive/50 text-destructive' : 'border-status-in-review/50 text-status-in-review'}>
+                    {item.severity}
+                  </Badge>
+                  <Button size="sm" variant="outline" onClick={() => navigate(`/validator/escalations/${item.id}`)}>Review</Button>
+                </div>
               </div>
             ))}
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>AI Closure Insights</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="p-3 border border-primary/20 rounded-lg bg-primary/5">
-              <p className="text-sm font-medium mb-1">PSIRP-2025-0045</p>
-              <p className="text-xs text-muted-foreground">
-                AI suggests: <span className="text-foreground">Close with advisory</span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Risk implication: Medium
-              </p>
-            </div>
-            <div className="p-3 border border-destructive/20 rounded-lg bg-destructive/5">
-              <p className="text-sm font-medium mb-1">PSIRP-2025-0043</p>
-              <p className="text-xs text-muted-foreground">
-                AI suggests: <span className="text-foreground">Recommend further investigation</span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Risk implication: High
-              </p>
-            </div>
-            <p className="text-xs text-muted-foreground italic">
-              * AI insights are for demonstration purposes
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Severity Distribution (Pending Approval)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {/* Bar Chart */}
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={severityData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="severity" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                  }}
-                  labelStyle={{ color: 'hsl(var(--foreground))' }}
-                />
-                <Bar dataKey="count" radius={[8, 8, 0, 0]}>
-                  {severityData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={severityColors[entry.severity]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-
-            {/* Summary Stats */}
-            <div className="grid grid-cols-4 gap-4">
-              {severityData.map((item) => (
-                <div key={item.severity} className="text-center space-y-1">
-                  <div className="flex items-center justify-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: severityColors[item.severity] }}
-                    />
-                    <p className="text-sm font-medium">{item.severity}</p>
+        {/* SLA Risk + Recently Closed */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>SLA Risk List</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {slaRiskCases.map((c) => {
+                const pct = Math.round((c.daysOpen / c.threshold) * 100);
+                const breached = c.daysOpen >= c.threshold;
+                return (
+                  <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
+                    <div>
+                      <p className="text-sm font-medium">{c.id}</p>
+                      <p className="text-xs text-muted-foreground">Officer: {c.officer}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className={cn('text-sm font-bold', breached ? 'text-destructive' : 'text-status-in-review')}>
+                        {c.daysOpen}/{c.threshold} days
+                      </p>
+                      <p className="text-xs text-muted-foreground">{pct}% elapsed</p>
+                    </div>
                   </div>
-                  <p className="text-2xl font-bold" style={{ color: severityColors[item.severity] }}>
-                    {item.count}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{item.percentage}% of total</p>
+                );
+              })}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Recently Closed Cases</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {recentClosed.map((c) => (
+                <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
+                  <div>
+                    <p className="text-sm font-medium">{c.id}</p>
+                    <p className="text-xs text-muted-foreground">{c.date}</p>
+                  </div>
+                  <Badge variant="outline" className="border-status-closed/50 text-status-closed text-xs">{c.outcome}</Badge>
                 </div>
               ))}
-            </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
-            {/* Total */}
-            <div className="pt-4 border-t">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Total Pending Approval</span>
-                <span className="text-2xl font-bold text-primary">
-                  {severityData.reduce((sum, item) => sum + item.count, 0)}
-                </span>
+      {/* Officer Workload */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Officer Workload Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              { name: 'Ahmad Razif', cases: 8, sla: 87 },
+              { name: 'Nurul Hana', cases: 6, sla: 92 },
+              { name: 'Lee Wei', cases: 9, sla: 78 },
+              { name: 'Farah Amin', cases: 5, sla: 100 },
+              { name: 'Raj Kumar', cases: 4, sla: 95 },
+              { name: 'Siti Mariam', cases: 2, sla: 100 },
+            ].map((o) => (
+              <div key={o.name} className="p-3 border border-border/40 rounded-lg">
+                <p className="text-sm font-medium">{o.name}</p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-muted-foreground">{o.cases} cases</span>
+                  <span className={cn('text-xs font-medium', o.sla >= 90 ? 'text-status-closed' : o.sla >= 80 ? 'text-status-in-review' : 'text-destructive')}>
+                    {o.sla}% SLA
+                  </span>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
     </div>
   );
+}
+
+function cn(...classes: (string | boolean | undefined)[]) {
+  return classes.filter(Boolean).join(' ');
 }
