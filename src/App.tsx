@@ -15,10 +15,14 @@ import NewIncident from "./pages/reporter/NewIncident";
 import IncidentDetails from "./pages/reporter/IncidentDetails";
 import ReviewerDashboard from "./pages/reviewer/Dashboard";
 import ReviewerIncidents from "./pages/reviewer/Incidents";
+import LicenseeAdminLayout from "./components/licenseeAdmin/LicenseeAdminLayout";
 import LicenseeAdminDashboard from "./pages/licenseeAdmin/Dashboard";
 import LicenseeAdminIncidents from "./pages/licenseeAdmin/Incidents";
 import LicenseeAdminUsers from "./pages/licenseeAdmin/Users";
 import LicenseeAdminProfile from "./pages/licenseeAdmin/Profile";
+import LicenseeAdminAnalytics from "./pages/licenseeAdmin/Analytics";
+import LicenseeAdminNotifications from "./pages/licenseeAdmin/Notifications";
+import LicenseeAdminSecuritySettings from "./pages/licenseeAdmin/SecuritySettings";
 import ValidatorDashboard from "./pages/validator/Dashboard";
 import InvestigatorDashboard from "./pages/investigator/Dashboard";
 import SystemAdminDashboard from "./pages/admin/Dashboard";
@@ -62,11 +66,16 @@ const App = () => (
                 <Route path="/reporter/incidents/new" element={<ProtectedRoute><NewIncident /></ProtectedRoute>} />
                 <Route path="/reporter/incidents/:id" element={<ProtectedRoute><IncidentDetails /></ProtectedRoute>} />
                 
-                {/* Licensee Admin Routes */}
-                <Route path="/licensee-admin/dashboard" element={<ProtectedRoute><LicenseeAdminDashboard /></ProtectedRoute>} />
-                <Route path="/licensee-admin/incidents" element={<ProtectedRoute><LicenseeAdminIncidents /></ProtectedRoute>} />
-                <Route path="/licensee-admin/users" element={<ProtectedRoute><LicenseeAdminUsers /></ProtectedRoute>} />
-                <Route path="/licensee-admin/profile" element={<ProtectedRoute><LicenseeAdminProfile /></ProtectedRoute>} />
+                {/* Licensee Admin Routes - with sidebar layout */}
+                <Route path="/licensee-admin" element={<ProtectedRoute><LicenseeAdminLayout /></ProtectedRoute>}>
+                  <Route path="dashboard" element={<LicenseeAdminDashboard />} />
+                  <Route path="incidents" element={<LicenseeAdminIncidents />} />
+                  <Route path="users" element={<LicenseeAdminUsers />} />
+                  <Route path="profile" element={<LicenseeAdminProfile />} />
+                  <Route path="analytics" element={<LicenseeAdminAnalytics />} />
+                  <Route path="notifications" element={<LicenseeAdminNotifications />} />
+                  <Route path="security" element={<LicenseeAdminSecuritySettings />} />
+                </Route>
                 
                 {/* Reviewer Routes */}
                 <Route path="/reviewer/dashboard" element={<ProtectedRoute><ReviewerDashboard /></ProtectedRoute>} />

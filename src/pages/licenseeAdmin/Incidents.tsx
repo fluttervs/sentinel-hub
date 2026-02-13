@@ -1,73 +1,146 @@
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Search, Filter, Download, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import { Search, Filter, Download, FileText, Clock, User, Paperclip, AlertTriangle, CheckCircle2, X } from 'lucide-react';
+
+const incidents = [
+  { id: 'PSIRP-2025-0025', reporter: 'Ahmad bin Abdullah', type: 'Theft', severity: 'High', status: 'Under Review', submitted: '2025-01-15', escalated: true, description: 'High-value package theft at sorting facility', attachments: ['evidence-photo.jpg', 'cctv-footage.mp4'] },
+  { id: 'PSIRP-2025-0024', reporter: 'Siti Nurhaliza', type: 'Suspicious Parcel', severity: 'Medium', status: 'Submitted', submitted: '2025-01-14', escalated: false, description: 'Suspicious parcel detected during scanning', attachments: ['scan-report.pdf'] },
+  { id: 'PSIRP-2025-0023', reporter: 'Kamal Hassan', type: 'Prohibited Items', severity: 'Low', status: 'Draft', submitted: '2025-01-13', escalated: false, description: 'Prohibited items found in shipment', attachments: [] },
+  { id: 'PSIRP-2025-0022', reporter: 'Fatimah Zahra', type: 'Security Breach', severity: 'High', status: 'Escalated', submitted: '2025-01-12', escalated: true, description: 'Unauthorized access to secure area', attachments: ['access-log.csv', 'photo1.jpg'] },
+  { id: 'PSIRP-2025-0021', reporter: 'Azman Ali', type: 'Theft', severity: 'Critical', status: 'Closed', submitted: '2025-01-11', escalated: true, description: 'Serial theft case across multiple branches', attachments: ['police-report.pdf'] },
+  { id: 'PSIRP-2025-0020', reporter: 'Ahmad bin Abdullah', type: 'Others', severity: 'Low', status: 'Under Review', submitted: '2025-01-10', escalated: false, description: 'Equipment tampering report', attachments: [] },
+];
+
+const statusColors: Record<string, string> = {
+  'Draft': 'bg-status-draft/20 text-status-draft border-status-draft/30',
+  'Submitted': 'bg-status-submitted/20 text-status-submitted border-status-submitted/30',
+  'Under Review': 'bg-status-in-review/20 text-status-in-review border-status-in-review/30',
+  'Escalated': 'bg-status-investigation/20 text-status-investigation border-status-investigation/30',
+  'Closed': 'bg-status-closed/20 text-status-closed border-status-closed/30',
+};
+
+const severityColors: Record<string, string> = {
+  'Low': 'bg-status-closed/20 text-status-closed border-status-closed/30',
+  'Medium': 'bg-status-in-review/20 text-status-in-review border-status-in-review/30',
+  'High': 'bg-status-rfi/20 text-status-rfi border-status-rfi/30',
+  'Critical': 'bg-destructive/20 text-destructive border-destructive/30',
+};
+
+const timeline = [
+  { date: '2025-01-15 14:30', action: 'Submitted by Reporter', user: 'Ahmad bin Abdullah' },
+  { date: '2025-01-15 16:00', action: 'Assigned to Case Officer', user: 'System' },
+  { date: '2025-01-16 09:15', action: 'Under Review', user: 'Officer Lim' },
+  { date: '2025-01-17 11:00', action: 'RFI Sent to Reporter', user: 'Officer Lim' },
+  { date: '2025-01-18 14:30', action: 'Escalated to LEA', user: 'Supervisor Wong' },
+];
 
 export default function LicenseeAdminIncidents() {
-  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedIncident, setSelectedIncident] = useState<typeof incidents[0] | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
 
-  const incidents = [
-    { id: 'PSIRP-2025-0025', title: 'High-Value Package Theft', reporter: 'Ahmad bin Abdullah', status: 'In Review', severity: 'High', submitted: '2025-01-15' },
-    { id: 'PSIRP-2025-0024', title: 'Delayed Shipment', reporter: 'Siti Nurhaliza', status: 'Submitted', severity: 'Medium', submitted: '2025-01-14' },
-    { id: 'PSIRP-2025-0023', title: 'Damaged Package', reporter: 'Kamal Hassan', status: 'RFI Sent', severity: 'Low', submitted: '2025-01-13' },
-    { id: 'PSIRP-2025-0022', title: 'Lost Consignment', reporter: 'Fatimah Zahra', status: 'Under Investigation', severity: 'High', submitted: '2025-01-12' },
-    { id: 'PSIRP-2025-0021', title: 'Fraud Attempt', reporter: 'Azman Ali', status: 'Closed', severity: 'Critical', submitted: '2025-01-11' },
-  ];
+  const filtered = incidents.filter(i =>
+    i.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    i.reporter.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    i.type.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      'Submitted': 'bg-status-submitted/20 text-status-submitted border-status-submitted/30',
-      'In Review': 'bg-status-in-review/20 text-status-in-review border-status-in-review/30',
-      'RFI Sent': 'bg-status-rfi/20 text-status-rfi border-status-rfi/30',
-      'Under Investigation': 'bg-status-investigation/20 text-status-investigation border-status-investigation/30',
-      'Closed': 'bg-status-closed/20 text-status-closed border-status-closed/30',
-    };
-    return colors[status] || 'bg-secondary';
-  };
-
-  const getSeverityColor = (severity: string) => {
-    const colors: Record<string, string> = {
-      'Low': 'bg-green-500/20 text-green-400 border-green-500/30',
-      'Medium': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-      'High': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-      'Critical': 'bg-red-500/20 text-red-400 border-red-500/30',
-    };
-    return colors[severity] || 'bg-secondary';
+  const handleRowClick = (incident: typeof incidents[0]) => {
+    setSelectedIncident(incident);
+    setDetailOpen(true);
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-4">
-        <Button variant="outline" size="sm" onClick={() => navigate('/licensee-admin/dashboard')}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold mb-1">Case Monitoring</h1>
+        <p className="text-muted-foreground">Read-only view of all organisation incidents</p>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Organisation Incidents</h1>
-          <p className="text-muted-foreground">View and manage all incidents from your organisation</p>
-        </div>
-        <Button onClick={() => navigate('/reporter/incidents/new')} className="glow-purple">
-          <Plus className="mr-2 h-4 w-4" />
-          New Incident
-        </Button>
-      </div>
-
+      {/* Search & Filter */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search by ID, title, reporter..." className="pl-10" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search by reference, reporter, type..." className="pl-10" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filters
-            </Button>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Advanced Filters
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Filter Cases</SheetTitle>
+                </SheetHeader>
+                <div className="space-y-6 mt-6">
+                  <div className="space-y-2">
+                    <Label>Date Range</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Input type="date" />
+                      <Input type="date" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Case Type</Label>
+                    <Select>
+                      <SelectTrigger><SelectValue placeholder="All types" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Types</SelectItem>
+                        <SelectItem value="theft">Theft</SelectItem>
+                        <SelectItem value="suspicious">Suspicious Parcel</SelectItem>
+                        <SelectItem value="prohibited">Prohibited Items</SelectItem>
+                        <SelectItem value="breach">Security Breach</SelectItem>
+                        <SelectItem value="others">Others</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <Select>
+                      <SelectTrigger><SelectValue placeholder="All statuses" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="submitted">Submitted</SelectItem>
+                        <SelectItem value="review">Under Review</SelectItem>
+                        <SelectItem value="escalated">Escalated</SelectItem>
+                        <SelectItem value="closed">Closed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Reporter</Label>
+                    <Select>
+                      <SelectTrigger><SelectValue placeholder="All reporters" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="ahmad">Ahmad bin Abdullah</SelectItem>
+                        <SelectItem value="siti">Siti Nurhaliza</SelectItem>
+                        <SelectItem value="kamal">Kamal Hassan</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex gap-2 pt-4">
+                    <Button className="flex-1">Apply Filters</Button>
+                    <Button variant="outline" className="flex-1">Reset</Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Export
@@ -76,54 +149,43 @@ export default function LicenseeAdminIncidents() {
         </CardContent>
       </Card>
 
+      {/* Cases Table */}
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Incident ID</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Title</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Reference No</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Reporter</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Case Type</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Severity</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Submitted</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Escalated</th>
                 </tr>
               </thead>
               <tbody>
-                {incidents.map((incident) => (
-                  <tr key={incident.id} className="border-b hover:bg-muted/30 transition-colors">
+                {filtered.map((incident) => (
+                  <tr key={incident.id} className="border-b hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => handleRowClick(incident)}>
                     <td className="px-4 py-4">
                       <span className="font-mono text-sm text-primary">{incident.id}</span>
                     </td>
+                    <td className="px-4 py-4 text-sm">{incident.reporter}</td>
+                    <td className="px-4 py-4 text-sm">{incident.type}</td>
                     <td className="px-4 py-4">
-                      <span className="font-medium">{incident.title}</span>
+                      <Badge variant="outline" className={severityColors[incident.severity]}>{incident.severity}</Badge>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm">{incident.reporter}</span>
+                      <Badge variant="outline" className={statusColors[incident.status]}>{incident.status}</Badge>
                     </td>
+                    <td className="px-4 py-4 text-sm text-muted-foreground">{incident.submitted}</td>
                     <td className="px-4 py-4">
-                      <Badge variant="outline" className={getStatusColor(incident.status)}>
-                        {incident.status}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-4">
-                      <Badge variant="outline" className={getSeverityColor(incident.severity)}>
-                        {incident.severity}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className="text-sm text-muted-foreground">{incident.submitted}</span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => navigate(`/reporter/incidents/${incident.id}`)}
-                      >
-                        View
-                      </Button>
+                      {incident.escalated ? (
+                        <Badge variant="outline" className="bg-destructive/20 text-destructive border-destructive/30">Yes</Badge>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">No</span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -132,6 +194,123 @@ export default function LicenseeAdminIncidents() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Case Detail Dialog (Read-Only) */}
+      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <span className="font-mono text-primary">{selectedIncident?.id}</span>
+              {selectedIncident && <Badge variant="outline" className={statusColors[selectedIncident.status]}>{selectedIncident.status}</Badge>}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedIncident && (
+            <div className="grid lg:grid-cols-5 gap-6 mt-4">
+              {/* Left - Incident Info */}
+              <div className="lg:col-span-3 space-y-6">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Incident Information</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Case Type</p>
+                      <p className="text-sm font-medium opacity-70">{selectedIncident.type}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Severity</p>
+                      <Badge variant="outline" className={severityColors[selectedIncident.severity]}>{selectedIncident.severity}</Badge>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Submitted Date</p>
+                      <p className="text-sm font-medium opacity-70">{selectedIncident.submitted}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Escalated</p>
+                      <p className="text-sm font-medium opacity-70">{selectedIncident.escalated ? 'Yes' : 'No'}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Description</p>
+                    <p className="text-sm opacity-70">{selectedIncident.description}</p>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                    <Paperclip className="h-4 w-4" />
+                    Attachments
+                  </h3>
+                  {selectedIncident.attachments.length > 0 ? (
+                    <div className="space-y-2">
+                      {selectedIncident.attachments.map((file) => (
+                        <div key={file} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50 border border-border">
+                          <FileText className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm flex-1">{file}</span>
+                          <Button size="sm" variant="ghost" className="text-xs">Download</Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No attachments</p>
+                  )}
+                </div>
+
+                <Separator />
+
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Reporter Details
+                  </h3>
+                  <div className="p-3 rounded-lg bg-muted/30 border border-border">
+                    <p className="text-sm font-medium opacity-70">{selectedIncident.reporter}</p>
+                    <p className="text-xs text-muted-foreground">Express Courier Sdn Bhd</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right - Status & Timeline */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Status</h3>
+                  <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
+                    <Badge variant="outline" className={`text-base px-4 py-1 ${statusColors[selectedIncident.status]}`}>{selectedIncident.status}</Badge>
+                  </div>
+                  {selectedIncident.escalated && (
+                    <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-destructive" />
+                      <span className="text-sm text-destructive font-medium">Escalated to LEA</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    Timeline
+                  </h3>
+                  <div className="space-y-0">
+                    {timeline.map((event, i) => (
+                      <div key={i} className="flex gap-3">
+                        <div className="flex flex-col items-center">
+                          <div className={`h-3 w-3 rounded-full shrink-0 ${i === 0 ? 'bg-role-licensee-admin' : 'bg-border'}`} />
+                          {i < timeline.length - 1 && <div className="w-px flex-1 bg-border" />}
+                        </div>
+                        <div className="pb-4">
+                          <p className="text-sm font-medium">{event.action}</p>
+                          <p className="text-xs text-muted-foreground">{event.user} • {event.date}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

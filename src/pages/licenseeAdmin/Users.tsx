@@ -4,96 +4,174 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Plus, Edit, Key, Ban, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Textarea } from '@/components/ui/textarea';
+import { Plus, Edit, Ban, CheckCircle, Search, Users, Activity, FileSearch } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function LicenseeAdminUsers() {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [open, setOpen] = useState(false);
+const usersData = [
+  { id: 1, name: 'Ahmad bin Abdullah', email: 'ahmad.abdullah@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 14:30', submissions: 14, avgTime: '1.8h' },
+  { id: 2, name: 'Mastura binti Hassan', email: 'mastura.hassan@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 10:15', submissions: 11, avgTime: '2.1h' },
+  { id: 3, name: 'Kamal Hassan', email: 'kamal.hassan@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-14 16:45', submissions: 9, avgTime: '3.2h' },
+  { id: 4, name: 'Fatimah Zahra', email: 'fatimah.zahra@expresscourier.com', role: 'Admin', status: 'Active', lastLogin: '2025-01-15 09:00', submissions: 8, avgTime: '2.5h' },
+  { id: 5, name: 'Azman Ali', email: 'azman.ali@expresscourier.com', role: 'Reporter', status: 'Inactive', lastLogin: '2024-12-20 11:30', submissions: 5, avgTime: '4.1h' },
+];
 
-  const users = [
-    { id: 1, name: 'Ahmad bin Abdullah', email: 'ahmad.abdullah@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 14:30' },
-    { id: 2, name: 'Mastura binti Hassan', email: 'mastura.hassan@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 10:15' },
-    { id: 3, name: 'Kamal Hassan', email: 'kamal.hassan@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-14 16:45' },
-    { id: 4, name: 'Fatimah Zahra', email: 'fatimah.zahra@expresscourier.com', role: 'Admin', status: 'Active', lastLogin: '2025-01-15 09:00' },
-    { id: 5, name: 'Azman Ali', email: 'azman.ali@expresscourier.com', role: 'Reporter', status: 'Disabled', lastLogin: '2024-12-20 11:30' },
-  ];
+export default function LicenseeAdminUsers() {
+  const { toast } = useToast();
+  const [addOpen, setAddOpen] = useState(false);
+  const [deactivateOpen, setDeactivateOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<typeof usersData[0] | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  const activeCount = usersData.filter(u => u.status === 'Active').length;
+  const inactiveCount = usersData.filter(u => u.status === 'Inactive').length;
+  const avgProductivity = (usersData.reduce((sum, u) => sum + u.submissions, 0) / usersData.length).toFixed(1);
+
+  const filtered = usersData.filter(u => {
+    const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || u.status.toLowerCase() === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   const handleAddUser = () => {
-    toast({
-      title: "User Added",
-      description: "New user has been added successfully.",
-    });
-    setOpen(false);
+    toast({ title: "User Added", description: "New user has been added successfully." });
+    setAddOpen(false);
+  };
+
+  const handleDeactivate = () => {
+    toast({ title: "Deactivation Requested", description: `Deactivation request for ${selectedUser?.name} has been submitted.` });
+    setDeactivateOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleToggleStatus = (user: typeof usersData[0]) => {
+    if (user.status === 'Active') {
+      setSelectedUser(user);
+      setDeactivateOpen(true);
+    } else {
+      toast({ title: "User Activated", description: `${user.name} has been activated.` });
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-4">
-        <Button variant="outline" size="sm" onClick={() => navigate('/licensee-admin/dashboard')}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold mb-1">Reporter Management</h1>
+        <p className="text-muted-foreground">Manage reporters in your organisation</p>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">User Management</h1>
-          <p className="text-muted-foreground">Manage users in your organisation</p>
-        </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="glow-purple">
-              <Plus className="mr-2 h-4 w-4" />
-              Add User
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New User</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
-                <Input id="name" placeholder="Enter full name" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input id="email" type="email" placeholder="user@expresscourier.com" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" type="tel" placeholder="+60 12-345 6789" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role *</Label>
-                <Select defaultValue="reporter">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="reporter">Reporter</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="active">Active</Label>
-                <Switch id="active" defaultChecked />
-              </div>
-              <Button onClick={handleAddUser} className="w-full">
-                Add User
-              </Button>
+      {/* Analytics Panel */}
+      <div className="grid gap-4 grid-cols-3">
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-status-closed/15 flex items-center justify-center">
+              <Users className="h-5 w-5 text-status-closed" />
             </div>
-          </DialogContent>
-        </Dialog>
+            <div>
+              <p className="text-xs text-muted-foreground">Active vs Inactive</p>
+              <p className="text-lg font-bold">{activeCount} / {inactiveCount}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-role-licensee-admin/15 flex items-center justify-center">
+              <Activity className="h-5 w-5 text-role-licensee-admin" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Avg Productivity</p>
+              <p className="text-lg font-bold">{avgProductivity} submissions</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-primary/15 flex items-center justify-center">
+              <FileSearch className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Total Reporters</p>
+              <p className="text-lg font-bold">{usersData.length}</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
+      {/* Search & Filter Bar */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search by name or email..." className="pl-10" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Filter status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+            <Dialog open={addOpen} onOpenChange={setAddOpen}>
+              <DialogTrigger asChild>
+                <Button className="glow-purple">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add User
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Reporter</DialogTitle>
+                  <DialogDescription>Create a new reporter account for your organisation.</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name *</Label>
+                    <Input id="name" placeholder="Enter full name" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email *</Label>
+                    <Input id="email" type="email" placeholder="user@expresscourier.com" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input id="phone" type="tel" placeholder="+60 12-345 6789" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Role *</Label>
+                    <Select defaultValue="reporter">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="reporter">Reporter</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="active">Active</Label>
+                    <Switch id="active" defaultChecked />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
+                  <Button onClick={handleAddUser}>Add User</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Users Table */}
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -102,49 +180,37 @@ export default function LicenseeAdminUsers() {
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Email</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Role</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Last Login</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Submissions</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Avg Time</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {filtered.map((user) => (
                   <tr key={user.id} className="border-b hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-4">
-                      <span className="font-medium">{user.name}</span>
+                      <div>
+                        <span className="font-medium">{user.name}</span>
+                        <Badge variant="outline" className="ml-2 text-xs">{user.role}</Badge>
+                      </div>
                     </td>
+                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.email}</td>
                     <td className="px-4 py-4">
-                      <span className="text-sm text-muted-foreground">{user.email}</span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <Badge variant="outline" className={user.role === 'Admin' ? 'border-role-licensee-admin/30' : ''}>
-                        {user.role}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-4">
-                      <Badge 
-                        variant="outline" 
-                        className={user.status === 'Active' 
-                          ? 'bg-green-500/20 text-green-400 border-green-500/30' 
-                          : 'bg-red-500/20 text-red-400 border-red-500/30'
-                        }
-                      >
+                      <Badge variant="outline" className={user.status === 'Active' ? 'bg-status-closed/20 text-status-closed border-status-closed/30' : 'bg-destructive/20 text-destructive border-destructive/30'}>
                         {user.status}
                       </Badge>
                     </td>
+                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.lastLogin}</td>
+                    <td className="px-4 py-4 text-sm font-medium">{user.submissions}</td>
+                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.avgTime}</td>
                     <td className="px-4 py-4">
-                      <span className="text-sm text-muted-foreground">{user.lastLogin}</span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="ghost">
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="ghost" title="Edit">
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" variant="ghost">
-                          <Key className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="ghost">
+                        <Button size="sm" variant="ghost" title={user.status === 'Active' ? 'Deactivate' : 'Activate'} onClick={() => handleToggleStatus(user)}>
                           {user.status === 'Active' ? <Ban className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
                         </Button>
                       </div>
@@ -156,6 +222,29 @@ export default function LicenseeAdminUsers() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Deactivation Modal */}
+      <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Request Deactivation</DialogTitle>
+            <DialogDescription>Submit a deactivation request for {selectedUser?.name}.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+              <p className="text-sm text-destructive font-medium">This will disable the user's access to the system.</p>
+            </div>
+            <div className="space-y-2">
+              <Label>Reason for deactivation *</Label>
+              <Textarea placeholder="Provide reason for deactivation..." rows={3} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeactivateOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDeactivate}>Submit Request</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
