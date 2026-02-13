@@ -1,60 +1,30 @@
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, Download, Filter, ArrowLeft } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Search, Download, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ReporterIncidents() {
   const navigate = useNavigate();
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const incidents = [
-    {
-      id: 'PSIRP-2025-0025',
-      title: 'High-Value Package Theft',
-      status: 'In Review',
-      severity: 'High',
-      submitted: '2025-01-15',
-      lastAction: '2 hours ago',
-      sla: '22h remaining',
-    },
-    {
-      id: 'PSIRP-2025-0023',
-      title: 'Tampered Shipment Detected',
-      status: 'RFI Sent',
-      severity: 'Medium',
-      submitted: '2025-01-14',
-      lastAction: '1 hour ago',
-      sla: 'Action Required',
-    },
-    {
-      id: 'PSIRP-2025-0020',
-      title: 'Lost Consignment Investigation',
-      status: 'Under Investigation',
-      severity: 'High',
-      submitted: '2025-01-12',
-      lastAction: '5 hours ago',
-      sla: '36h remaining',
-    },
-    {
-      id: 'PSIRP-2025-0019',
-      title: 'Dangerous Goods Mishandling',
-      status: 'Closed',
-      severity: 'Critical',
-      submitted: '2025-01-10',
-      lastAction: '1 day ago',
-      sla: 'Completed',
-    },
-    {
-      id: 'PSIRP-2025-0018',
-      title: 'Fraud Attempt Reported',
-      status: 'Submitted',
-      severity: 'Medium',
-      submitted: '2025-01-09',
-      lastAction: '3 days ago',
-      sla: '12h remaining',
-    },
+    { id: 'PSIRP-2025-0025', title: 'High-Value Package Theft', category: 'Theft', status: 'In Review', submitted: '2025-01-15', lastUpdated: '2 hours ago' },
+    { id: 'PSIRP-2025-0023', title: 'Tampered Shipment Detected', category: 'Tampering', status: 'RFI Sent', submitted: '2025-01-14', lastUpdated: '1 hour ago' },
+    { id: 'PSIRP-2025-0020', title: 'Lost Consignment Investigation', category: 'Loss', status: 'Under Investigation', submitted: '2025-01-12', lastUpdated: '5 hours ago' },
+    { id: 'PSIRP-2025-0019', title: 'Dangerous Goods Mishandling', category: 'Dangerous Goods', status: 'Closed', submitted: '2025-01-10', lastUpdated: '1 day ago' },
+    { id: 'PSIRP-2025-0018', title: 'Fraud Attempt Reported', category: 'Fraud', status: 'Submitted', submitted: '2025-01-09', lastUpdated: '3 days ago' },
   ];
+
+  const filtered = incidents.filter((i) => {
+    if (statusFilter !== 'all' && i.status !== statusFilter) return false;
+    if (searchQuery && !i.title.toLowerCase().includes(searchQuery.toLowerCase()) && !i.id.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
@@ -68,30 +38,8 @@ export default function ReporterIncidents() {
     return colors[status] || 'bg-secondary';
   };
 
-  const getSeverityColor = (severity: string) => {
-    const colors: Record<string, string> = {
-      'Low': 'bg-green-500/20 text-green-400 border-green-500/30',
-      'Medium': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-      'High': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-      'Critical': 'bg-red-500/20 text-red-400 border-red-500/30',
-    };
-    return colors[severity] || 'bg-secondary';
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigate('/reporter/dashboard')}
-          className="gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
-      </div>
-      
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-2">My Submissions</h1>
@@ -109,12 +57,28 @@ export default function ReporterIncidents() {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search by ID, title, or description..." className="pl-10" />
+              <Input
+                placeholder="Search by ID, title..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filters
-            </Button>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="Submitted">Submitted</SelectItem>
+                <SelectItem value="In Review">In Review</SelectItem>
+                <SelectItem value="RFI Sent">RFI Sent</SelectItem>
+                <SelectItem value="Under Investigation">Under Investigation</SelectItem>
+                <SelectItem value="Closed">Closed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input type="date" className="w-[160px]" />
+            <Input type="date" className="w-[160px]" />
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Export
@@ -123,47 +87,42 @@ export default function ReporterIncidents() {
         </CardContent>
       </Card>
 
-      {/* Incidents Table */}
+      {/* Table */}
       <Card>
         <CardContent className="pt-6">
-          <div className="space-y-4">
-            {incidents.map((incident) => (
-              <div
-                key={incident.id}
-                className="flex flex-col md:flex-row md:items-center gap-4 p-4 rounded-lg border border-border hover:border-primary/40 transition-all cursor-pointer"
-                onClick={() => navigate(`/reporter/incidents/${incident.id}`)}
-              >
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-start gap-3">
-                    <span className="font-mono text-sm text-primary">{incident.id}</span>
-                    <h3 className="font-semibold flex-1">{incident.title}</h3>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className={getStatusColor(incident.status)}>
-                      {incident.status}
-                    </Badge>
-                    <Badge variant="outline" className={getSeverityColor(incident.severity)}>
-                      {incident.severity}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="flex flex-col md:items-end gap-1 text-sm">
-                  <p className="text-muted-foreground">Submitted: {incident.submitted}</p>
-                  <p className="text-muted-foreground">Last action: {incident.lastAction}</p>
-                  <p
-                    className={`font-medium ${
-                      incident.sla === 'Action Required'
-                        ? 'text-destructive'
-                        : incident.sla === 'Completed'
-                        ? 'text-status-closed'
-                        : 'text-foreground'
-                    }`}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border text-left">
+                  <th className="pb-3 font-medium text-muted-foreground">Reference</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Title</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Category</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Status</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Last Updated</th>
+                  <th className="pb-3 font-medium text-muted-foreground">Submitted</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filtered.map((incident) => (
+                  <tr
+                    key={incident.id}
+                    className="hover:bg-accent/30 cursor-pointer transition-colors"
+                    onClick={() => navigate(`/reporter/incidents/${incident.id}`)}
                   >
-                    {incident.sla}
-                  </p>
-                </div>
-              </div>
-            ))}
+                    <td className="py-3 font-mono text-primary">{incident.id}</td>
+                    <td className="py-3 font-medium">{incident.title}</td>
+                    <td className="py-3 text-muted-foreground">{incident.category}</td>
+                    <td className="py-3">
+                      <Badge variant="outline" className={getStatusColor(incident.status)}>
+                        {incident.status}
+                      </Badge>
+                    </td>
+                    <td className="py-3 text-muted-foreground">{incident.lastUpdated}</td>
+                    <td className="py-3 text-muted-foreground">{incident.submitted}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </CardContent>
       </Card>
