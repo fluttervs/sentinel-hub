@@ -1,0 +1,148 @@
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Search, Download, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+export default function CaseOfficerInbox() {
+  const navigate = useNavigate();
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [severityFilter, setSeverityFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const incidents = [
+    { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Pending Review', sla: '2h remaining', escalation: 'None', submitted: '2025-01-16' },
+    { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', organisation: 'Swift Logistics Sdn Bhd', severity: 'High', status: 'Pending Review', sla: '5h remaining', escalation: 'None', submitted: '2025-01-16' },
+    { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', organisation: 'Express Courier Sdn Bhd', severity: 'High', status: 'RFI Sent', sla: '8h remaining', escalation: 'None', submitted: '2025-01-15' },
+    { id: 'PSIRP-2025-0025', title: 'Lost Consignment Claim', organisation: 'Fast Delivery Enterprise', severity: 'Medium', status: 'Under Review', sla: '12h remaining', escalation: 'None', submitted: '2025-01-15' },
+    { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', organisation: 'Express Courier Sdn Bhd', severity: 'High', status: 'RFI Sent', sla: '3h remaining', escalation: 'None', submitted: '2025-01-15' },
+    { id: 'PSIRP-2025-0023', title: 'Damaged Goods Report', organisation: 'Swift Logistics Sdn Bhd', severity: 'Medium', status: 'Under Review', sla: '24h remaining', escalation: 'None', submitted: '2025-01-14' },
+    { id: 'PSIRP-2025-0022', title: 'Suspicious Package Alert', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Escalation Pending', sla: '1h remaining', escalation: 'Pending Approval', submitted: '2025-01-14' },
+    { id: 'PSIRP-2025-0021', title: 'Delayed Goods — Route 7', organisation: 'Pos Malaysia Berhad', severity: 'Low', status: 'Under Review', sla: 'Breached', escalation: 'None', submitted: '2025-01-13' },
+  ];
+
+  const filtered = incidents.filter((i) => {
+    if (statusFilter !== 'all' && i.status !== statusFilter) return false;
+    if (severityFilter !== 'all' && i.severity !== severityFilter) return false;
+    if (searchQuery && !i.title.toLowerCase().includes(searchQuery.toLowerCase()) && !i.id.toLowerCase().includes(searchQuery.toLowerCase()) && !i.organisation.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+
+  const getStatusColor = (status: string) => {
+    const colors: Record<string, string> = {
+      'Pending Review': 'bg-status-in-review/20 text-status-in-review border-status-in-review/30',
+      'RFI Sent': 'bg-status-rfi/20 text-status-rfi border-status-rfi/30',
+      'Under Review': 'bg-status-submitted/20 text-status-submitted border-status-submitted/30',
+      'Escalation Pending': 'bg-destructive/20 text-destructive border-destructive/30',
+      'Closed': 'bg-status-closed/20 text-status-closed border-status-closed/30',
+    };
+    return colors[status] || 'bg-secondary';
+  };
+
+  const getSeverityColor = (severity: string) => {
+    const colors: Record<string, string> = {
+      'Critical': 'bg-red-500/20 text-red-400 border-red-500/30',
+      'High': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+      'Medium': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+      'Low': 'bg-green-500/20 text-green-400 border-green-500/30',
+    };
+    return colors[severity] || 'bg-secondary';
+  };
+
+  const getSlaClass = (sla: string) => {
+    if (sla === 'Breached') return 'text-destructive font-bold';
+    const match = sla.match(/(\d+)h/);
+    if (match && parseInt(match[1]) <= 3) return 'text-destructive font-medium';
+    if (match && parseInt(match[1]) <= 8) return 'text-status-in-review font-medium';
+    return 'text-muted-foreground';
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Assignment Inbox</h1>
+          <p className="text-muted-foreground">Cases assigned to you — sorted by SLA risk</p>
+        </div>
+        <Button variant="outline"><Download className="mr-2 h-4 w-4" />Export</Button>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search by ID, title, or organisation..." className="pl-10" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[180px]"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="Pending Review">Pending Review</SelectItem>
+                <SelectItem value="Under Review">Under Review</SelectItem>
+                <SelectItem value="RFI Sent">RFI Sent</SelectItem>
+                <SelectItem value="Escalation Pending">Escalation Pending</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={severityFilter} onValueChange={setSeverityFilter}>
+              <SelectTrigger className="w-[160px]"><SelectValue placeholder="Severity" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Severity</SelectItem>
+                <SelectItem value="Critical">Critical</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="Low">Low</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input type="date" className="w-[160px]" />
+            <Input type="date" className="w-[160px]" />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Table */}
+      <Card>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Reference</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Title</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Organisation</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Severity</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">SLA</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Escalation</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Submitted</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filtered.map((incident) => (
+                  <tr key={incident.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-3 font-mono text-role-reviewer">{incident.id}</td>
+                    <td className="px-4 py-3 font-medium">{incident.title}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{incident.organisation}</td>
+                    <td className="px-4 py-3"><Badge variant="outline" className={getSeverityColor(incident.severity)}>{incident.severity}</Badge></td>
+                    <td className="px-4 py-3"><Badge variant="outline" className={getStatusColor(incident.status)}>{incident.status}</Badge></td>
+                    <td className="px-4 py-3"><span className={getSlaClass(incident.sla)}>{incident.sla}</span></td>
+                    <td className="px-4 py-3 text-muted-foreground">{incident.escalation}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{incident.submitted}</td>
+                    <td className="px-4 py-3">
+                      <Button size="sm" variant="outline" onClick={() => navigate(`/reviewer/cases/${incident.id}`)}><Eye className="mr-1 h-3 w-3" />Review</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

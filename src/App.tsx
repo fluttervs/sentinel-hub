@@ -17,8 +17,15 @@ import IncidentDetails from "./pages/reporter/IncidentDetails";
 import ReporterNotifications from "./pages/reporter/Notifications";
 import ReporterAnalytics from "./pages/reporter/Analytics";
 import ReporterProfileSecurity from "./pages/reporter/ProfileSecurity";
+import CaseOfficerLayout from "./components/caseOfficer/CaseOfficerLayout";
 import ReviewerDashboard from "./pages/reviewer/Dashboard";
 import ReviewerIncidents from "./pages/reviewer/Incidents";
+import CaseOfficerInbox from "./pages/reviewer/Inbox";
+import CaseReview from "./pages/reviewer/CaseReview";
+import CaseOfficerSearch from "./pages/reviewer/Search";
+import CaseOfficerReports from "./pages/reviewer/Reports";
+import CaseOfficerNotifications from "./pages/reviewer/Notifications";
+import CaseOfficerSecurity from "./pages/reviewer/Security";
 import LicenseeAdminLayout from "./components/licenseeAdmin/LicenseeAdminLayout";
 import LicenseeAdminDashboard from "./pages/licenseeAdmin/Dashboard";
 import LicenseeAdminIncidents from "./pages/licenseeAdmin/Incidents";
@@ -86,9 +93,17 @@ const App = () => (
                   <Route path="security" element={<LicenseeAdminSecuritySettings />} />
                 </Route>
                 
-                {/* Reviewer Routes */}
-                <Route path="/reviewer/dashboard" element={<ProtectedRoute><ReviewerDashboard /></ProtectedRoute>} />
-                <Route path="/reviewer/incidents" element={<ProtectedRoute><ReviewerIncidents /></ProtectedRoute>} />
+                {/* Case Officer Routes - with sidebar layout */}
+                <Route path="/reviewer" element={<ProtectedRoute><CaseOfficerLayout /></ProtectedRoute>}>
+                  <Route path="dashboard" element={<ReviewerDashboard />} />
+                  <Route path="inbox" element={<CaseOfficerInbox />} />
+                  <Route path="incidents" element={<ReviewerIncidents />} />
+                  <Route path="cases/:id" element={<CaseReview />} />
+                  <Route path="search" element={<CaseOfficerSearch />} />
+                  <Route path="reports" element={<CaseOfficerReports />} />
+                  <Route path="notifications" element={<CaseOfficerNotifications />} />
+                  <Route path="security" element={<CaseOfficerSecurity />} />
+                </Route>
                 
                 {/* Validator Routes */}
                 <Route path="/validator/dashboard" element={<ProtectedRoute><ValidatorDashboard /></ProtectedRoute>} />
