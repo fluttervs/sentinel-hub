@@ -1,31 +1,33 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Users, FileText, AlertTriangle, CheckCircle2, Clock, TrendingUp, TrendingDown,
+  Users, FileText, AlertTriangle, CheckCircle2, Clock,
   Shield, Activity
 } from 'lucide-react';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
-  PieChart, Pie, Cell, BarChart, Bar,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  PieChart, Pie, Cell,
 } from 'recharts';
 
 const kpiCards = [
-  { label: 'Total Reporters', value: 12, change: +8.3, icon: Users, color: 'text-role-licensee-admin' },
-  { label: 'Active Reporters', value: 10, change: +5.0, icon: Activity, color: 'text-status-closed' },
-  { label: 'Total Incidents', value: 47, change: +12.5, icon: FileText, color: 'text-primary' },
-  { label: 'Under Review', value: 8, change: -15.0, icon: Clock, color: 'text-status-in-review' },
-  { label: 'Escalated Cases', value: 5, change: +25.0, icon: AlertTriangle, color: 'text-destructive' },
-  { label: 'Closed Cases', value: 30, change: +10.0, icon: CheckCircle2, color: 'text-status-closed' },
-  { label: 'Avg Submission', value: '2.4h', change: -18.0, icon: TrendingDown, color: 'text-primary' },
-  { label: 'Compliance Score', value: '92%', change: +3.2, icon: Shield, color: 'text-role-licensee-admin' },
+  { label: 'Total Reporters', value: 12, icon: Users, color: 'text-role-licensee-admin' },
+  { label: 'Active Reporters', value: 10, icon: Activity, color: 'text-status-closed' },
+  { label: 'Total Incidents', value: 47, icon: FileText, color: 'text-primary' },
+  { label: 'Under Review', value: 8, icon: Clock, color: 'text-status-in-review' },
+  { label: 'Escalated Cases', value: 5, icon: AlertTriangle, color: 'text-destructive' },
+  { label: 'Closed Cases', value: 30, icon: CheckCircle2, color: 'text-status-closed' },
+  { label: 'Avg Submission', value: '2.4h', icon: Clock, color: 'text-primary' },
+  { label: 'Compliance Score', value: '92%', icon: Shield, color: 'text-role-licensee-admin' },
 ];
 
-const submissionTrend = [
-  { month: 'Aug', current: 6, previous: 4 },
-  { month: 'Sep', current: 8, previous: 5 },
-  { month: 'Oct', current: 12, previous: 7 },
-  { month: 'Nov', current: 9, previous: 8 },
-  { month: 'Dec', current: 7, previous: 10 },
-  { month: 'Jan', current: 5, previous: 6 },
+const casesByState = [
+  { state: 'Selangor', cases: 12 },
+  { state: 'KL', cases: 9 },
+  { state: 'Johor', cases: 7 },
+  { state: 'Penang', cases: 5 },
+  { state: 'Sabah', cases: 4 },
+  { state: 'Sarawak', cases: 3 },
+  { state: 'Perak', cases: 3 },
+  { state: 'Others', cases: 4 },
 ];
 
 const statusDistribution = [
@@ -36,12 +38,12 @@ const statusDistribution = [
   { name: 'Closed', value: 25, color: 'hsl(var(--status-closed))' },
 ];
 
-const reporterPerformance = [
-  { name: 'Ahmad Abdullah', submissions: 14, avgTime: 1.8, escalation: 7 },
-  { name: 'Mastura Hassan', submissions: 11, avgTime: 2.1, escalation: 9 },
-  { name: 'Kamal Hassan', submissions: 9, avgTime: 3.2, escalation: 22 },
-  { name: 'Fatimah Zahra', submissions: 8, avgTime: 2.5, escalation: 12 },
-  { name: 'Azman Ali', submissions: 5, avgTime: 4.1, escalation: 40 },
+const caseSubmissionByReporter = [
+  { name: 'Ahmad Abdullah', submissions: 14 },
+  { name: 'Mastura Hassan', submissions: 11 },
+  { name: 'Kamal Hassan', submissions: 9 },
+  { name: 'Fatimah Zahra', submissions: 8 },
+  { name: 'Azman Ali', submissions: 5 },
 ];
 
 const caseTypeByMonth = [
@@ -61,8 +63,6 @@ const chartTooltipStyle = {
 };
 
 export default function LicenseeAdminDashboard() {
-  const escalationRatio = ((5 / 47) * 100).toFixed(1);
-
   return (
     <div className="space-y-6">
       <div>
@@ -70,7 +70,7 @@ export default function LicenseeAdminDashboard() {
         <p className="text-muted-foreground">Organisational overview — Express Courier Sdn Bhd</p>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards — no trend indicators */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {kpiCards.map((kpi) => (
           <Card key={kpi.label} className="hover:shadow-lg transition-shadow duration-200">
@@ -80,17 +80,6 @@ export default function LicenseeAdminDashboard() {
                 <kpi.icon className={`h-4 w-4 ${kpi.color}`} />
               </div>
               <div className="text-2xl font-bold">{kpi.value}</div>
-              <div className="flex items-center gap-1 mt-1">
-                {kpi.change > 0 ? (
-                  <TrendingUp className="h-3 w-3 text-status-closed" />
-                ) : (
-                  <TrendingDown className="h-3 w-3 text-primary" />
-                )}
-                <span className={`text-xs font-medium ${kpi.change > 0 ? 'text-status-closed' : 'text-primary'}`}>
-                  {kpi.change > 0 ? '+' : ''}{kpi.change}%
-                </span>
-                <span className="text-xs text-muted-foreground">vs last month</span>
-              </div>
             </CardContent>
           </Card>
         ))}
@@ -98,22 +87,20 @@ export default function LicenseeAdminDashboard() {
 
       {/* Charts Row 1 */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Submission Trend */}
+        {/* Incident Cases by State */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Incident Submission Trend</CardTitle>
+            <CardTitle className="text-base">Incident Cases by State</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
-              <LineChart data={submissionTrend}>
+              <BarChart data={casesByState}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <XAxis dataKey="state" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} allowDecimals={false} />
                 <Tooltip contentStyle={chartTooltipStyle} />
-                <Legend />
-                <Line type="monotone" dataKey="current" stroke="hsl(var(--role-licensee-admin))" strokeWidth={2} name="Current" dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="previous" stroke="hsl(var(--muted-foreground))" strokeWidth={2} strokeDasharray="5 5" name="Previous" dot={{ r: 3 }} />
-              </LineChart>
+                <Bar dataKey="cases" fill="hsl(var(--role-licensee-admin))" radius={[4, 4, 0, 0]} name="Cases" />
+              </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
@@ -159,14 +146,14 @@ export default function LicenseeAdminDashboard() {
 
       {/* Charts Row 2 */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Reporter Performance */}
+        {/* Case Submission by Reporter — no Top/Lowest indicators */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Reporter Performance</CardTitle>
+            <CardTitle className="text-base">Case Submission by Reporter</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={reporterPerformance} layout="vertical" margin={{ left: 30 }}>
+              <BarChart data={caseSubmissionByReporter} layout="vertical" margin={{ left: 30 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" fontSize={11} width={110} />
@@ -174,16 +161,6 @@ export default function LicenseeAdminDashboard() {
                 <Bar dataKey="submissions" fill="hsl(var(--role-licensee-admin))" radius={[0, 4, 4, 0]} name="Submissions" />
               </BarChart>
             </ResponsiveContainer>
-            <div className="mt-3 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-1">
-                <TrendingUp className="h-3 w-3 text-status-closed" />
-                <span className="text-status-closed font-medium">Top: Ahmad Abdullah</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <TrendingDown className="h-3 w-3 text-destructive" />
-                <span className="text-destructive font-medium">Lowest: Azman Ali</span>
-              </div>
-            </div>
           </CardContent>
         </Card>
 
@@ -210,28 +187,6 @@ export default function LicenseeAdminDashboard() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Escalation Ratio */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center gap-6">
-            <div className="h-16 w-16 rounded-full border-4 border-destructive/30 flex items-center justify-center bg-destructive/10">
-              <AlertTriangle className="h-7 w-7 text-destructive" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Escalation Ratio to LEA</p>
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold">{escalationRatio}%</span>
-                <div className="flex items-center gap-1">
-                  <TrendingUp className="h-4 w-4 text-destructive" />
-                  <span className="text-sm text-destructive font-medium">+2.1% from last month</span>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">5 out of 47 total incidents escalated</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
