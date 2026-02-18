@@ -289,20 +289,57 @@ export default function CaseReview() {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label>Select LEA Agency(s) *</Label>
-                      <div className="space-y-2">
-                        {['PDRM (Royal Malaysia Police)', 'KPDNHEP (Consumer Affairs)', 'MACC (Anti-Corruption)', 'Customs Department'].map((agency) => (
-                          <div key={agency} className="flex items-center gap-2">
-                            <Checkbox
-                              checked={selectedAgencies.includes(agency)}
-                              onCheckedChange={(checked) => {
-                                if (checked) setSelectedAgencies((prev) => [...prev, agency]);
-                                else setSelectedAgencies((prev) => prev.filter((a) => a !== agency));
-                              }}
-                            />
-                            <Label className="text-sm">{agency}</Label>
-                          </div>
-                        ))}
+                      <div className="relative">
+                        <Input
+                          placeholder="Search agencies..."
+                          className="mb-2"
+                          onChange={(e) => {
+                            const el = e.target.nextElementSibling as HTMLElement;
+                            if (el) {
+                              const items = el.querySelectorAll('[data-agency]');
+                              items.forEach((item) => {
+                                const name = (item as HTMLElement).dataset.agency || '';
+                                (item as HTMLElement).style.display = name.toLowerCase().includes(e.target.value.toLowerCase()) ? '' : 'none';
+                              });
+                            }
+                          }}
+                        />
+                        <div className="max-h-48 overflow-y-auto space-y-1 border border-border rounded-lg p-2">
+                          {[
+                            'Ministry of Communications and Digital',
+                            'Ministry of Health',
+                            'Ministry of Natural Resources and Environmental Sustainability',
+                            'KPDNKK',
+                            'MKN',
+                            'PDRM',
+                            'KASTAM',
+                            'KDN',
+                            'MOT',
+                            'AKPS',
+                            'Jabatan Perhilitan',
+                          ].map((agency) => (
+                            <div key={agency} data-agency={agency} className="flex items-center gap-2 py-1">
+                              <Checkbox
+                                checked={selectedAgencies.includes(agency)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) setSelectedAgencies((prev) => [...prev, agency]);
+                                  else setSelectedAgencies((prev) => prev.filter((a) => a !== agency));
+                                }}
+                              />
+                              <Label className="text-sm cursor-pointer">{agency}</Label>
+                            </div>
+                          ))}
+                        </div>
                       </div>
+                      {selectedAgencies.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {selectedAgencies.map((a) => (
+                            <Badge key={a} variant="outline" className="text-xs cursor-pointer hover:bg-destructive/10" onClick={() => setSelectedAgencies((prev) => prev.filter((x) => x !== a))}>
+                              {a} ✕
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label>Justification *</Label>

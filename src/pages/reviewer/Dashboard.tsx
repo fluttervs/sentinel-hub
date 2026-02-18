@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, AlertCircle, MessageSquare, Clock, Eye, Inbox, ArrowUpRight, ShieldAlert } from 'lucide-react';
+import { FileText, MessageSquare, Clock, Eye, Inbox, ArrowUpRight, ShieldAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ReviewerDashboard() {
@@ -12,12 +12,6 @@ export default function ReviewerDashboard() {
     { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', licensee: 'Swift Logistics Sdn Bhd', severity: 'High', sla: '5h remaining', status: 'Pending Review' },
     { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', licensee: 'Express Courier Sdn Bhd', severity: 'High', sla: '8h remaining', status: 'RFI Sent' },
     { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', licensee: 'Express Courier Sdn Bhd', severity: 'High', sla: '3h remaining', status: 'RFI Sent' },
-  ];
-
-  const slaAlerts = [
-    { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', remaining: '2h', breached: false },
-    { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', remaining: '3h', breached: false },
-    { id: 'PSIRP-2025-0021', title: 'Delayed Goods — Route 7', remaining: '0h', breached: true },
   ];
 
   const recentUpdates = [
@@ -144,25 +138,8 @@ export default function ReviewerDashboard() {
           </CardContent>
         </Card>
 
-        {/* SLA Alerts */}
+        {/* Recently Updated */}
         <div className="space-y-6">
-          <Card className="border-destructive/20">
-            <CardHeader><CardTitle className="text-destructive flex items-center gap-2"><AlertCircle className="h-5 w-5" />SLA Alerts</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              {slaAlerts.map((alert) => (
-                <div key={alert.id} className={`p-3 rounded-lg border ${alert.breached ? 'border-destructive/50 bg-destructive/10' : 'border-status-in-review/30 bg-status-in-review/5'}`}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-xs text-role-reviewer">{alert.id}</span>
-                    <Badge variant="outline" className={alert.breached ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-status-in-review/20 text-status-in-review border-status-in-review/30'}>
-                      {alert.breached ? 'BREACHED' : alert.remaining}
-                    </Badge>
-                  </div>
-                  <p className="text-sm font-medium">{alert.title}</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
           <Card>
             <CardHeader><CardTitle>Recently Updated</CardTitle></CardHeader>
             <CardContent className="space-y-3">
