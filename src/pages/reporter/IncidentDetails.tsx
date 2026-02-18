@@ -199,10 +199,9 @@ export default function IncidentDetails() {
           <Card>
             <CardContent className="pt-6">
               <Tabs defaultValue="timeline">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="timeline">Timeline</TabsTrigger>
                   <TabsTrigger value="rfis">RFIs</TabsTrigger>
-                  <TabsTrigger value="ai">AI</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="timeline" className="mt-4">
@@ -254,11 +253,6 @@ export default function IncidentDetails() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="ai" className="mt-4 space-y-3">
-                  <Card className="border-primary/20"><CardContent className="pt-4"><p className="text-sm font-medium mb-1">Similar Incidents</p><p className="text-xs text-muted-foreground">3 similar incidents found in the past 30 days</p></CardContent></Card>
-                  <Card className="border-primary/20"><CardContent className="pt-4"><p className="text-sm font-medium mb-1">Risk Pattern</p><p className="text-xs text-muted-foreground">High-value items via Route X show increased risk</p></CardContent></Card>
-                  <p className="text-xs text-muted-foreground text-center">AI insights are for demonstration purposes only</p>
-                </TabsContent>
               </Tabs>
             </CardContent>
           </Card>

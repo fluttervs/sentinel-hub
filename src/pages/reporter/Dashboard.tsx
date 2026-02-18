@@ -85,6 +85,24 @@ export default function ReporterDashboard() {
         </Card>
       </div>
 
+      {/* Pending RFI Alert */}
+      <Card className="border-destructive/40 bg-destructive/5">
+        <CardContent className="flex items-center justify-between py-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-destructive/20 flex items-center justify-center">
+              <MessageSquare className="h-5 w-5 text-destructive" />
+            </div>
+            <div>
+              <p className="font-semibold text-destructive">2 Pending RFI Responses</p>
+              <p className="text-sm text-muted-foreground">You have requests for information awaiting your response</p>
+            </div>
+          </div>
+          <Button variant="outline" className="border-destructive/30 text-destructive hover:bg-destructive/10" onClick={() => navigate('/reporter/incidents')}>
+            View & Respond
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Create New Incident */}
       <Button
         onClick={() => navigate('/reporter/incidents/new')}
