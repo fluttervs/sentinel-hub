@@ -25,7 +25,7 @@ export const login = (email: string, password: string, role: Role): User => {
   const roleNames: Record<Role, string> = {
     'reporter': 'Licensee Reporter',
     'licensee-admin': 'Licensee Admin',
-    'reviewer': 'MCMC Reviewer',
+    'reviewer': 'MCMC Case Officer',
     'validator': 'MCMC Validator',
     'investigator': 'MCMC Investigator',
     'system-admin': 'MCMC System Admin',
