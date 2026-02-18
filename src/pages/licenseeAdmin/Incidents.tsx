@@ -8,7 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { Search, Filter, Download, FileText, Clock, User, Paperclip, AlertTriangle, CheckCircle2, X } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { Search, Filter, Download, FileText, Clock, User, Paperclip, AlertTriangle, MessageSquare, Send } from 'lucide-react';
 
 const incidents = [
   { id: 'PSIRP-2025-0025', reporter: 'Ahmad bin Abdullah', type: 'Theft', severity: 'High', status: 'Under Review', submitted: '2025-01-15', escalated: true, description: 'High-value package theft at sorting facility', attachments: ['evidence-photo.jpg', 'cctv-footage.mp4'] },
@@ -42,10 +44,18 @@ const timeline = [
   { date: '2025-01-18 14:30', action: 'Escalated to LEA', user: 'Supervisor Wong' },
 ];
 
+const rfiMessages = [
+  { id: 1, from: 'Officer Lim', role: 'MCMC Case Officer', date: '2025-01-17 11:00', message: 'Please provide additional CCTV footage from the loading bay area for the period 10:00–14:00 on 14 Jan 2025.', status: 'Action Required' },
+  { id: 2, from: 'Ahmad bin Abdullah', role: 'Reporter', date: '2025-01-17 15:30', message: 'Attached the requested CCTV footage. The footage covers cameras 3 and 5 at the loading bay.', attachment: 'cctv-bay-14jan.mp4' },
+  { id: 3, from: 'Officer Lim', role: 'MCMC Case Officer', date: '2025-01-18 09:00', message: 'Thank you. Can you also confirm the shift schedule for the security personnel on duty during that time?', status: 'Action Required' },
+  { id: 4, from: 'Licensee Admin', role: 'Licensee Admin', date: '2025-01-18 11:45', message: 'The shift schedule has been attached. Security personnel on duty were Mohd Rizal (06:00–14:00) and Tan Wei Ming (14:00–22:00).', attachment: 'shift-schedule-jan.pdf' },
+];
+
 export default function LicenseeAdminIncidents() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIncident, setSelectedIncident] = useState<typeof incidents[0] | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [replyText, setReplyText] = useState('');
 
   const filtered = incidents.filter(i =>
     i.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -56,6 +66,7 @@ export default function LicenseeAdminIncidents() {
   const handleRowClick = (incident: typeof incidents[0]) => {
     setSelectedIncident(incident);
     setDetailOpen(true);
+    setReplyText('');
   };
 
   return (
@@ -73,7 +84,6 @@ export default function LicenseeAdminIncidents() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search by reference, reporter, type..." className="pl-10" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
-
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline">
@@ -140,7 +150,6 @@ export default function LicenseeAdminIncidents() {
                 </div>
               </SheetContent>
             </Sheet>
-
             <Button variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Export
@@ -195,9 +204,9 @@ export default function LicenseeAdminIncidents() {
         </CardContent>
       </Card>
 
-      {/* Case Detail Dialog (Read-Only) */}
+      {/* Case Detail Dialog with RFI */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               <span className="font-mono text-primary">{selectedIncident?.id}</span>
@@ -206,108 +215,173 @@ export default function LicenseeAdminIncidents() {
           </DialogHeader>
 
           {selectedIncident && (
-            <div className="grid lg:grid-cols-5 gap-6 mt-4">
-              {/* Left - Incident Info */}
-              <div className="lg:col-span-3 space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Incident Information</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">Case Type</p>
-                      <p className="text-sm font-medium opacity-70">{selectedIncident.type}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">Severity</p>
-                      <Badge variant="outline" className={severityColors[selectedIncident.severity]}>{selectedIncident.severity}</Badge>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">Submitted Date</p>
-                      <p className="text-sm font-medium opacity-70">{selectedIncident.submitted}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">Escalated</p>
-                      <p className="text-sm font-medium opacity-70">{selectedIncident.escalated ? 'Yes' : 'No'}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Description</p>
-                    <p className="text-sm opacity-70">{selectedIncident.description}</p>
-                  </div>
-                </div>
+            <Tabs defaultValue="details" className="mt-4">
+              <TabsList>
+                <TabsTrigger value="details">Case Details</TabsTrigger>
+                <TabsTrigger value="rfi" className="flex items-center gap-1.5">
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  RFIs & Communication
+                </TabsTrigger>
+              </TabsList>
 
-                <Separator />
-
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <Paperclip className="h-4 w-4" />
-                    Attachments
-                  </h3>
-                  {selectedIncident.attachments.length > 0 ? (
-                    <div className="space-y-2">
-                      {selectedIncident.attachments.map((file) => (
-                        <div key={file} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50 border border-border">
-                          <FileText className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm flex-1">{file}</span>
-                          <Button size="sm" variant="ghost" className="text-xs">Download</Button>
+              {/* Details Tab */}
+              <TabsContent value="details">
+                <div className="grid lg:grid-cols-5 gap-6 mt-4">
+                  <div className="lg:col-span-3 space-y-6">
+                    <div className="space-y-4">
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Incident Information</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-xs text-muted-foreground">Case Type</p>
+                          <p className="text-sm font-medium opacity-70">{selectedIncident.type}</p>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No attachments</p>
-                  )}
-                </div>
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    Reporter Details
-                  </h3>
-                  <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                    <p className="text-sm font-medium opacity-70">{selectedIncident.reporter}</p>
-                    <p className="text-xs text-muted-foreground">Express Courier Sdn Bhd</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right - Status & Timeline */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Status</h3>
-                  <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
-                    <Badge variant="outline" className={`text-base px-4 py-1 ${statusColors[selectedIncident.status]}`}>{selectedIncident.status}</Badge>
-                  </div>
-                  {selectedIncident.escalated && (
-                    <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-destructive" />
-                      <span className="text-sm text-destructive font-medium">Escalated to LEA</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    Timeline
-                  </h3>
-                  <div className="space-y-0">
-                    {timeline.map((event, i) => (
-                      <div key={i} className="flex gap-3">
-                        <div className="flex flex-col items-center">
-                          <div className={`h-3 w-3 rounded-full shrink-0 ${i === 0 ? 'bg-role-licensee-admin' : 'bg-border'}`} />
-                          {i < timeline.length - 1 && <div className="w-px flex-1 bg-border" />}
+                        <div className="space-y-1">
+                          <p className="text-xs text-muted-foreground">Severity</p>
+                          <Badge variant="outline" className={severityColors[selectedIncident.severity]}>{selectedIncident.severity}</Badge>
                         </div>
-                        <div className="pb-4">
-                          <p className="text-sm font-medium">{event.action}</p>
-                          <p className="text-xs text-muted-foreground">{event.user} • {event.date}</p>
+                        <div className="space-y-1">
+                          <p className="text-xs text-muted-foreground">Submitted Date</p>
+                          <p className="text-sm font-medium opacity-70">{selectedIncident.submitted}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs text-muted-foreground">Escalated</p>
+                          <p className="text-sm font-medium opacity-70">{selectedIncident.escalated ? 'Yes' : 'No'}</p>
                         </div>
                       </div>
-                    ))}
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Description</p>
+                        <p className="text-sm opacity-70">{selectedIncident.description}</p>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                        <Paperclip className="h-4 w-4" />
+                        Attachments
+                      </h3>
+                      {selectedIncident.attachments.length > 0 ? (
+                        <div className="space-y-2">
+                          {selectedIncident.attachments.map((file) => (
+                            <div key={file} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50 border border-border">
+                              <FileText className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-sm flex-1">{file}</span>
+                              <Button size="sm" variant="ghost" className="text-xs">Download</Button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No attachments</p>
+                      )}
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Reporter Details
+                      </h3>
+                      <div className="p-3 rounded-lg bg-muted/30 border border-border">
+                        <p className="text-sm font-medium opacity-70">{selectedIncident.reporter}</p>
+                        <p className="text-xs text-muted-foreground">Express Courier Sdn Bhd</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-2 space-y-6">
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Status</h3>
+                      <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
+                        <Badge variant="outline" className={`text-base px-4 py-1 ${statusColors[selectedIncident.status]}`}>{selectedIncident.status}</Badge>
+                      </div>
+                      {selectedIncident.escalated && (
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
+                          <AlertTriangle className="h-4 w-4 text-destructive" />
+                          <span className="text-sm text-destructive font-medium">Escalated to LEA</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        Timeline
+                      </h3>
+                      <div className="space-y-0">
+                        {timeline.map((event, i) => (
+                          <div key={i} className="flex gap-3">
+                            <div className="flex flex-col items-center">
+                              <div className={`h-3 w-3 rounded-full shrink-0 ${i === 0 ? 'bg-role-licensee-admin' : 'bg-border'}`} />
+                              {i < timeline.length - 1 && <div className="w-px flex-1 bg-border" />}
+                            </div>
+                            <div className="pb-4">
+                              <p className="text-sm font-medium">{event.action}</p>
+                              <p className="text-xs text-muted-foreground">{event.user} • {event.date}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </TabsContent>
+
+              {/* RFI & Communication Tab */}
+              <TabsContent value="rfi">
+                <div className="mt-4 space-y-4">
+                  <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                    {rfiMessages.map((msg) => {
+                      const isMCMC = msg.role === 'MCMC Case Officer';
+                      return (
+                        <div key={msg.id} className={`flex ${isMCMC ? 'justify-start' : 'justify-end'}`}>
+                          <div className={`max-w-[75%] p-3 rounded-lg border ${isMCMC ? 'bg-muted/50 border-border' : 'bg-role-licensee-admin/10 border-role-licensee-admin/20'}`}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-semibold">{msg.from}</span>
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">{msg.role}</Badge>
+                              {msg.status && (
+                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-status-rfi/20 text-status-rfi border-status-rfi/30">{msg.status}</Badge>
+                              )}
+                            </div>
+                            <p className="text-sm">{msg.message}</p>
+                            {msg.attachment && (
+                              <div className="mt-2 flex items-center gap-2 p-1.5 rounded bg-background/60 border border-border text-xs">
+                                <Paperclip className="h-3 w-3 text-muted-foreground" />
+                                <span>{msg.attachment}</span>
+                                <Button size="sm" variant="ghost" className="h-5 text-[10px] px-1.5 ml-auto">Download</Button>
+                              </div>
+                            )}
+                            <p className="text-[10px] text-muted-foreground mt-1">{msg.date}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex gap-2">
+                    <Textarea
+                      placeholder="Type a message or clarification..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      className="flex-1 min-h-[60px]"
+                    />
+                    <div className="flex flex-col gap-1">
+                      <Button size="sm" disabled={!replyText.trim()}>
+                        <Send className="h-4 w-4 mr-1" />
+                        Send
+                      </Button>
+                      <Button size="sm" variant="outline">
+                        <Paperclip className="h-4 w-4 mr-1" />
+                        Attach
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>

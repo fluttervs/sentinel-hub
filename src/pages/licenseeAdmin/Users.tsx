@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,15 +8,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Edit, Ban, CheckCircle, Search, Users, Activity, FileSearch } from 'lucide-react';
+import { Plus, Edit, Ban, CheckCircle, Search, Users, FileSearch } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const usersData = [
-  { id: 1, name: 'Ahmad bin Abdullah', email: 'ahmad.abdullah@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 14:30', submissions: 14, avgTime: '1.8h' },
-  { id: 2, name: 'Mastura binti Hassan', email: 'mastura.hassan@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 10:15', submissions: 11, avgTime: '2.1h' },
-  { id: 3, name: 'Kamal Hassan', email: 'kamal.hassan@expresscourier.com', role: 'Reporter', status: 'Active', lastLogin: '2025-01-14 16:45', submissions: 9, avgTime: '3.2h' },
-  { id: 4, name: 'Fatimah Zahra', email: 'fatimah.zahra@expresscourier.com', role: 'Admin', status: 'Active', lastLogin: '2025-01-15 09:00', submissions: 8, avgTime: '2.5h' },
-  { id: 5, name: 'Azman Ali', email: 'azman.ali@expresscourier.com', role: 'Reporter', status: 'Inactive', lastLogin: '2024-12-20 11:30', submissions: 5, avgTime: '4.1h' },
+  { id: 1, name: 'Ahmad bin Abdullah', email: 'ahmad.abdullah@expresscourier.com', phone: '+60 12-345 6789', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 14:30', submissions: 14 },
+  { id: 2, name: 'Mastura binti Hassan', email: 'mastura.hassan@expresscourier.com', phone: '+60 13-456 7890', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 10:15', submissions: 11 },
+  { id: 3, name: 'Kamal Hassan', email: 'kamal.hassan@expresscourier.com', phone: '+60 14-567 8901', role: 'Reporter', status: 'Active', lastLogin: '2025-01-14 16:45', submissions: 9 },
+  { id: 4, name: 'Fatimah Zahra', email: 'fatimah.zahra@expresscourier.com', phone: '+60 15-678 9012', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 09:00', submissions: 8 },
+  { id: 5, name: 'Azman Ali', email: 'azman.ali@expresscourier.com', phone: '+60 16-789 0123', role: 'Reporter', status: 'Inactive', lastLogin: '2024-12-20 11:30', submissions: 5 },
 ];
 
 export default function LicenseeAdminUsers() {
@@ -29,7 +29,6 @@ export default function LicenseeAdminUsers() {
 
   const activeCount = usersData.filter(u => u.status === 'Active').length;
   const inactiveCount = usersData.filter(u => u.status === 'Inactive').length;
-  const avgProductivity = (usersData.reduce((sum, u) => sum + u.submissions, 0) / usersData.length).toFixed(1);
 
   const filtered = usersData.filter(u => {
     const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -64,8 +63,8 @@ export default function LicenseeAdminUsers() {
         <p className="text-muted-foreground">Manage reporters in your organisation</p>
       </div>
 
-      {/* Analytics Panel */}
-      <div className="grid gap-4 grid-cols-3">
+      {/* Analytics Panel — 2 boxes, full width */}
+      <div className="grid gap-4 grid-cols-2">
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-status-closed/15 flex items-center justify-center">
@@ -74,17 +73,6 @@ export default function LicenseeAdminUsers() {
             <div>
               <p className="text-xs text-muted-foreground">Active vs Inactive</p>
               <p className="text-lg font-bold">{activeCount} / {inactiveCount}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-role-licensee-admin/15 flex items-center justify-center">
-              <Activity className="h-5 w-5 text-role-licensee-admin" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Avg Productivity</p>
-              <p className="text-lg font-bold">{avgProductivity} submissions</p>
             </div>
           </CardContent>
         </Card>
@@ -141,7 +129,7 @@ export default function LicenseeAdminUsers() {
                     <Input id="email" type="email" placeholder="user@expresscourier.com" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone">Phone Number</Label>
                     <Input id="phone" type="tel" placeholder="+60 12-345 6789" />
                   </div>
                   <div className="space-y-2">
@@ -180,10 +168,10 @@ export default function LicenseeAdminUsers() {
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Email</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Phone Number</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Last Login</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Submissions</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Avg Time</th>
                   <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
                 </tr>
               </thead>
@@ -197,6 +185,7 @@ export default function LicenseeAdminUsers() {
                       </div>
                     </td>
                     <td className="px-4 py-4 text-sm text-muted-foreground">{user.email}</td>
+                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.phone}</td>
                     <td className="px-4 py-4">
                       <Badge variant="outline" className={user.status === 'Active' ? 'bg-status-closed/20 text-status-closed border-status-closed/30' : 'bg-destructive/20 text-destructive border-destructive/30'}>
                         {user.status}
@@ -204,7 +193,6 @@ export default function LicenseeAdminUsers() {
                     </td>
                     <td className="px-4 py-4 text-sm text-muted-foreground">{user.lastLogin}</td>
                     <td className="px-4 py-4 text-sm font-medium">{user.submissions}</td>
-                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.avgTime}</td>
                     <td className="px-4 py-4">
                       <div className="flex gap-1">
                         <Button size="sm" variant="ghost" title="Edit">
