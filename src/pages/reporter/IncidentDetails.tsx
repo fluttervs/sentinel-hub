@@ -3,10 +3,17 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { ArrowLeft, Download, FileText, Clock, User, Paperclip, Send, MapPin, Package, ShieldAlert } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ArrowLeft, Download, FileText, Clock, User, Paperclip, Send, MapPin, Package, ShieldAlert, Info, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
+import { getAutoCategory } from '@/components/reporter/incident-form/types';
+import BasicCaseInfo from '@/components/reporter/incident-details/BasicCaseInfo';
+import IncidentDescription from '@/components/reporter/incident-details/IncidentDescription';
+import ParcelInformation from '@/components/reporter/incident-details/ParcelInformation';
+import ActionsTaken from '@/components/reporter/incident-details/ActionsTaken';
+import SupportingDocuments from '@/components/reporter/incident-details/SupportingDocuments';
+import ClassificationNote from '@/components/reporter/incident-details/ClassificationNote';
 
 export default function IncidentDetails() {
   const navigate = useNavigate();
@@ -18,43 +25,58 @@ export default function IncidentDetails() {
     title: 'High-Value Package Theft',
     status: 'In Review',
     severity: 'High',
-    category: 'Theft',
+    incidentType: 'Theft or loss of postal items (non-dangerous)',
+    category: getAutoCategory('Theft or loss of postal items (non-dangerous)'),
     description: 'A high-value package containing electronic goods was reported missing from the KL Distribution Center during the morning shift. The package was last scanned at 08:45 AM and could not be located during the 10:00 AM audit.',
     incidentDate: '2025-01-15',
     incidentTime: '08:45',
+    dateReported: '2025-01-15 10:30',
     locationType: 'Hub / Distribution Center',
     branchName: 'KL Main Distribution Center',
     address: 'Lot 5, Jalan Teknologi, Taman Sains Selangor',
     state: 'Selangor',
     postalCode: '47810',
+    companyName: 'Pos Malaysia Berhad',
+    reporterName: 'Ahmad bin Ibrahim',
+    reporterDesignation: 'Security Manager',
+    leaEscalation: 'No',
+    systemServiceAffected: 'Parcel Tracking System',
+    impactIndicators: ['Operational Disruption', 'Financial Impact', 'Reputational Risk'],
     items: [
-      { tracking: 'EC20250115-12345', type: 'Parcel', sender: 'TechCo Sdn Bhd', receiver: 'Ahmad bin Ibrahim', description: 'Electronic goods - Laptop' },
+      { tracking: 'EC20250115-12345', type: 'Parcel', declaration: 'Electronic goods - Laptop', weight: '2.5 kg', detectedItemType: 'Consumer Electronics', sender: { name: 'TechCo Sdn Bhd', address: '12 Jalan Tech, KL', stateCountry: 'Kuala Lumpur, Malaysia', contact: '+60123456789' }, receiver: { name: 'Ahmad bin Ibrahim', address: '45 Jalan Mawar, Shah Alam', stateCountry: 'Selangor, Malaysia', contact: '+60198765432' } },
     ],
-    violationType: 'Postal Services Act 2012',
-    supportingExplanation: 'Internal CCTV review indicates the package was removed from the sorting area by an unidentified individual.',
+    immediateActions: 'Area secured, CCTV footage preserved, internal investigation initiated. All staff on shift have been interviewed.',
+    incidentControlStatus: 'Under Monitoring',
+    reportedToAuthority: 'Yes',
+    authorityAgency: 'PDRM',
+    authorityReference: 'RPT-2025-KL-0045',
+    parcelHandedOver: 'No',
+    assistanceRequested: ['Investigation Support', 'Legal Advice'],
     documents: [
-      { name: 'CCTV_Footage_Screenshot.png', size: '2.4 MB' },
-      { name: 'Incident_Report_Internal.pdf', size: '1.1 MB' },
+      { name: 'CCTV_Footage_Screenshot.png', size: '2.4 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:25' },
+      { name: 'Incident_Report_Internal.pdf', size: '1.1 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:28' },
     ],
     submitted: '2025-01-15 10:30',
     lastUpdated: '2025-01-15 14:45',
-    assigned: 'MCMC Reviewer',
+    assigned: 'MCMC Case Officer',
   };
+
+  const isParcelIncident = incident.items && incident.items.length > 0;
 
   const timeline = [
     { event: 'Draft Created', actor: 'Reporter', time: '2025-01-15 09:00', type: 'system' },
     { event: 'Incident Submitted', actor: 'Licensee Reporter', time: '2025-01-15 10:30', type: 'submission' },
     { event: 'Acknowledged by System', actor: 'System', time: '2025-01-15 10:32', type: 'system' },
-    { event: 'Assigned to Reviewer', actor: 'System', time: '2025-01-15 11:00', type: 'system' },
-    { event: 'Clarification Requested', actor: 'MCMC Reviewer', time: '2025-01-15 15:30', type: 'rfi' },
+    { event: 'Assigned to Case Officer', actor: 'System', time: '2025-01-15 11:00', type: 'system' },
+    { event: 'Clarification Requested', actor: 'MCMC Case Officer', time: '2025-01-15 15:30', type: 'rfi' },
     { event: 'Clarification Responded', actor: 'Reporter', time: '2025-01-15 16:15', type: 'response' },
-    { event: 'Under Review', actor: 'MCMC Reviewer', time: '2025-01-15 14:45', type: 'update' },
+    { event: 'Under Review', actor: 'MCMC Case Officer', time: '2025-01-15 14:45', type: 'update' },
   ];
 
   const communications = [
-    { id: 1, type: 'rfi', from: 'MCMC Reviewer', fromRole: 'reviewer', message: 'Please provide additional information regarding the exact time the package was last seen at the distribution center. Also, clarify if CCTV footage is available.', timestamp: '2025-01-15 15:30', urgent: true },
+    { id: 1, type: 'rfi', from: 'MCMC Case Officer', fromRole: 'reviewer', message: 'Please provide additional information regarding the exact time the package was last seen at the distribution center. Also, clarify if CCTV footage is available.', timestamp: '2025-01-15 15:30', urgent: true },
     { id: 2, type: 'reply', from: 'Licensee Reporter', fromRole: 'reporter', message: 'The package was last scanned at 08:45 AM on January 15th. CCTV footage for the warehouse area from 08:00 AM to 10:00 AM has been secured.', timestamp: '2025-01-15 16:15', urgent: false },
-    { id: 3, type: 'comment', from: 'MCMC Reviewer', fromRole: 'reviewer', message: 'Thank you. Please upload the CCTV footage and confirm insurance and declared value.', timestamp: '2025-01-15 16:45', urgent: false },
+    { id: 3, type: 'comment', from: 'MCMC Case Officer', fromRole: 'reviewer', message: 'Thank you. Please upload the CCTV footage and confirm insurance and declared value.', timestamp: '2025-01-15 16:45', urgent: false },
   ];
 
   const handleSendReply = () => {
@@ -103,85 +125,18 @@ export default function IncidentDetails() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left - Read-only details */}
+        {/* Left - Structured Report Details */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Incident Info */}
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-primary" />Incident Information</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div><p className="text-xs text-muted-foreground">Category</p><p className="text-sm font-medium">{incident.category}</p></div>
-                <div><p className="text-xs text-muted-foreground">Date & Time</p><p className="text-sm font-medium">{incident.incidentDate} at {incident.incidentTime}</p></div>
-              </div>
-              <div><p className="text-xs text-muted-foreground">Description</p><p className="text-sm text-muted-foreground leading-relaxed">{incident.description}</p></div>
-            </CardContent>
-          </Card>
-
-          {/* Location */}
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><MapPin className="h-5 w-5 text-primary" />Location Details</CardTitle></CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div><p className="text-xs text-muted-foreground">Location Type</p><p className="text-sm font-medium">{incident.locationType}</p></div>
-                <div><p className="text-xs text-muted-foreground">Branch / Hub</p><p className="text-sm font-medium">{incident.branchName}</p></div>
-                <div><p className="text-xs text-muted-foreground">Address</p><p className="text-sm font-medium">{incident.address}</p></div>
-                <div><p className="text-xs text-muted-foreground">State / Postal Code</p><p className="text-sm font-medium">{incident.state}, {incident.postalCode}</p></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Affected Items */}
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-primary" />Affected Items</CardTitle></CardHeader>
-            <CardContent>
-              {incident.items.map((item, i) => (
-                <div key={i} className="p-3 border border-border rounded-lg space-y-2">
-                  <div className="grid md:grid-cols-2 gap-3">
-                    <div><p className="text-xs text-muted-foreground">Tracking</p><p className="text-sm font-mono">{item.tracking}</p></div>
-                    <div><p className="text-xs text-muted-foreground">Type</p><p className="text-sm font-medium">{item.type}</p></div>
-                    <div><p className="text-xs text-muted-foreground">Sender</p><p className="text-sm font-medium">{item.sender}</p></div>
-                    <div><p className="text-xs text-muted-foreground">Receiver</p><p className="text-sm font-medium">{item.receiver}</p></div>
-                  </div>
-                  <div><p className="text-xs text-muted-foreground">Description</p><p className="text-sm font-medium">{item.description}</p></div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Violation */}
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><ShieldAlert className="h-5 w-5 text-primary" />Violation Details</CardTitle></CardHeader>
-            <CardContent className="space-y-3">
-              <div><p className="text-xs text-muted-foreground">Violation Type</p><p className="text-sm font-medium">{incident.violationType}</p></div>
-              <div><p className="text-xs text-muted-foreground">Supporting Explanation</p><p className="text-sm text-muted-foreground leading-relaxed">{incident.supportingExplanation}</p></div>
-            </CardContent>
-          </Card>
-
-          {/* Documents */}
-          <Card>
-            <CardHeader><CardTitle>Supporting Documents</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {incident.documents.map((doc, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 border border-border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center"><FileText className="h-5 w-5 text-primary" /></div>
-                      <div>
-                        <p className="text-sm font-medium">{doc.name}</p>
-                        <p className="text-xs text-muted-foreground">{doc.size}</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-2" />Download</Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <BasicCaseInfo incident={incident} getStatusColor={getStatusColor} getSeverityColor={getSeverityColor} />
+          <ClassificationNote />
+          <IncidentDescription incident={incident} />
+          {isParcelIncident && <ParcelInformation items={incident.items} />}
+          <ActionsTaken incident={incident} />
+          <SupportingDocuments documents={incident.documents} />
         </div>
 
         {/* Right - Timeline & Tabs */}
         <div className="space-y-6">
-          {/* Status Card */}
           <Card className="border-primary/20">
             <CardContent className="pt-6 space-y-4">
               <div className="text-center">
@@ -195,7 +150,6 @@ export default function IncidentDetails() {
             </CardContent>
           </Card>
 
-          {/* Tabs */}
           <Card>
             <CardContent className="pt-6">
               <Tabs defaultValue="timeline">
@@ -252,7 +206,6 @@ export default function IncidentDetails() {
                     </div>
                   </div>
                 </TabsContent>
-
               </Tabs>
             </CardContent>
           </Card>
