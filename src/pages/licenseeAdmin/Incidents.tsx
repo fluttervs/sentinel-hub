@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Search, Filter, Download, FileText, Clock, User, Paperclip, AlertTriangle, MessageSquare, Send } from 'lucide-react';
+import { Search, Filter, Download, Clock, Paperclip, MessageSquare, Send } from 'lucide-react';
+import CaseDetailsView, { CaseData } from '@/components/shared/CaseDetailsView';
 
 const incidents = [
   { id: 'PSIRP-2025-0025', reporter: 'Ahmad bin Abdullah', type: 'Theft', severity: 'High', status: 'Under Review', submitted: '2025-01-15', escalated: true, description: 'High-value package theft at sorting facility', attachments: ['evidence-photo.jpg', 'cctv-footage.mp4'] },
@@ -62,6 +63,38 @@ export default function LicenseeAdminIncidents() {
     i.reporter.toLowerCase().includes(searchQuery.toLowerCase()) ||
     i.type.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const mapToCaseData = (inc: typeof incidents[0]): CaseData => ({
+    id: inc.id,
+    title: inc.description,
+    incidentType: inc.type,
+    category: inc.type,
+    dateReported: inc.submitted,
+    incidentDate: inc.submitted,
+    incidentTime: '—',
+    branchName: '—',
+    address: '—',
+    state: '—',
+    postalCode: '—',
+    companyName: 'Express Courier Sdn Bhd',
+    reporterName: inc.reporter,
+    reporterDesignation: 'Reporter',
+    status: inc.status,
+    severity: inc.severity,
+    leaEscalation: inc.escalated ? 'Yes' : 'No',
+    description: inc.description,
+    immediateActions: '—',
+    incidentControlStatus: '—',
+    reportedToAuthority: inc.escalated ? 'Yes' : 'No',
+    parcelHandedOver: '—',
+    assistanceRequested: [],
+    documents: inc.attachments.map(f => ({ name: f, size: '—', uploadedBy: inc.reporter, uploadDate: inc.submitted })),
+    items: ['Theft', 'Suspicious Parcel', 'Prohibited Items'].includes(inc.type) ? [{
+      tracking: '—', type: 'Standard', declaration: '—', weight: '—', detectedItemType: inc.type,
+      sender: { name: '—', address: '—', stateCountry: '—', contact: '—' },
+      receiver: { name: '—', address: '—', stateCountry: '—', contact: '—' },
+    }] : undefined,
+  });
 
   const handleRowClick = (incident: typeof incidents[0]) => {
     setSelectedIncident(incident);
@@ -227,67 +260,8 @@ export default function LicenseeAdminIncidents() {
               {/* Details Tab */}
               <TabsContent value="details">
                 <div className="grid lg:grid-cols-5 gap-6 mt-4">
-                  <div className="lg:col-span-3 space-y-6">
-                    <div className="space-y-4">
-                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Incident Information</h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <p className="text-xs text-muted-foreground">Case Type</p>
-                          <p className="text-sm font-medium opacity-70">{selectedIncident.type}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-xs text-muted-foreground">Severity</p>
-                          <Badge variant="outline" className={severityColors[selectedIncident.severity]}>{selectedIncident.severity}</Badge>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-xs text-muted-foreground">Submitted Date</p>
-                          <p className="text-sm font-medium opacity-70">{selectedIncident.submitted}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-xs text-muted-foreground">Escalated</p>
-                          <p className="text-sm font-medium opacity-70">{selectedIncident.escalated ? 'Yes' : 'No'}</p>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground">Description</p>
-                        <p className="text-sm opacity-70">{selectedIncident.description}</p>
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <Paperclip className="h-4 w-4" />
-                        Attachments
-                      </h3>
-                      {selectedIncident.attachments.length > 0 ? (
-                        <div className="space-y-2">
-                          {selectedIncident.attachments.map((file) => (
-                            <div key={file} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50 border border-border">
-                              <FileText className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm flex-1">{file}</span>
-                              <Button size="sm" variant="ghost" className="text-xs">Download</Button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">No attachments</p>
-                      )}
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        Reporter Details
-                      </h3>
-                      <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                        <p className="text-sm font-medium opacity-70">{selectedIncident.reporter}</p>
-                        <p className="text-xs text-muted-foreground">Express Courier Sdn Bhd</p>
-                      </div>
-                    </div>
+                  <div className="lg:col-span-3">
+                    <CaseDetailsView incident={mapToCaseData(selectedIncident)} />
                   </div>
 
                   <div className="lg:col-span-2 space-y-6">
@@ -298,8 +272,7 @@ export default function LicenseeAdminIncidents() {
                       </div>
                       {selectedIncident.escalated && (
                         <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
-                          <AlertTriangle className="h-4 w-4 text-destructive" />
-                          <span className="text-sm text-destructive font-medium">Escalated to LEA</span>
+                          <span className="text-sm text-destructive font-medium">⚠ Escalated to LEA</span>
                         </div>
                       )}
                     </div>
