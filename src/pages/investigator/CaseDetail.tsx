@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Download, FileText, Lock } from 'lucide-react';
+import { ArrowLeft, Lock } from 'lucide-react';
+import CaseDetailsView, { getStatusColor, getSeverityColor, type CaseData } from '@/components/shared/CaseDetailsView';
 
 const timelineEvents = [
   { date: '2025-06-10', time: '14:30', actor: 'System', action: 'Case assigned to Raj Kumar' },
@@ -20,6 +21,43 @@ export default function InvestigatorCaseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const incident: CaseData = {
+    id: id || 'PSIRP-2025-0063',
+    title: 'Missing parcel from sorting hub',
+    incidentType: 'Theft or loss of postal items (non-dangerous)',
+    category: 'Medium Severity Incident',
+    dateReported: '2025-06-10 09:15',
+    incidentDate: '2025-06-08',
+    incidentTime: '14:22',
+    branchName: 'KL Central Sorting Hub',
+    address: 'Jalan Kuching, 51200 KL',
+    state: 'W.P. Kuala Lumpur',
+    postalCode: '51200',
+    companyName: 'Express Courier Sdn Bhd',
+    reporterName: 'Ali Hassan',
+    reporterDesignation: 'Hub Manager',
+    status: 'Under Review',
+    severity: 'Medium',
+    leaEscalation: 'Yes',
+    description: 'A parcel containing electronic goods went missing during the sorting process at KL Hub. CCTV footage shows the parcel entering the sorting lane but not arriving at the dispatch area.',
+    systemServiceAffected: 'Sorting & Dispatch System',
+    items: [
+      { tracking: 'EC-2025-KL-89012', type: 'Standard Parcel', declaration: 'Wireless headphones (RM 450 declared value)', weight: '0.8 kg', detectedItemType: 'Consumer Electronics', sender: { name: 'TechStore Online', address: 'Penang', stateCountry: 'Penang, Malaysia', contact: '+60124567890' }, receiver: { name: 'Ahmad bin Ismail', address: 'Kuala Lumpur', stateCountry: 'KL, Malaysia', contact: '+60198765432' } },
+    ],
+    immediateActions: 'CCTV footage preserved, hub supervisor interviewed, sorting lane access restricted.',
+    incidentControlStatus: 'Under Monitoring',
+    reportedToAuthority: 'Yes',
+    authorityAgency: 'PDRM',
+    authorityReference: 'RPT-2025-KL-0063',
+    parcelHandedOver: 'No',
+    assistanceRequested: ['Investigation Support'],
+    documents: [
+      { name: 'CCTV_Screenshot_Hub3.png', size: '1.8 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-10 09:10' },
+      { name: 'Sorting_Log_20250608.pdf', size: '0.6 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-10 09:12' },
+      { name: 'Dispatch_Record.xlsx', size: '0.4 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-10 09:14' },
+    ],
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -33,10 +71,10 @@ export default function InvestigatorCaseDetail() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{id || 'PSIRP-2025-0063'}</h1>
+          <h1 className="text-3xl font-bold">{incident.id}</h1>
           <p className="text-muted-foreground">Oversight view — no editing permitted</p>
         </div>
-        <Badge variant="outline" className="border-status-in-review/50 text-status-in-review text-sm px-3 py-1">Under Review</Badge>
+        <Badge variant="outline" className={`text-sm px-3 py-1 ${getStatusColor(incident.status)}`}>{incident.status}</Badge>
       </div>
 
       <Tabs defaultValue="details" className="space-y-4">
@@ -47,43 +85,8 @@ export default function InvestigatorCaseDetail() {
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="details" className="space-y-4">
-          <Card>
-            <CardHeader><CardTitle>Incident Information</CardTitle></CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-4">
-              <div><p className="text-xs text-muted-foreground">Title</p><p className="text-sm font-medium">Missing parcel from sorting hub</p></div>
-              <div><p className="text-xs text-muted-foreground">Category</p><p className="text-sm font-medium">Package Theft / Missing</p></div>
-              <div><p className="text-xs text-muted-foreground">Date of Incident</p><p className="text-sm font-medium">2025-06-08</p></div>
-              <div><p className="text-xs text-muted-foreground">Organisation</p><p className="text-sm font-medium">Express Courier Sdn Bhd</p></div>
-              <div className="md:col-span-2"><p className="text-xs text-muted-foreground">Description</p><p className="text-sm">A parcel containing electronic goods went missing during the sorting process at KL Hub. CCTV footage shows the parcel entering the sorting lane but not arriving at the dispatch area.</p></div>
-              <div><p className="text-xs text-muted-foreground">Location</p><p className="text-sm font-medium">KL Central Sorting Hub, Jalan Kuching, 51200 KL</p></div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle>Affected Items</CardTitle></CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div><p className="text-xs text-muted-foreground">Tracking Number</p><p className="text-sm font-medium">EC-2025-KL-89012</p></div>
-                <div><p className="text-xs text-muted-foreground">Parcel Type</p><p className="text-sm font-medium">Standard Parcel</p></div>
-                <div><p className="text-xs text-muted-foreground">Sender</p><p className="text-sm font-medium">TechStore Online – Penang</p></div>
-                <div><p className="text-xs text-muted-foreground">Receiver</p><p className="text-sm font-medium">Ahmad bin Ismail – Kuala Lumpur</p></div>
-                <div><p className="text-xs text-muted-foreground">Item Description</p><p className="text-sm font-medium">Wireless headphones (RM 450 declared value)</p></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle>Supporting Documents</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              {['CCTV_Screenshot_Hub3.png', 'Sorting_Log_20250608.pdf', 'Dispatch_Record.xlsx'].map((f) => (
-                <div key={f} className="flex items-center justify-between p-2 border border-border/40 rounded-lg">
-                  <div className="flex items-center gap-2"><FileText className="h-4 w-4 text-muted-foreground" /><span className="text-sm">{f}</span></div>
-                  <Button size="sm" variant="ghost"><Download className="h-4 w-4" /></Button>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+        <TabsContent value="details">
+          <CaseDetailsView incident={incident} />
         </TabsContent>
 
         <TabsContent value="assessment">

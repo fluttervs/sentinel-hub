@@ -7,8 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Download, FileText, Lock, CheckCircle, Upload, Send } from 'lucide-react';
+import { ArrowLeft, Lock, CheckCircle, Upload, Send, FileText, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import CaseDetailsView, { getStatusColor, type CaseData } from '@/components/shared/CaseDetailsView';
 
 const timelineEvents = [
   { date: '2025-06-15', time: '08:00', actor: 'System', action: 'Case escalated to PDRM' },
@@ -29,6 +30,43 @@ export default function LEACaseDetail() {
   const [clarificationMsg, setClarificationMsg] = useState('');
   const [outcomeType, setOutcomeType] = useState('');
   const [outcomeSummary, setOutcomeSummary] = useState('');
+
+  const incident: CaseData = {
+    id: id || 'ESC-2025-001',
+    title: 'Theft of High-Value Consignment',
+    incidentType: 'Theft or loss of postal items (non-dangerous)',
+    category: 'Medium Severity Incident',
+    dateReported: '2025-06-08 14:00',
+    incidentDate: '2025-06-08',
+    incidentTime: '14:22',
+    branchName: 'KL Central Sorting Hub',
+    address: 'Jalan Kuching, 51200 Kuala Lumpur',
+    state: 'W.P. Kuala Lumpur',
+    postalCode: '51200',
+    companyName: 'Express Courier Sdn Bhd',
+    reporterName: 'Ali Hassan',
+    reporterDesignation: 'Facility Manager',
+    status: investigationStatus,
+    severity: 'High',
+    leaEscalation: 'Yes',
+    description: 'A high-value consignment containing electronic goods went missing during transit. CCTV footage confirms the parcel entered sorting lane but did not reach dispatch area. Evidence suggests possible internal theft.',
+    systemServiceAffected: 'Sorting & Dispatch System',
+    items: [
+      { tracking: 'EC-2025-KL-89012', type: 'Standard Parcel', declaration: 'Wireless headphones (RM 450 declared value)', weight: '0.8 kg', detectedItemType: 'Consumer Electronics', sender: { name: 'TechStore Online', address: 'Penang', stateCountry: 'Penang, Malaysia', contact: '+60124567890' }, receiver: { name: 'Ahmad bin Ismail', address: 'Kuala Lumpur', stateCountry: 'KL, Malaysia', contact: '+60198765432' } },
+    ],
+    immediateActions: 'Facility secured, CCTV preserved, staff interviewed.',
+    incidentControlStatus: 'Under Monitoring',
+    reportedToAuthority: 'Yes',
+    authorityAgency: 'PDRM',
+    authorityReference: 'RPT-2025-KL-ESC001',
+    parcelHandedOver: 'No',
+    assistanceRequested: ['Investigation Support'],
+    documents: [
+      { name: 'CCTV_Screenshot_Hub3.png', size: '1.8 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-08 14:30' },
+      { name: 'Sorting_Log_20250608.pdf', size: '0.6 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-08 14:32' },
+      { name: 'Escalation_Justification.pdf', size: '0.4 MB', uploadedBy: 'Ahmad Razif', uploadDate: '2025-06-15 08:00' },
+    ],
+  };
 
   const handleAcknowledge = () => {
     setAcknowledged(true);
@@ -68,8 +106,8 @@ export default function LEACaseDetail() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{id || 'ESC-2025-001'}</h1>
-          <p className="text-muted-foreground">Theft of High-Value Consignment — Express Courier Sdn Bhd</p>
+          <h1 className="text-3xl font-bold">{incident.id}</h1>
+          <p className="text-muted-foreground">{incident.title} — {incident.companyName}</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="border-primary/50 text-primary text-sm px-3 py-1">{investigationStatus}</Badge>
@@ -91,59 +129,8 @@ export default function LEACaseDetail() {
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="details" className="space-y-4">
-          <Card>
-            <CardHeader><CardTitle>Incident Information</CardTitle></CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-4">
-              <div><p className="text-xs text-muted-foreground">Title</p><p className="text-sm font-medium">Theft of High-Value Consignment</p></div>
-              <div><p className="text-xs text-muted-foreground">Category</p><p className="text-sm font-medium">Package Theft / Missing</p></div>
-              <div><p className="text-xs text-muted-foreground">Date of Incident</p><p className="text-sm font-medium">2025-06-08</p></div>
-              <div><p className="text-xs text-muted-foreground">Organisation</p><p className="text-sm font-medium">Express Courier Sdn Bhd</p></div>
-              <div><p className="text-xs text-muted-foreground">Severity</p><p className="text-sm font-medium">High</p></div>
-              <div><p className="text-xs text-muted-foreground">Escalation Date</p><p className="text-sm font-medium">2025-06-15</p></div>
-              <div className="md:col-span-2"><p className="text-xs text-muted-foreground">Description</p><p className="text-sm">A high-value consignment containing electronic goods went missing during transit. CCTV footage confirms the parcel entered sorting lane but did not reach dispatch area. Evidence suggests possible internal theft.</p></div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle>Location Details</CardTitle></CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-4">
-              <div><p className="text-xs text-muted-foreground">Location</p><p className="text-sm font-medium">KL Central Sorting Hub</p></div>
-              <div><p className="text-xs text-muted-foreground">Address</p><p className="text-sm font-medium">Jalan Kuching, 51200 Kuala Lumpur</p></div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle>Affected Items</CardTitle></CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-4">
-              <div><p className="text-xs text-muted-foreground">Tracking Number</p><p className="text-sm font-medium">EC-2025-KL-89012</p></div>
-              <div><p className="text-xs text-muted-foreground">Parcel Type</p><p className="text-sm font-medium">Standard Parcel</p></div>
-              <div><p className="text-xs text-muted-foreground">Sender</p><p className="text-sm font-medium">TechStore Online — Penang</p></div>
-              <div><p className="text-xs text-muted-foreground">Receiver</p><p className="text-sm font-medium">Ahmad bin Ismail — Kuala Lumpur</p></div>
-              <div><p className="text-xs text-muted-foreground">Item Description</p><p className="text-sm font-medium">Wireless headphones (RM 450 declared value)</p></div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle>Violation Details</CardTitle></CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-4">
-              <div><p className="text-xs text-muted-foreground">Violation Type</p><p className="text-sm font-medium">Theft / Misappropriation</p></div>
-              <div><p className="text-xs text-muted-foreground">Severity</p><p className="text-sm font-medium">High</p></div>
-              <div className="md:col-span-2"><p className="text-xs text-muted-foreground">Explanation</p><p className="text-sm">CCTV confirms parcel entered sorting lane 3 at 14:22 but was not recorded at dispatch. Two staff members had access during the window.</p></div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle>Supporting Documents</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              {['CCTV_Screenshot_Hub3.png', 'Sorting_Log_20250608.pdf', 'Escalation_Justification.pdf'].map((f) => (
-                <div key={f} className="flex items-center justify-between p-2 border border-border/40 rounded-lg">
-                  <div className="flex items-center gap-2"><FileText className="h-4 w-4 text-muted-foreground" /><span className="text-sm">{f}</span></div>
-                  <Button size="sm" variant="ghost"><Download className="h-4 w-4" /></Button>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+        <TabsContent value="details">
+          <CaseDetailsView incident={incident} />
         </TabsContent>
 
         <TabsContent value="investigation">
@@ -184,7 +171,6 @@ export default function LEACaseDetail() {
                   <Upload className="h-4 w-4 mr-2" /> Select Files
                 </Button>
               </div>
-
               <div className="space-y-2">
                 <p className="text-sm font-medium">Uploaded Files</p>
                 {[
@@ -225,7 +211,6 @@ export default function LEACaseDetail() {
                   <p className="text-sm mt-1">Last scan recorded at 14:22:45. Shift roster attached — 3 staff members were assigned to lane 3 between 14:00–16:00.</p>
                 </div>
               </div>
-
               <div className="border-t border-border pt-4 space-y-3">
                 <Label>New Clarification Request</Label>
                 <Textarea placeholder="Enter your clarification request to MCMC or Licensee..." value={clarificationMsg} onChange={(e) => setClarificationMsg(e.target.value)} rows={3} />

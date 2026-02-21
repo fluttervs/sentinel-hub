@@ -1,26 +1,19 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Download, FileText, Clock, User, Paperclip, Send, MapPin, Package, ShieldAlert, Info, CheckCircle, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Paperclip, Send } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
-import { getAutoCategory } from '@/components/reporter/incident-form/types';
-import BasicCaseInfo from '@/components/reporter/incident-details/BasicCaseInfo';
-import IncidentDescription from '@/components/reporter/incident-details/IncidentDescription';
-import ParcelInformation from '@/components/reporter/incident-details/ParcelInformation';
-import ActionsTaken from '@/components/reporter/incident-details/ActionsTaken';
-import SupportingDocuments from '@/components/reporter/incident-details/SupportingDocuments';
-import ClassificationNote from '@/components/reporter/incident-details/ClassificationNote';
+import CaseDetailsView, { getStatusColor, getSeverityColor, getAutoCategory, type CaseData } from '@/components/shared/CaseDetailsView';
 
 export default function IncidentDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [replyText, setReplyText] = useState('');
 
-  const incident = {
+  const incident: CaseData = {
     id: id || 'PSIRP-2025-0025',
     title: 'High-Value Package Theft',
     status: 'In Review',
@@ -31,7 +24,6 @@ export default function IncidentDetails() {
     incidentDate: '2025-01-15',
     incidentTime: '08:45',
     dateReported: '2025-01-15 10:30',
-    locationType: 'Hub / Distribution Center',
     branchName: 'KL Main Distribution Center',
     address: 'Lot 5, Jalan Teknologi, Taman Sains Selangor',
     state: 'Selangor',
@@ -56,12 +48,7 @@ export default function IncidentDetails() {
       { name: 'CCTV_Footage_Screenshot.png', size: '2.4 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:25' },
       { name: 'Incident_Report_Internal.pdf', size: '1.1 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:28' },
     ],
-    submitted: '2025-01-15 10:30',
-    lastUpdated: '2025-01-15 14:45',
-    assigned: 'MCMC Case Officer',
   };
-
-  const isParcelIncident = incident.items && incident.items.length > 0;
 
   const timeline = [
     { event: 'Draft Created', actor: 'Reporter', time: '2025-01-15 09:00', type: 'system' },
@@ -81,26 +68,6 @@ export default function IncidentDetails() {
 
   const handleSendReply = () => {
     if (replyText.trim()) { setReplyText(''); }
-  };
-
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      'In Review': 'bg-status-in-review/20 text-status-in-review border-status-in-review/30',
-      'Submitted': 'bg-status-submitted/20 text-status-submitted border-status-submitted/30',
-      'Closed': 'bg-status-closed/20 text-status-closed border-status-closed/30',
-      'RFI Sent': 'bg-status-rfi/20 text-status-rfi border-status-rfi/30',
-    };
-    return colors[status] || 'bg-secondary';
-  };
-
-  const getSeverityColor = (sev: string) => {
-    const colors: Record<string, string> = {
-      'Low': 'bg-green-500/20 text-green-400 border-green-500/30',
-      'Medium': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-      'High': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-      'Critical': 'bg-red-500/20 text-red-400 border-red-500/30',
-    };
-    return colors[sev] || 'bg-secondary';
   };
 
   const getTimelineDotColor = (type: string) => {
@@ -126,13 +93,8 @@ export default function IncidentDetails() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left - Structured Report Details */}
-        <div className="lg:col-span-2 space-y-6">
-          <BasicCaseInfo incident={incident} getStatusColor={getStatusColor} getSeverityColor={getSeverityColor} />
-          <ClassificationNote />
-          <IncidentDescription incident={incident} />
-          {isParcelIncident && <ParcelInformation items={incident.items} />}
-          <ActionsTaken incident={incident} />
-          <SupportingDocuments documents={incident.documents} />
+        <div className="lg:col-span-2">
+          <CaseDetailsView incident={incident} />
         </div>
 
         {/* Right - Timeline & Tabs */}
@@ -142,10 +104,10 @@ export default function IncidentDetails() {
               <div className="text-center">
                 <Badge variant="outline" className={`text-lg px-4 py-1 ${getStatusColor(incident.status)}`}>{incident.status}</Badge>
               </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{incident.submitted}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Last Updated</span><span>{incident.lastUpdated}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Assigned To</span><span>{incident.assigned}</span></div>
+                <div className="space-y-2 text-sm">
+                <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{incident.dateReported}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Last Updated</span><span>2025-01-15 14:45</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Assigned To</span><span>MCMC Case Officer</span></div>
               </div>
             </CardContent>
           </Card>

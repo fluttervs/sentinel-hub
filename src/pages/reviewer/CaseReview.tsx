@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import CaseDetailsView, { getStatusColor, getSeverityColor, type CaseData } from '@/components/shared/CaseDetailsView';
 
 export default function CaseReview() {
   const navigate = useNavigate();
@@ -30,37 +31,44 @@ export default function CaseReview() {
   const [selectedAgencies, setSelectedAgencies] = useState<string[]>([]);
   const [replyText, setReplyText] = useState('');
 
-  const incident = {
+  const incident: CaseData = {
     id: id || 'PSIRP-2025-0028',
     title: 'Critical Security Breach',
     status: 'Under Review',
     severity: 'Critical',
-    category: 'Security Breach',
+    incidentType: 'Criminal activities within postal hubs',
+    category: 'Serious Threat',
     description: 'A critical security breach was detected at the main sorting facility. Unauthorized access to restricted areas was recorded by security systems during the early morning hours of January 16th.',
     incidentDate: '2025-01-16',
     incidentTime: '03:15',
-    locationType: 'Hub / Distribution Center',
+    dateReported: '2025-01-16 06:30',
     branchName: 'KL Main Sorting Facility',
     address: 'Lot 12, Jalan Perusahaan, Shah Alam',
     state: 'Selangor',
     postalCode: '40150',
-    organisation: 'Express Courier Sdn Bhd',
-    reporter: 'Ahmad bin Abdullah',
+    companyName: 'Express Courier Sdn Bhd',
+    reporterName: 'Ahmad bin Abdullah',
+    reporterDesignation: 'Security Manager',
+    leaEscalation: 'No',
+    systemServiceAffected: 'Access Control System',
+    impactIndicators: ['Safety Risk', 'Operational Disruption'],
     items: [
-      { tracking: 'EC20250116-99001', type: 'Bulk Shipment', sender: 'Various', receiver: 'Various', description: 'Multiple high-value consignments in restricted zone' },
+      { tracking: 'EC20250116-99001', type: 'Bulk Shipment', declaration: 'Multiple high-value consignments in restricted zone', weight: 'N/A', detectedItemType: 'Mixed consignments', sender: { name: 'Various', address: 'Various', stateCountry: 'Malaysia', contact: 'N/A' }, receiver: { name: 'Various', address: 'Various', stateCountry: 'Malaysia', contact: 'N/A' } },
     ],
-    violationType: 'Postal Services Act 2012',
-    supportingExplanation: 'Unauthorized individual bypassed security protocols and accessed restricted sorting area containing high-value items.',
+    immediateActions: 'Facility locked down, security protocols activated, CCTV footage secured.',
+    incidentControlStatus: 'Contained',
+    reportedToAuthority: 'No',
+    parcelHandedOver: 'No',
+    assistanceRequested: ['Investigation Support', 'Legal Advice'],
     documents: [
-      { name: 'Security_Camera_Log.pdf', size: '3.2 MB' },
-      { name: 'Access_Control_Report.xlsx', size: '0.8 MB' },
-      { name: 'Incident_Photo_01.jpg', size: '2.1 MB' },
+      { name: 'Security_Camera_Log.pdf', size: '3.2 MB', uploadedBy: 'Ahmad bin Abdullah', uploadDate: '2025-01-16 06:25' },
+      { name: 'Access_Control_Report.xlsx', size: '0.8 MB', uploadedBy: 'Ahmad bin Abdullah', uploadDate: '2025-01-16 06:27' },
+      { name: 'Incident_Photo_01.jpg', size: '2.1 MB', uploadedBy: 'Ahmad bin Abdullah', uploadDate: '2025-01-16 06:29' },
     ],
-    submitted: '2025-01-16 06:30',
-    lastUpdated: '2025-01-16 09:15',
-    sla: '2h remaining',
-    agingDays: 0,
   };
+
+  const sla = '2h remaining';
+  const agingDays = 0;
 
   const timeline = [
     { event: 'Incident Submitted', actor: 'Licensee Reporter', time: '2025-01-16 06:30', type: 'submission' },
@@ -114,10 +122,10 @@ export default function CaseReview() {
           <p className="font-mono text-sm text-role-reviewer">{incident.id}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="bg-status-in-review/20 text-status-in-review border-status-in-review/30">{incident.status}</Badge>
-          <Badge variant="outline" className="bg-red-500/20 text-red-400 border-red-500/30">{incident.severity}</Badge>
-          <Badge variant="outline" className={`${incident.sla.includes('2h') ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-muted'}`}>
-            <Clock className="h-3 w-3 mr-1" />{incident.sla}
+          <Badge variant="outline" className={getStatusColor(incident.status)}>{incident.status}</Badge>
+          <Badge variant="outline" className={getSeverityColor(incident.severity)}>{incident.severity}</Badge>
+          <Badge variant="outline" className={`${sla.includes('2h') ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-muted'}`}>
+            <Clock className="h-3 w-3 mr-1" />{sla}
           </Badge>
         </div>
       </div>
@@ -125,65 +133,7 @@ export default function CaseReview() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left - Incident details (read-only) + Assessment (editable) */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Incident Info */}
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-role-reviewer" />Incident Information</CardTitle></CardHeader>
-            <CardContent className="space-y-3 opacity-80">
-              <div className="grid md:grid-cols-3 gap-4">
-                <div><p className="text-xs text-muted-foreground">Category</p><p className="text-sm font-medium">{incident.category}</p></div>
-                <div><p className="text-xs text-muted-foreground">Date & Time</p><p className="text-sm font-medium">{incident.incidentDate} at {incident.incidentTime}</p></div>
-                <div><p className="text-xs text-muted-foreground">Organisation</p><p className="text-sm font-medium">{incident.organisation}</p></div>
-              </div>
-              <div><p className="text-xs text-muted-foreground">Description</p><p className="text-sm text-muted-foreground leading-relaxed">{incident.description}</p></div>
-            </CardContent>
-          </Card>
-
-          {/* Location */}
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><MapPin className="h-5 w-5 text-role-reviewer" />Location Details</CardTitle></CardHeader>
-            <CardContent className="opacity-80">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div><p className="text-xs text-muted-foreground">Type</p><p className="text-sm font-medium">{incident.locationType}</p></div>
-                <div><p className="text-xs text-muted-foreground">Branch</p><p className="text-sm font-medium">{incident.branchName}</p></div>
-                <div><p className="text-xs text-muted-foreground">Address</p><p className="text-sm font-medium">{incident.address}</p></div>
-                <div><p className="text-xs text-muted-foreground">State / Postal</p><p className="text-sm font-medium">{incident.state}, {incident.postalCode}</p></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Affected Items */}
-          <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><Package className="h-5 w-5 text-role-reviewer" />Affected Items</CardTitle></CardHeader>
-            <CardContent className="opacity-80">
-              {incident.items.map((item, i) => (
-                <div key={i} className="p-3 border border-border rounded-lg">
-                  <div className="grid md:grid-cols-2 gap-3">
-                    <div><p className="text-xs text-muted-foreground">Tracking</p><p className="text-sm font-mono">{item.tracking}</p></div>
-                    <div><p className="text-xs text-muted-foreground">Type</p><p className="text-sm font-medium">{item.type}</p></div>
-                  </div>
-                  <div className="mt-2"><p className="text-xs text-muted-foreground">Description</p><p className="text-sm">{item.description}</p></div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Documents */}
-          <Card>
-            <CardHeader><CardTitle>Supporting Documents</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {incident.documents.map((doc, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 border border-border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded bg-role-reviewer/10 flex items-center justify-center"><FileText className="h-5 w-5 text-role-reviewer" /></div>
-                      <div><p className="text-sm font-medium">{doc.name}</p><p className="text-xs text-muted-foreground">{doc.size}</p></div>
-                    </div>
-                    <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-2" />Download</Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <CaseDetailsView incident={incident} />
 
           {/* Initial Assessment (editable) */}
           <Card className="border-role-reviewer/20">
@@ -239,10 +189,10 @@ export default function CaseReview() {
                 <Badge variant="outline" className="text-lg px-4 py-1 bg-status-in-review/20 text-status-in-review border-status-in-review/30">{incident.status}</Badge>
               </div>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">Case Age</span><span>{incident.agingDays} days</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">SLA</span><span className="text-destructive font-medium">{incident.sla}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Reporter</span><span>{incident.reporter}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{incident.submitted}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Case Age</span><span>{agingDays} days</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">SLA</span><span className="text-destructive font-medium">{sla}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Reporter</span><span>{incident.reporterName}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{incident.dateReported}</span></div>
               </div>
             </CardContent>
           </Card>
