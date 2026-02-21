@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Download, FileText, MapPin, Package, AlertTriangle, Clock, User } from 'lucide-react';
+import { ArrowLeft, Clock, User } from 'lucide-react';
+import CaseDetailsView, { getStatusColor, getSeverityColor, type CaseData } from '@/components/shared/CaseDetailsView';
 
 const timelineEvents = [
   { date: '2025-06-09', time: '09:15', actor: 'System', action: 'Incident submitted by Licensee Reporter' },
@@ -17,6 +18,43 @@ export default function CaseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const incident: CaseData = {
+    id: id || 'PSIRP-2025-0042',
+    title: 'High-value theft at KL Central Hub',
+    incidentType: 'Theft or loss of postal items (non-dangerous)',
+    category: 'Medium Severity Incident',
+    dateReported: '2025-06-09 09:15',
+    incidentDate: '2025-06-08',
+    incidentTime: '02:15',
+    branchName: 'KL Central Hub',
+    address: 'Jalan Tun Razak, 50400 Kuala Lumpur',
+    state: 'W.P. Kuala Lumpur',
+    postalCode: '50400',
+    companyName: 'Express Courier Sdn Bhd',
+    reporterName: 'Ali Hassan',
+    reporterDesignation: 'Facility Manager',
+    status: 'Escalation Pending',
+    severity: 'Critical',
+    leaEscalation: 'Yes',
+    description: 'Multiple high-value parcels reported missing from sorting facility during overnight shift. Security footage shows unauthorized access to restricted zone.',
+    systemServiceAffected: 'Sorting Facility Security System',
+    impactIndicators: ['Operational Disruption', 'Financial Impact', 'Safety Risk'],
+    items: [
+      { tracking: 'EC-2025-87654', type: 'Registered Parcel', declaration: 'Electronics – Laptop', weight: '3.2 kg', detectedItemType: 'Consumer Electronics', sender: { name: 'TechStore Online', address: 'Penang', stateCountry: 'Penang, Malaysia', contact: '+60124567890' }, receiver: { name: 'Ahmad Ismail', address: 'KL', stateCountry: 'KL, Malaysia', contact: '+60198765432' } },
+      { tracking: 'EC-2025-87655', type: 'Insured Parcel', declaration: 'Jewelry – Gold necklace set', weight: '0.5 kg', detectedItemType: 'Precious Items', sender: { name: 'Jewel House', address: 'JB', stateCountry: 'Johor, Malaysia', contact: '+60127654321' }, receiver: { name: 'Siti Aminah', address: 'Shah Alam', stateCountry: 'Selangor, Malaysia', contact: '+60191234567' } },
+    ],
+    immediateActions: 'Secured facility, preserved CCTV footage, interviewed night shift staff.',
+    incidentControlStatus: 'Under Monitoring',
+    reportedToAuthority: 'No',
+    parcelHandedOver: 'No',
+    assistanceRequested: ['Investigation Support'],
+    documents: [
+      { name: 'CCTV_Footage_Screenshot.jpg', size: '2.1 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-09 09:10' },
+      { name: 'Security_Log_20250608.pdf', size: '0.9 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-09 09:12' },
+      { name: 'Missing_Parcel_List.xlsx', size: '0.3 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-09 09:14' },
+    ],
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -24,10 +62,10 @@ export default function CaseDetail() {
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">{id}</h1>
+          <h1 className="text-2xl font-bold">{incident.id}</h1>
           <p className="text-muted-foreground">Case Detail – Supervisor View</p>
         </div>
-        <Badge variant="outline" className="border-destructive/50 text-destructive ml-auto text-sm px-3 py-1">Escalation Pending</Badge>
+        <Badge variant="outline" className={`ml-auto text-sm px-3 py-1 ${getStatusColor(incident.status)}`}>{incident.status}</Badge>
       </div>
 
       <Tabs defaultValue="details" className="space-y-4">
@@ -38,73 +76,8 @@ export default function CaseDetail() {
           <TabsTrigger value="escalation">Escalation Info</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="details" className="space-y-4">
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Card>
-              <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-4 w-4" /> Incident Information</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
-                {[
-                  ['Title', 'High-value theft at KL Central Hub'],
-                  ['Date', '2025-06-08'],
-                  ['Category', 'Theft / Pilferage'],
-                  ['Description', 'Multiple high-value parcels reported missing from sorting facility during overnight shift. Security footage shows unauthorized access to restricted zone.'],
-                ].map(([l, v]) => (
-                  <div key={l}><p className="text-xs text-muted-foreground">{l}</p><p className="text-sm">{v}</p></div>
-                ))}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle className="flex items-center gap-2"><MapPin className="h-4 w-4" /> Location Details</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
-                {[
-                  ['Type', 'Sorting Hub'],
-                  ['Branch', 'KL Central Hub'],
-                  ['Address', 'Jalan Tun Razak, 50400 Kuala Lumpur'],
-                  ['State', 'W.P. Kuala Lumpur'],
-                ].map(([l, v]) => (
-                  <div key={l}><p className="text-xs text-muted-foreground">{l}</p><p className="text-sm">{v}</p></div>
-                ))}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle className="flex items-center gap-2"><Package className="h-4 w-4" /> Affected Items</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
-                {[
-                  { tracking: 'EC-2025-87654', type: 'Registered Parcel', item: 'Electronics – Laptop' },
-                  { tracking: 'EC-2025-87655', type: 'Insured Parcel', item: 'Jewelry – Gold necklace set' },
-                ].map((p) => (
-                  <div key={p.tracking} className="p-3 border border-border/40 rounded-lg">
-                    <p className="text-sm font-medium">{p.tracking}</p>
-                    <p className="text-xs text-muted-foreground">{p.type} · {p.item}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader><CardTitle className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> Violation Details</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
-                {[
-                  ['Violation Type', 'Theft / Unauthorized Access'],
-                  ['Severity', 'Critical'],
-                  ['Explanation', 'Unauthorized personnel accessed restricted sorting area. Evidence of systematic targeting of high-value parcels.'],
-                ].map(([l, v]) => (
-                  <div key={l}><p className="text-xs text-muted-foreground">{l}</p><p className="text-sm">{v}</p></div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader><CardTitle>Supporting Documents</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
-              {['CCTV_Footage_Screenshot.jpg', 'Security_Log_20250608.pdf', 'Missing_Parcel_List.xlsx'].map((f) => (
-                <div key={f} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
-                  <span className="text-sm">{f}</span>
-                  <Button size="sm" variant="ghost"><Download className="h-4 w-4" /></Button>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+        <TabsContent value="details">
+          <CaseDetailsView incident={incident} />
         </TabsContent>
 
         <TabsContent value="assessment">
