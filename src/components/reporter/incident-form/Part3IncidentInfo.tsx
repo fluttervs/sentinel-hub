@@ -1,9 +1,8 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { IncidentFormData, StaffDetected, SenderRecipientInfo, postalIncidentTypeOptions } from './types';
+import { IncidentFormData, StaffDetected, SenderRecipientInfo, incidentTypeGroups, observedImpactOptions, parcelRelatedTypes } from './types';
 
 interface Props {
   data: IncidentFormData;
@@ -11,15 +10,6 @@ interface Props {
 }
 
 export default function Part3IncidentInfo({ data, onChange }: Props) {
-  const toggleType = (value: string) => {
-    const current = data.postalIncidentTypes;
-    if (current.includes(value)) {
-      onChange('postalIncidentTypes', current.filter((v) => v !== value));
-    } else {
-      onChange('postalIncidentTypes', [...current, value]);
-    }
-  };
-
   const updateStaff = (field: keyof StaffDetected, value: string) => {
     onChange('staffDetected', { ...data.staffDetected, [field]: value });
   };
@@ -32,28 +22,39 @@ export default function Part3IncidentInfo({ data, onChange }: Props) {
     onChange('recipientInfo', { ...data.recipientInfo, [field]: value });
   };
 
+  const showParcelSection = parcelRelatedTypes.has(data.primaryIncidentType);
+
   return (
     <div className="space-y-6">
-      {/* Type of Postal Security Incident */}
+      {/* Primary Incident Type – Single Select, Grouped */}
       <div className="space-y-3">
-        <Label>Type of Postal Security Incident *</Label>
-        <p className="text-xs text-muted-foreground">Select all that apply</p>
-        <div className="grid md:grid-cols-2 gap-3">
-          {postalIncidentTypeOptions.map((opt) => (
-            <div key={opt} className="flex items-center gap-3 p-3 border border-border rounded-lg hover:bg-muted/30 transition-colors">
-              <Checkbox
-                id={`postal-type-${opt}`}
-                checked={data.postalIncidentTypes.includes(opt)}
-                onCheckedChange={() => toggleType(opt)}
-              />
-              <Label htmlFor={`postal-type-${opt}`} className="cursor-pointer text-sm">{opt}</Label>
-            </div>
-          ))}
-        </div>
-        <div className="space-y-2 mt-2">
-          <Label>Others (please specify)</Label>
-          <Input value={data.postalIncidentOther} onChange={(e) => onChange('postalIncidentOther', e.target.value)} placeholder="Describe other incident type..." />
-        </div>
+        <Label>Primary Incident Type *</Label>
+        <p className="text-xs text-muted-foreground">Select one that best describes the incident</p>
+        <RadioGroup value={data.primaryIncidentType} onValueChange={(v) => onChange('primaryIncidentType', v)}>
+          <div className="space-y-4">
+            {incidentTypeGroups.map((group) => (
+              <div key={group.label} className="space-y-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{group.label}</p>
+                <div className="grid md:grid-cols-2 gap-2">
+                  {group.options.map((opt) => (
+                    <div
+                      key={opt}
+                      className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+                        data.primaryIncidentType === opt
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:bg-muted/30'
+                      }`}
+                      onClick={() => onChange('primaryIncidentType', opt)}
+                    >
+                      <RadioGroupItem value={opt} id={`incident-type-${opt}`} />
+                      <Label htmlFor={`incident-type-${opt}`} className="cursor-pointer text-sm flex-1">{opt}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </RadioGroup>
       </div>
 
       {/* Incident Description */}
@@ -111,86 +112,100 @@ export default function Part3IncidentInfo({ data, onChange }: Props) {
         <Input value={data.systemServiceAffected} onChange={(e) => onChange('systemServiceAffected', e.target.value)} placeholder="e.g. Parcel Tracking System, Sorting Hub Operations" />
       </div>
 
-      {/* Estimated Impact */}
+      {/* Observed Impact */}
       <div className="space-y-3">
-        <Label>Estimated Impact *</Label>
-        <RadioGroup value={data.estimatedImpact} onValueChange={(v) => onChange('estimatedImpact', v)} className="flex gap-6">
-          {['Low', 'Medium', 'High'].map((level) => (
-            <div key={level} className="flex items-center gap-2">
-              <RadioGroupItem value={level} id={`impact-${level}`} />
-              <Label htmlFor={`impact-${level}`} className="cursor-pointer">{level}</Label>
+        <Label>Observed Impact (Reporter Assessment) *</Label>
+        <p className="text-xs text-muted-foreground">Severity will be determined by MCMC upon review</p>
+        <RadioGroup value={data.observedImpact} onValueChange={(v) => onChange('observedImpact', v)} className="grid md:grid-cols-2 gap-2">
+          {observedImpactOptions.map((opt) => (
+            <div
+              key={opt}
+              className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+                data.observedImpact === opt
+                  ? 'border-primary bg-primary/5'
+                  : 'border-border hover:bg-muted/30'
+              }`}
+              onClick={() => onChange('observedImpact', opt)}
+            >
+              <RadioGroupItem value={opt} id={`impact-${opt}`} />
+              <Label htmlFor={`impact-${opt}`} className="cursor-pointer text-sm">{opt}</Label>
             </div>
           ))}
         </RadioGroup>
       </div>
 
-      {/* Sender Information */}
-      <div className="space-y-3 p-4 border border-border rounded-lg bg-muted/30">
-        <h4 className="text-sm font-semibold">Sender Information</h4>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Name</Label>
-            <Input value={data.senderInfo.name} onChange={(e) => updateSender('name', e.target.value)} />
+      {/* Parcel Information — conditionally visible */}
+      {showParcelSection && (
+        <>
+          {/* Sender Information */}
+          <div className="space-y-3 p-4 border border-border rounded-lg bg-muted/30">
+            <h4 className="text-sm font-semibold">Sender Information</h4>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Name</Label>
+                <Input value={data.senderInfo.name} onChange={(e) => updateSender('name', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Phone No.</Label>
+                <Input value={data.senderInfo.contact} onChange={(e) => updateSender('contact', e.target.value)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Address</Label>
+              <Textarea value={data.senderInfo.address} onChange={(e) => updateSender('address', e.target.value)} rows={2} />
+            </div>
+            <div className="space-y-2">
+              <Label>State / Country</Label>
+              <Input value={data.senderInfo.stateCountry} onChange={(e) => updateSender('stateCountry', e.target.value)} />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label>Phone No.</Label>
-            <Input value={data.senderInfo.contact} onChange={(e) => updateSender('contact', e.target.value)} />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label>Address</Label>
-          <Textarea value={data.senderInfo.address} onChange={(e) => updateSender('address', e.target.value)} rows={2} />
-        </div>
-        <div className="space-y-2">
-          <Label>State / Country</Label>
-          <Input value={data.senderInfo.stateCountry} onChange={(e) => updateSender('stateCountry', e.target.value)} />
-        </div>
-      </div>
 
-      {/* Recipient Information */}
-      <div className="space-y-3 p-4 border border-border rounded-lg bg-muted/30">
-        <h4 className="text-sm font-semibold">Recipient Information</h4>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Name</Label>
-            <Input value={data.recipientInfo.name} onChange={(e) => updateRecipient('name', e.target.value)} />
+          {/* Recipient Information */}
+          <div className="space-y-3 p-4 border border-border rounded-lg bg-muted/30">
+            <h4 className="text-sm font-semibold">Recipient Information</h4>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Name</Label>
+                <Input value={data.recipientInfo.name} onChange={(e) => updateRecipient('name', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Phone No.</Label>
+                <Input value={data.recipientInfo.contact} onChange={(e) => updateRecipient('contact', e.target.value)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Address</Label>
+              <Textarea value={data.recipientInfo.address} onChange={(e) => updateRecipient('address', e.target.value)} rows={2} />
+            </div>
+            <div className="space-y-2">
+              <Label>State / Country</Label>
+              <Input value={data.recipientInfo.stateCountry} onChange={(e) => updateRecipient('stateCountry', e.target.value)} />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label>Phone No.</Label>
-            <Input value={data.recipientInfo.contact} onChange={(e) => updateRecipient('contact', e.target.value)} />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label>Address</Label>
-          <Textarea value={data.recipientInfo.address} onChange={(e) => updateRecipient('address', e.target.value)} rows={2} />
-        </div>
-        <div className="space-y-2">
-          <Label>State / Country</Label>
-          <Input value={data.recipientInfo.stateCountry} onChange={(e) => updateRecipient('stateCountry', e.target.value)} />
-        </div>
-      </div>
 
-      {/* Tracking / Package Info */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Tracking / Consignment Number</Label>
-          <Input value={data.trackingNumber} onChange={(e) => onChange('trackingNumber', e.target.value)} placeholder="e.g. EC20250115-12345" />
-        </div>
-        <div className="space-y-2">
-          <Label>Package Declaration</Label>
-          <Input value={data.packageDeclaration} onChange={(e) => onChange('packageDeclaration', e.target.value)} placeholder="e.g. Electronic goods" />
-        </div>
-      </div>
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Package Weight (kg)</Label>
-          <Input type="number" min="0" step="0.1" value={data.packageWeight} onChange={(e) => onChange('packageWeight', e.target.value)} placeholder="e.g. 2.5" />
-        </div>
-        <div className="space-y-2">
-          <Label>Type of Prohibited Item Detected</Label>
-          <Input value={data.prohibitedItemType} onChange={(e) => onChange('prohibitedItemType', e.target.value)} placeholder="e.g. Narcotics, Firearms" />
-        </div>
-      </div>
+          {/* Tracking / Package Info */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Tracking / Consignment Number</Label>
+              <Input value={data.trackingNumber} onChange={(e) => onChange('trackingNumber', e.target.value)} placeholder="e.g. EC20250115-12345" />
+            </div>
+            <div className="space-y-2">
+              <Label>Package Declaration</Label>
+              <Input value={data.packageDeclaration} onChange={(e) => onChange('packageDeclaration', e.target.value)} placeholder="e.g. Electronic goods" />
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Package Weight (kg)</Label>
+              <Input type="number" min="0" step="0.1" value={data.packageWeight} onChange={(e) => onChange('packageWeight', e.target.value)} placeholder="e.g. 2.5" />
+            </div>
+            <div className="space-y-2">
+              <Label>Type of Prohibited Item Detected</Label>
+              <Input value={data.prohibitedItemType} onChange={(e) => onChange('prohibitedItemType', e.target.value)} placeholder="e.g. Narcotics, Firearms" />
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Other Related Information */}
       <div className="space-y-2">
