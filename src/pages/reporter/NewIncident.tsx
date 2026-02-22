@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { IncidentFormData, Step, emptySenderRecipient } from '@/components/reporter/incident-form/types';
 import SectionA from '@/components/reporter/incident-form/SectionA';
-import SectionB from '@/components/reporter/incident-form/SectionB';
 import Part3IncidentInfo from '@/components/reporter/incident-form/Part3IncidentInfo';
 import Part4ActionsTaken from '@/components/reporter/incident-form/Part4ActionsTaken';
 import SectionG from '@/components/reporter/incident-form/SectionG';
@@ -22,6 +21,8 @@ const initialFormData: IncidentFormData = {
   officialEmail: 'ahmad.ismail@posmalaysia.com.my',
   contactNumber: '+60 12-345 6789',
   faxNumber: '',
+  additionalPhone: '',
+  alternativeEmail: '',
   incidentType: '',
   postalIncidentTypes: [],
   postalIncidentOther: '',
@@ -65,12 +66,11 @@ export default function NewIncident() {
   }, []);
 
   const steps = [
-    { number: 1 as Step, title: 'Part 1 – Reporter Information', short: 'Reporter' },
-    { number: 2 as Step, title: 'Part 2 – Incident Classification', short: 'Classification' },
-    { number: 3 as Step, title: 'Part 3 – Incident Information', short: 'Incident' },
-    { number: 4 as Step, title: 'Part 4 – Actions Taken', short: 'Actions' },
-    { number: 5 as Step, title: 'Part 5 – Supporting Documents', short: 'Documents' },
-    { number: 6 as Step, title: 'Part 6 – Declaration', short: 'Declaration' },
+    { number: 1 as Step, title: 'Reporter Information', short: 'Reporter' },
+    { number: 2 as Step, title: 'Incident Information', short: 'Incident' },
+    { number: 3 as Step, title: 'Actions Taken', short: 'Actions' },
+    { number: 4 as Step, title: 'Supporting Documents', short: 'Documents' },
+    { number: 5 as Step, title: 'Declaration', short: 'Declaration' },
   ];
 
   const currentIdx = steps.findIndex((s) => s.number === currentStep);
@@ -98,8 +98,9 @@ export default function NewIncident() {
       toast({ title: 'Declaration Required', description: 'Please agree to the declaration before submitting.', variant: 'destructive' });
       return;
     }
-    toast({ title: 'Incident Submitted', description: 'Reference: PSIRP-2025-0026. Submission timestamp recorded.' });
-    navigate('/reporter/incidents/PSIRP-2025-0026');
+    const reportId = 'ABXX0020';
+    toast({ title: 'Incident Submitted', description: `Reference: ${reportId}. Submission timestamp recorded.` });
+    navigate(`/reporter/incidents/${reportId}`);
   };
 
   const currentStepInfo = steps[currentIdx];
@@ -151,11 +152,10 @@ export default function NewIncident() {
         <CardHeader><CardTitle>{currentStepInfo?.title}</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           {currentStep === 1 && <SectionA data={formData} onChange={updateField} />}
-          {currentStep === 2 && <SectionB data={formData} onChange={updateField} />}
-          {currentStep === 3 && <Part3IncidentInfo data={formData} onChange={updateField} />}
-          {currentStep === 4 && <Part4ActionsTaken data={formData} onChange={updateField} />}
-          {currentStep === 5 && <SectionG attachments={formData.attachments} onChange={(v) => updateField('attachments', v)} />}
-          {currentStep === 6 && <Part6Declaration data={formData} declaration={declaration} onDeclarationChange={setDeclaration} onDateChange={(d) => updateField('declarationDate', d)} />}
+          {currentStep === 2 && <Part3IncidentInfo data={formData} onChange={updateField} />}
+          {currentStep === 3 && <Part4ActionsTaken data={formData} onChange={updateField} />}
+          {currentStep === 4 && <SectionG attachments={formData.attachments} onChange={(v) => updateField('attachments', v)} />}
+          {currentStep === 5 && <Part6Declaration data={formData} declaration={declaration} onDeclarationChange={setDeclaration} onDateChange={(d) => updateField('declarationDate', d)} />}
         </CardContent>
       </Card>
 

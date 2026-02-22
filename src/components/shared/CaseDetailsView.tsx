@@ -2,7 +2,6 @@ import BasicCaseInfo from '@/components/reporter/incident-details/BasicCaseInfo'
 import IncidentDescription from '@/components/reporter/incident-details/IncidentDescription';
 import ActionsTaken from '@/components/reporter/incident-details/ActionsTaken';
 import SupportingDocuments from '@/components/reporter/incident-details/SupportingDocuments';
-import ClassificationNote from '@/components/reporter/incident-details/ClassificationNote';
 import { getAutoCategory } from '@/components/reporter/incident-form/types';
 
 export interface CaseData {
@@ -97,19 +96,16 @@ interface Props {
 export default function CaseDetailsView({ incident, children }: Props) {
   return (
     <div className="space-y-6">
-      {/* Part 1: Reporter Information */}
+      {/* Reporter Information */}
       <BasicCaseInfo incident={incident} getStatusColor={getStatusColor} getSeverityColor={getSeverityColor} />
 
-      {/* Part 2: Classification Note */}
-      <ClassificationNote />
-
-      {/* Part 3: Incident Information */}
+      {/* Incident Information */}
       <IncidentDescription incident={incident} />
 
-      {/* Part 4: Actions Taken */}
+      {/* Actions Taken */}
       <ActionsTaken incident={incident} />
 
-      {/* Part 5: Supporting Documents */}
+      {/* Supporting Documents */}
       <SupportingDocuments documents={incident.documents} />
 
       {children}

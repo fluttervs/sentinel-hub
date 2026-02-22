@@ -43,6 +43,18 @@ export default function SectionA({ data, onChange }: Props) {
         <Label>Fax Number</Label>
         <Input value={data.faxNumber} onChange={(e) => onChange('faxNumber', e.target.value)} placeholder="e.g. +60 3-1234 5678" />
       </div>
+
+      {/* Optional additional contact fields */}
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Additional Phone Number <span className="text-xs text-muted-foreground">(Optional)</span></Label>
+          <Input value={data.additionalPhone} onChange={(e) => onChange('additionalPhone', e.target.value)} placeholder="e.g. +60 13-987 6543" />
+        </div>
+        <div className="space-y-2">
+          <Label>Alternative Email <span className="text-xs text-muted-foreground">(Optional)</span></Label>
+          <Input type="email" value={data.alternativeEmail} onChange={(e) => onChange('alternativeEmail', e.target.value)} placeholder="e.g. alternate@company.com" />
+        </div>
+      </div>
     </div>
   );
 }

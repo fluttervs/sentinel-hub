@@ -156,22 +156,6 @@ export default function SectionB({ data, onChange }: Props) {
         </div>
       )}
 
-      {/* Classification Note */}
-      <div className="p-4 border border-primary/30 rounded-lg bg-primary/5 space-y-2">
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <AlertTriangle className="h-4 w-4 text-primary" />
-          Classification Note
-        </div>
-        <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
-          <li><strong>Prohibited Postal Items</strong> → Auto-flag as High / Critical, LEA Escalation = Yes</li>
-          <li><strong>Serious Threat</strong> → High / Critical, immediate action and escalation</li>
-          <li><strong>Medium Severity Incident</strong> → Monitoring, follow-up, or further action; escalation case-by-case</li>
-          <li><strong>Operational Issues (Low Severity)</strong> → Routine handling, usually no escalation</li>
-        </ul>
-        <p className="text-xs text-muted-foreground italic">
-          Final severity, case status, and escalation decision remain subject to validation or reclassification by MCMC.
-        </p>
-      </div>
     </div>
   );
 }
