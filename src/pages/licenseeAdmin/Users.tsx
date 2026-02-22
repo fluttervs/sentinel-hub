@@ -4,24 +4,38 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Edit, Ban, CheckCircle, Search, Users, FileSearch } from 'lucide-react';
+import { Edit, Ban, CheckCircle, Search, Users, FileSearch, Clock, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const usersData = [
-  { id: 1, name: 'Ahmad bin Abdullah', email: 'ahmad.abdullah@expresscourier.com', phone: '+60 12-345 6789', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 14:30', submissions: 14 },
-  { id: 2, name: 'Mastura binti Hassan', email: 'mastura.hassan@expresscourier.com', phone: '+60 13-456 7890', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 10:15', submissions: 11 },
-  { id: 3, name: 'Kamal Hassan', email: 'kamal.hassan@expresscourier.com', phone: '+60 14-567 8901', role: 'Reporter', status: 'Active', lastLogin: '2025-01-14 16:45', submissions: 9 },
-  { id: 4, name: 'Fatimah Zahra', email: 'fatimah.zahra@expresscourier.com', phone: '+60 15-678 9012', role: 'Reporter', status: 'Active', lastLogin: '2025-01-15 09:00', submissions: 8 },
-  { id: 5, name: 'Azman Ali', email: 'azman.ali@expresscourier.com', phone: '+60 16-789 0123', role: 'Reporter', status: 'Inactive', lastLogin: '2024-12-20 11:30', submissions: 5 },
+  { id: 1, name: 'Ahmad bin Abdullah', email: 'ahmad.abdullah@expresscourier.com', phone: '+60 12-345 6789', role: 'Reporter', status: 'Active', submissions: 14, draftDate: '2025-02-18', hasDraft: true },
+  { id: 2, name: 'Mastura binti Hassan', email: 'mastura.hassan@expresscourier.com', phone: '+60 13-456 7890', role: 'Reporter', status: 'Active', submissions: 11, draftDate: '2025-02-20', hasDraft: true },
+  { id: 3, name: 'Kamal Hassan', email: 'kamal.hassan@expresscourier.com', phone: '+60 14-567 8901', role: 'Reporter', status: 'Active', submissions: 9, draftDate: null, hasDraft: false },
+  { id: 4, name: 'Fatimah Zahra', email: 'fatimah.zahra@expresscourier.com', phone: '+60 15-678 9012', role: 'Reporter', status: 'Active', submissions: 8, draftDate: '2025-02-15', hasDraft: true },
+  { id: 5, name: 'Azman Ali', email: 'azman.ali@expresscourier.com', phone: '+60 16-789 0123', role: 'Reporter', status: 'Inactive', submissions: 5, draftDate: null, hasDraft: false },
 ];
+
+function getDraftDaysRemaining(draftDate: string | null): number | null {
+  if (!draftDate) return null;
+  const draft = new Date(draftDate);
+  const now = new Date('2026-02-22');
+  const diffMs = 7 * 24 * 60 * 60 * 1000 - (now.getTime() - draft.getTime());
+  return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+}
+
+function getDraftBadge(daysRemaining: number | null) {
+  if (daysRemaining === null) return null;
+  if (daysRemaining <= 0) return <Badge variant="outline" className="bg-destructive/20 text-destructive border-destructive/30 text-xs">Overdue</Badge>;
+  if (daysRemaining <= 2) return <Badge variant="outline" className="bg-destructive/20 text-destructive border-destructive/30 text-xs"><Clock className="h-3 w-3 mr-1" />{daysRemaining}d left</Badge>;
+  if (daysRemaining <= 4) return <Badge variant="outline" className="bg-status-rfi/20 text-status-rfi border-status-rfi/30 text-xs"><Clock className="h-3 w-3 mr-1" />{daysRemaining}d left</Badge>;
+  return <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30 text-xs"><Clock className="h-3 w-3 mr-1" />{daysRemaining}d left</Badge>;
+}
 
 export default function LicenseeAdminUsers() {
   const { toast } = useToast();
-  const [addOpen, setAddOpen] = useState(false);
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<typeof usersData[0] | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,17 +43,16 @@ export default function LicenseeAdminUsers() {
 
   const activeCount = usersData.filter(u => u.status === 'Active').length;
   const inactiveCount = usersData.filter(u => u.status === 'Inactive').length;
+  const overdueCount = usersData.filter(u => {
+    const days = getDraftDaysRemaining(u.draftDate);
+    return days !== null && days <= 0;
+  }).length;
 
   const filtered = usersData.filter(u => {
     const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || u.status.toLowerCase() === statusFilter;
     return matchesSearch && matchesStatus;
   });
-
-  const handleAddUser = () => {
-    toast({ title: "User Added", description: "New user has been added successfully." });
-    setAddOpen(false);
-  };
 
   const handleDeactivate = () => {
     toast({ title: "Deactivation Requested", description: `Deactivation request for ${selectedUser?.name} has been submitted.` });
@@ -63,15 +76,15 @@ export default function LicenseeAdminUsers() {
         <p className="text-muted-foreground">Manage reporters in your organisation</p>
       </div>
 
-      {/* Analytics Panel — 2 boxes, full width */}
-      <div className="grid gap-4 grid-cols-2">
+      {/* Analytics Panel */}
+      <div className="grid gap-4 grid-cols-3">
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-status-closed/15 flex items-center justify-center">
               <Users className="h-5 w-5 text-status-closed" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Active vs Inactive</p>
+              <p className="text-xs text-muted-foreground">Active / Inactive</p>
               <p className="text-lg font-bold">{activeCount} / {inactiveCount}</p>
             </div>
           </CardContent>
@@ -84,6 +97,17 @@ export default function LicenseeAdminUsers() {
             <div>
               <p className="text-xs text-muted-foreground">Total Reporters</p>
               <p className="text-lg font-bold">{usersData.length}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-destructive/15 flex items-center justify-center">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Overdue Drafts</p>
+              <p className="text-lg font-bold">{overdueCount}</p>
             </div>
           </CardContent>
         </Card>
@@ -107,54 +131,6 @@ export default function LicenseeAdminUsers() {
                 <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
-            <Dialog open={addOpen} onOpenChange={setAddOpen}>
-              <DialogTrigger asChild>
-                <Button className="glow-purple">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add User
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Reporter</DialogTitle>
-                  <DialogDescription>Create a new reporter account for your organisation.</DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input id="name" placeholder="Enter full name" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email *</Label>
-                    <Input id="email" type="email" placeholder="user@expresscourier.com" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+60 12-345 6789" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Role *</Label>
-                    <Select defaultValue="reporter">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="reporter">Reporter</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="active">Active</Label>
-                    <Switch id="active" defaultChecked />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
-                  <Button onClick={handleAddUser}>Add User</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
           </div>
         </CardContent>
       </Card>
@@ -166,43 +142,50 @@ export default function LicenseeAdminUsers() {
             <table className="w-full">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Name</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Email</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Phone Number</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Status</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Submissions</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Actions</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Email</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Phone Number</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Submissions</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Draft Deadline</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((user) => (
-                  <tr key={user.id} className="border-b hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-4">
-                      <div>
-                        <span className="font-medium">{user.name}</span>
-                        <Badge variant="outline" className="ml-2 text-xs">{user.role}</Badge>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.email}</td>
-                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.phone}</td>
-                    <td className="px-4 py-4">
-                      <Badge variant="outline" className={user.status === 'Active' ? 'bg-status-closed/20 text-status-closed border-status-closed/30' : 'bg-destructive/20 text-destructive border-destructive/30'}>
-                        {user.status}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-4 text-sm font-medium">{user.submissions}</td>
-                    <td className="px-4 py-4">
-                      <div className="flex gap-1">
-                        <Button size="sm" variant="ghost" title="Edit">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="ghost" title={user.status === 'Active' ? 'Deactivate' : 'Activate'} onClick={() => handleToggleStatus(user)}>
-                          {user.status === 'Active' ? <Ban className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {filtered.map((user) => {
+                  const daysRemaining = getDraftDaysRemaining(user.draftDate);
+                  return (
+                    <tr key={user.id} className="border-b hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-4">
+                        <div>
+                          <span className="font-medium">{user.name}</span>
+                          <Badge variant="outline" className="ml-2 text-xs">{user.role}</Badge>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-muted-foreground">{user.email}</td>
+                      <td className="px-4 py-4 text-sm text-muted-foreground">{user.phone}</td>
+                      <td className="px-4 py-4">
+                        <Badge variant="outline" className={user.status === 'Active' ? 'bg-status-closed/20 text-status-closed border-status-closed/30' : 'bg-destructive/20 text-destructive border-destructive/30'}>
+                          {user.status}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-4 text-sm font-medium">{user.submissions}</td>
+                      <td className="px-4 py-4">
+                        {user.hasDraft ? getDraftBadge(daysRemaining) : <span className="text-xs text-muted-foreground">No draft</span>}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex gap-1">
+                          <Button size="sm" variant="ghost" title="Edit">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost" title={user.status === 'Active' ? 'Deactivate' : 'Activate'} onClick={() => handleToggleStatus(user)}>
+                            {user.status === 'Active' ? <Ban className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

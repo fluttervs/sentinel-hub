@@ -47,6 +47,7 @@ import AuditCompliance from "./pages/validator/AuditCompliance";
 import SearchReports from "./pages/validator/SearchReports";
 import SupervisorNotifications from "./pages/validator/Notifications";
 import SupervisorSecurity from "./pages/validator/Security";
+import SupervisorAnalytics from "./pages/validator/Analytics";
 import InvestigatorLayout from "./components/investigator/InvestigatorLayout";
 import InvestigatorDashboard from "./pages/investigator/Dashboard";
 import InvestigatorAnalytics from "./pages/investigator/Analytics";
@@ -69,6 +70,7 @@ import LEACaseList from "./pages/lea/CaseList";
 import LEACaseDetail from "./pages/lea/CaseDetail";
 import LEANotifications from "./pages/lea/Notifications";
 import LEASecurity from "./pages/lea/Security";
+import LEAAnalytics from "./pages/lea/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -146,6 +148,7 @@ const App = () => (
                   <Route path="audit" element={<AuditCompliance />} />
                   <Route path="reports" element={<SearchReports />} />
                   <Route path="notifications" element={<SupervisorNotifications />} />
+                  <Route path="analytics" element={<SupervisorAnalytics />} />
                   <Route path="security" element={<SupervisorSecurity />} />
                 </Route>
                 
@@ -177,6 +180,7 @@ const App = () => (
                   <Route path="dashboard" element={<LEADashboard />} />
                   <Route path="cases" element={<LEACaseList />} />
                   <Route path="cases/:id" element={<LEACaseDetail />} />
+                  <Route path="analytics" element={<LEAAnalytics />} />
                   <Route path="notifications" element={<LEANotifications />} />
                   <Route path="security" element={<LEASecurity />} />
                 </Route>

@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Clock, User } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, Clock, User, Send, Paperclip, MessageSquare } from 'lucide-react';
 import CaseDetailsView, { getStatusColor, getSeverityColor, type CaseData } from '@/components/shared/CaseDetailsView';
 
 const timelineEvents = [
@@ -13,6 +15,51 @@ const timelineEvents = [
   { date: '2025-06-10', time: '09:00', actor: 'Ahmad Razif', action: 'Escalation request submitted to Supervisor' },
   { date: '2025-06-10', time: '11:45', actor: 'System', action: 'Status changed to Escalation Pending Approval' },
 ];
+
+function RFICommunication() {
+  const [replyText, setReplyText] = useState('');
+  const communications = [
+    { id: 1, from: 'Case Officer (Ahmad Razif)', fromRole: 'reviewer', type: 'rfi', message: 'Please provide the access control logs for the past 48 hours and confirm whether CCTV footage from Camera 3 and 7 is available.', timestamp: '2025-06-09 09:30' },
+    { id: 2, from: 'Licensee Reporter (Ali Hassan)', fromRole: 'reporter', type: 'reply', message: 'Access control logs attached. CCTV footage from Camera 3 is available and being prepared for secure transfer.', timestamp: '2025-06-09 10:15' },
+    { id: 3, from: 'Licensee Admin', fromRole: 'admin', type: 'reply', message: 'Confirmed internal review of the incident. All relevant documentation has been gathered.', timestamp: '2025-06-09 14:00' },
+  ];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2"><MessageSquare className="h-5 w-5" />RFIs & Communication</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+          {communications.map((comm) => (
+            <div key={comm.id} className={`flex ${comm.fromRole === 'reviewer' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[85%] rounded-lg p-3 ${
+                comm.fromRole === 'reviewer' ? 'bg-role-reviewer/10 border border-role-reviewer/20' :
+                comm.fromRole === 'admin' ? 'bg-role-validator/10 border border-role-validator/20' :
+                'bg-muted border border-border'
+              }`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-xs font-semibold">{comm.from}</p>
+                  {comm.type === 'rfi' && <Badge variant="destructive" className="text-[10px] px-1 py-0">RFI</Badge>}
+                </div>
+                <p className="text-xs leading-relaxed">{comm.message}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{comm.timestamp}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="border-t pt-3 space-y-2">
+          <p className="text-xs text-muted-foreground">Respond as MCMC Supervisor — visible to Officer, Reporter, and Licensee Admin.</p>
+          <Textarea placeholder="Send a message..." value={replyText} onChange={(e) => setReplyText(e.target.value)} rows={3} className="resize-none text-sm" />
+          <div className="flex justify-between">
+            <Button variant="outline" size="sm"><Paperclip className="h-4 w-4 mr-1" />Attach</Button>
+            <Button onClick={() => { if (replyText.trim()) setReplyText(''); }} disabled={!replyText.trim()} size="sm"><Send className="h-4 w-4 mr-1" />Send</Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function CaseDetail() {
   const { id } = useParams();
@@ -70,6 +117,7 @@ export default function CaseDetail() {
         <TabsList>
           <TabsTrigger value="details">Case Details</TabsTrigger>
           <TabsTrigger value="assessment">Officer Assessment</TabsTrigger>
+          <TabsTrigger value="rfis">RFIs & Communication</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="escalation">Escalation Info</TabsTrigger>
         </TabsList>
@@ -106,6 +154,10 @@ export default function CaseDetail() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="rfis">
+          <RFICommunication />
         </TabsContent>
 
         <TabsContent value="timeline">

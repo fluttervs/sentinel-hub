@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Lock, CheckCircle, Upload, Send, FileText, Download } from 'lucide-react';
+import { ArrowLeft, Lock, CheckCircle, Send, FileText, Download, Share2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CaseDetailsView, { getStatusColor, type CaseData } from '@/components/shared/CaseDetailsView';
 
@@ -76,9 +77,6 @@ export default function LEACaseDetail() {
     toast({ title: 'Status Updated', description: `Investigation status changed to "${status}".` });
   };
 
-  const handleUpload = () => {
-    toast({ title: 'File Uploaded', description: 'Investigation report uploaded and logged.' });
-  };
 
   const handleClarification = () => {
     if (!clarificationMsg.trim()) return;
@@ -114,6 +112,39 @@ export default function LEACaseDetail() {
               <CheckCircle className="h-4 w-4 mr-2" /> Acknowledge Receipt
             </Button>
           )}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Share2 className="h-4 w-4 mr-2" /> Share Report
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Share Report with LEA Agency</DialogTitle></DialogHeader>
+              <div className="space-y-4 py-4">
+                <div>
+                  <Label>Recipient Agency</Label>
+                  <Select>
+                    <SelectTrigger><SelectValue placeholder="Select agency" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pdrm-ccid">PDRM — CCID</SelectItem>
+                      <SelectItem value="pdrm-narcotics">PDRM — Narcotics</SelectItem>
+                      <SelectItem value="kastam">Royal Malaysian Customs (KASTAM)</SelectItem>
+                      <SelectItem value="macc">MACC</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Message (optional)</Label>
+                  <Textarea placeholder="Add context for the receiving agency..." rows={3} />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={() => toast({ title: 'Report Shared', description: 'Case report has been shared with the selected agency.' })}>
+                  <Share2 className="h-4 w-4 mr-2" /> Share
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -159,35 +190,32 @@ export default function LEACaseDetail() {
 
         <TabsContent value="uploads">
           <Card>
-            <CardHeader><CardTitle>Upload Investigation Reports & Evidence</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground mb-1">Upload investigation reports, official correspondence, or supporting evidence</p>
-                <p className="text-xs text-muted-foreground mb-4">Accepted: PDF, DOCX, PNG, JPG — Max 20MB per file</p>
-                <Button variant="outline" onClick={handleUpload}>
-                  <Upload className="h-4 w-4 mr-2" /> Select Files
-                </Button>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Investigation Reports & Evidence</CardTitle>
+                <Badge variant="outline" className="gap-1" style={{ color: 'hsl(220 70% 50%)', borderColor: 'hsl(220 70% 50% / 0.3)' }}>
+                  <Lock className="h-3 w-3" /> Read-Only
+                </Badge>
               </div>
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Uploaded Files</p>
-                {[
-                  { name: 'Investigation_Report_ESC001.pdf', date: '2025-06-22', user: 'Insp. Razak' },
-                  { name: 'Evidence_Photo_001.jpg', date: '2025-06-18', user: 'Insp. Razak' },
-                  { name: 'Witness_Statement.pdf', date: '2025-06-20', user: 'Insp. Razak' },
-                ].map((f) => (
-                  <div key={f.name} className="flex items-center justify-between p-2 border border-border/40 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm">{f.name}</p>
-                        <p className="text-xs text-muted-foreground">{f.date} — {f.user}</p>
-                      </div>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-sm font-medium">Files</p>
+              {[
+                { name: 'Investigation_Report_ESC001.pdf', date: '2025-06-22', user: 'Insp. Razak' },
+                { name: 'Evidence_Photo_001.jpg', date: '2025-06-18', user: 'Insp. Razak' },
+                { name: 'Witness_Statement.pdf', date: '2025-06-20', user: 'Insp. Razak' },
+              ].map((f) => (
+                <div key={f.name} className="flex items-center justify-between p-2 border border-border/40 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm">{f.name}</p>
+                      <p className="text-xs text-muted-foreground">{f.date} — {f.user}</p>
                     </div>
-                    <Button size="sm" variant="ghost"><Download className="h-4 w-4" /></Button>
                   </div>
-                ))}
-              </div>
+                  <Button size="sm" variant="ghost"><Download className="h-4 w-4" /></Button>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </TabsContent>
