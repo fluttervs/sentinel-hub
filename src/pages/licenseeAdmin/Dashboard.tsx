@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Users, FileText, AlertTriangle, CheckCircle2, Clock,
-  Shield, Activity
+  Activity
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
@@ -15,8 +15,6 @@ const kpiCards = [
   { label: 'Under Review', value: 8, icon: Clock, color: 'text-status-in-review' },
   { label: 'Escalated Cases', value: 5, icon: AlertTriangle, color: 'text-destructive' },
   { label: 'Closed Cases', value: 30, icon: CheckCircle2, color: 'text-status-closed' },
-  { label: 'Avg Submission', value: '2.4h', icon: Clock, color: 'text-primary' },
-  { label: 'Compliance Score', value: '92%', icon: Shield, color: 'text-role-licensee-admin' },
 ];
 
 const casesByState = [
@@ -71,7 +69,7 @@ export default function LicenseeAdminDashboard() {
       </div>
 
       {/* KPI Cards — no trend indicators */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
         {kpiCards.map((kpi) => (
           <Card key={kpi.label} className="hover:shadow-lg transition-shadow duration-200">
             <CardContent className="p-4">
