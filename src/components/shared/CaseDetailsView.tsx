@@ -27,7 +27,9 @@ export interface CaseData {
   leaEscalation: string;
   description: string;
   systemServiceAffected?: string;
+  observedImpact?: string;
   estimatedImpact?: string;
+  primaryIncidentType?: string;
   postalIncidentTypes?: string[];
   staffDetected?: { name: string; designation: string; contactNumber: string; email: string };
   senderInfo?: { name: string; address: string; stateCountry: string; contact: string };

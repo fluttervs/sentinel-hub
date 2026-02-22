@@ -25,15 +25,14 @@ export interface IncidentFormData {
   alternativeEmail: string;
 
   // Part 3: Incident Information
-  postalIncidentTypes: string[];
-  postalIncidentOther: string;
+  primaryIncidentType: string;
   description: string;
   incidentDate: string;
   incidentTime: string;
   incidentLocation: string;
   staffDetected: StaffDetected;
   systemServiceAffected: string;
-  estimatedImpact: string; // Low | Medium | High
+  observedImpact: string;
   senderInfo: SenderRecipientInfo;
   recipientInfo: SenderRecipientInfo;
   trackingNumber: string;
@@ -61,23 +60,93 @@ export interface IncidentFormData {
 
 export type Step = 1 | 2 | 3 | 4 | 5;
 
-// Postal security incident type options for Part 3 checkboxes
-export const postalIncidentTypeOptions = [
-  'Theft or Pilferage',
-  'Loss of Postal Item',
-  'Tampering / Damage',
-  'Suspicious / Prohibited Item Detected',
-  'Counterfeit or Pirated Goods',
-  'Dangerous / Toxic / Flammable Materials',
-  'Illegal Drugs or Narcotics',
-  'Firearms / Weapons / Ammunition',
-  'Cyber Incident / Data Breach',
-  'Infrastructure Damage / Sabotage',
-  'Fraud / Scam',
-  'Natural Disaster Impact',
-  'Operational Disruption',
+// Grouped incident type options for Part 3
+export interface IncidentTypeGroup {
+  label: string;
+  options: string[];
+}
+
+export const incidentTypeGroups: IncidentTypeGroup[] = [
+  {
+    label: 'Prohibited Postal Items',
+    options: [
+      'Gold bullion',
+      'Counterfeit or pirated goods',
+      'Currency',
+      'Dangerous, toxic, or flammable materials',
+      'Illegal drugs or narcotics',
+      'Firearms, weapons, ammunition (including replicas)',
+      'Bearer negotiable instruments',
+      'Pornographic materials',
+      'Wildlife or exotic animals',
+      'Items prohibited under Federal, State, or local laws',
+    ],
+  },
+  {
+    label: 'Serious Threat',
+    options: [
+      'Explosives, biological or chemical threats',
+      'Data leakage or cyber incidents',
+      'Sabotage or large-scale infrastructure damage',
+      'Criminal activities within postal hubs',
+      'Gas leaks, fires, or major accidents',
+      'Significant disruption to postal operations',
+    ],
+  },
+  {
+    label: 'Medium Severity Incident',
+    options: [
+      'Scam or fraud cases',
+      'Theft or loss of postal items',
+      'Mail tampering',
+      'System outage',
+      'Floods or natural disasters',
+      'Suspicious package (false alarm)',
+      'Non-compliance with postal procedures',
+      'Limited impact data access incidents',
+    ],
+  },
+  {
+    label: 'Operational Issues',
+    options: [
+      'Customs hold',
+      'Minor delivery delays',
+      'Documentation errors',
+      'Procedural lapses',
+      'Customer complaints (non-security)',
+      'Administrative issues',
+      'Minor system/process issues',
+    ],
+  },
 ];
 
+export const observedImpactOptions = [
+  'Operational Disruption',
+  'Safety Risk',
+  'Financial Impact',
+  'Data / Information Risk',
+  'Reputational Risk',
+  'No Significant Impact',
+];
+
+// Incident types that require parcel information section
+export const parcelRelatedTypes = new Set([
+  // All Prohibited Postal Items
+  'Gold bullion',
+  'Counterfeit or pirated goods',
+  'Currency',
+  'Dangerous, toxic, or flammable materials',
+  'Illegal drugs or narcotics',
+  'Firearms, weapons, ammunition (including replicas)',
+  'Bearer negotiable instruments',
+  'Pornographic materials',
+  'Wildlife or exotic animals',
+  'Items prohibited under Federal, State, or local laws',
+  // Theft / loss / tampering / suspicious
+  'Theft or loss of postal items',
+  'Mail tampering',
+  'Suspicious package (false alarm)',
+]);
 
 export const emptySenderRecipient: SenderRecipientInfo = {
   name: '', address: '', stateCountry: '', contact: '',

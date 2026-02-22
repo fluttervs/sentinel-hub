@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Info, Package } from 'lucide-react';
+import { Info } from 'lucide-react';
 
 interface Props {
   incident: {
@@ -9,7 +9,10 @@ interface Props {
     incidentTime: string;
     incidentLocation?: string;
     systemServiceAffected?: string;
+    observedImpact?: string;
+    // Legacy support
     estimatedImpact?: string;
+    primaryIncidentType?: string;
     postalIncidentTypes?: string[];
     staffDetected?: { name: string; designation: string; contactNumber: string; email: string };
     senderInfo?: { name: string; address: string; stateCountry: string; contact: string };
@@ -32,6 +35,8 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 export default function IncidentDescription({ incident }: Props) {
+  const impact = incident.observedImpact || incident.estimatedImpact;
+
   return (
     <Card>
       <CardHeader>
@@ -41,8 +46,16 @@ export default function IncidentDescription({ incident }: Props) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-5">
-        {/* Postal Incident Types */}
-        {incident.postalIncidentTypes && incident.postalIncidentTypes.length > 0 && (
+        {/* Primary Incident Type */}
+        {incident.primaryIncidentType && (
+          <div>
+            <p className="text-xs text-muted-foreground mb-2">Primary Incident Type</p>
+            <Badge variant="outline" className="text-xs">{incident.primaryIncidentType}</Badge>
+          </div>
+        )}
+
+        {/* Legacy: Postal Incident Types (multi) */}
+        {!incident.primaryIncidentType && incident.postalIncidentTypes && incident.postalIncidentTypes.length > 0 && (
           <div>
             <p className="text-xs text-muted-foreground mb-2">Type of Postal Security Incident</p>
             <div className="flex flex-wrap gap-2">
@@ -88,15 +101,11 @@ export default function IncidentDescription({ incident }: Props) {
           <Field label="Affected System/Service" value={incident.systemServiceAffected} />
         )}
 
-        {/* Estimated Impact */}
-        {incident.estimatedImpact && (
+        {/* Observed Impact */}
+        {impact && (
           <div>
-            <p className="text-xs text-muted-foreground mb-1">Estimated Impact</p>
-            <Badge variant="outline" className={`text-xs ${
-              incident.estimatedImpact === 'High' ? 'bg-destructive/20 text-destructive border-destructive/30' :
-              incident.estimatedImpact === 'Medium' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
-              'bg-green-500/20 text-green-400 border-green-500/30'
-            }`}>{incident.estimatedImpact}</Badge>
+            <p className="text-xs text-muted-foreground mb-1">Observed Impact (Reporter Assessment)</p>
+            <Badge variant="outline" className="text-xs">{impact}</Badge>
           </div>
         )}
 
