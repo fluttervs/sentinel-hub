@@ -24,8 +24,6 @@ export default function InvestigatorCaseDetail() {
   const incident: CaseData = {
     id: id || 'PSIRP-2025-0063',
     title: 'Missing parcel from sorting hub',
-    incidentType: 'Theft or loss of postal items (non-dangerous)',
-    category: 'Medium Severity Incident',
     dateReported: '2025-06-10 09:15',
     incidentDate: '2025-06-08',
     incidentTime: '14:22',
@@ -94,7 +92,7 @@ export default function InvestigatorCaseDetail() {
             <CardHeader><CardTitle>Officer Assessment</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
-                <div><p className="text-xs text-muted-foreground">Classification</p><p className="text-sm font-medium">Package Theft / Missing</p></div>
+                
                 <div><p className="text-xs text-muted-foreground">Severity</p><p className="text-sm font-medium">Medium</p></div>
                 <div><p className="text-xs text-muted-foreground">Risk Indicator</p><p className="text-sm font-medium">Moderate</p></div>
                 <div><p className="text-xs text-muted-foreground">Assigned Officer</p><p className="text-sm font-medium">Raj Kumar</p></div>

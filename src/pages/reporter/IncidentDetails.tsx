@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Paperclip, Send } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
-import CaseDetailsView, { getStatusColor, getSeverityColor, getAutoCategory, type CaseData } from '@/components/shared/CaseDetailsView';
+import CaseDetailsView, { getStatusColor, getSeverityColor, type CaseData } from '@/components/shared/CaseDetailsView';
 
 export default function IncidentDetails() {
   const navigate = useNavigate();
@@ -18,8 +18,6 @@ export default function IncidentDetails() {
     title: 'High-Value Package Theft',
     status: 'In Review',
     severity: 'High',
-    incidentType: 'Theft or loss of postal items (non-dangerous)',
-    category: getAutoCategory('Theft or loss of postal items (non-dangerous)'),
     description: 'A high-value package containing electronic goods was reported missing from the KL Distribution Center during the morning shift. The package was last scanned at 08:45 AM and could not be located during the 10:00 AM audit.',
     incidentDate: '2025-01-15',
     incidentTime: '08:45',

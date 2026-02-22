@@ -22,7 +22,7 @@ export default function CaseReview() {
   const { id } = useParams();
   const { toast } = useToast();
 
-  const [classification, setClassification] = useState('theft');
+  
   const [severityLevel, setSeverityLevel] = useState('high');
   const [preliminaryFindings, setPreliminaryFindings] = useState('');
   const [internalNotes, setInternalNotes] = useState('');
@@ -36,8 +36,6 @@ export default function CaseReview() {
     title: 'Critical Security Breach',
     status: 'Under Review',
     severity: 'Critical',
-    incidentType: 'Criminal activities within postal hubs',
-    category: 'Serious Threat',
     description: 'A critical security breach was detected at the main sorting facility. Unauthorized access to restricted areas was recorded by security systems during the early morning hours of January 16th.',
     incidentDate: '2025-01-16',
     incidentTime: '03:15',
@@ -108,7 +106,7 @@ export default function CaseReview() {
   };
 
   const handleSaveAssessment = () => {
-    toast({ title: 'Assessment Saved', description: 'Classification and findings have been recorded.' });
+    toast({ title: 'Assessment Saved', description: 'Findings have been recorded.' });
   };
 
   return (
@@ -140,20 +138,6 @@ export default function CaseReview() {
             <CardHeader><CardTitle className="flex items-center gap-2 text-role-reviewer"><ShieldAlert className="h-5 w-5" />Initial Assessment</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Classification *</Label>
-                  <Select value={classification} onValueChange={setClassification}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="theft">Theft & Loss</SelectItem>
-                      <SelectItem value="tampering">Tampering</SelectItem>
-                      <SelectItem value="fraud">Fraud</SelectItem>
-                      <SelectItem value="dangerous-goods">Dangerous Goods</SelectItem>
-                      <SelectItem value="security-breach">Security Breach</SelectItem>
-                      <SelectItem value="regulatory">Regulatory Compliance</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
                 <div className="space-y-2">
                   <Label>Severity Level *</Label>
                   <Select value={severityLevel} onValueChange={setSeverityLevel}>
