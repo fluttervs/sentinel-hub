@@ -166,13 +166,12 @@ export default function LicenseeAdminUsers() {
             <table className="w-full">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Email</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Phone Number</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Status</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Last Login</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Submissions</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Actions</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Name</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Email</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Phone Number</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Status</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Submissions</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium w-1/6">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -191,7 +190,6 @@ export default function LicenseeAdminUsers() {
                         {user.status}
                       </Badge>
                     </td>
-                    <td className="px-4 py-4 text-sm text-muted-foreground">{user.lastLogin}</td>
                     <td className="px-4 py-4 text-sm font-medium">{user.submissions}</td>
                     <td className="px-4 py-4">
                       <div className="flex gap-1">

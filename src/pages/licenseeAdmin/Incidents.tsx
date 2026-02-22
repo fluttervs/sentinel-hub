@@ -15,7 +15,7 @@ import CaseDetailsView, { CaseData } from '@/components/shared/CaseDetailsView';
 
 const incidents = [
   { id: 'PSIRP-2025-0025', reporter: 'Ahmad bin Abdullah', type: 'Theft', severity: 'High', status: 'Under Review', submitted: '2025-01-15', escalated: true, description: 'High-value package theft at sorting facility', attachments: ['evidence-photo.jpg', 'cctv-footage.mp4'] },
-  { id: 'PSIRP-2025-0024', reporter: 'Siti Nurhaliza', type: 'Suspicious Parcel', severity: 'Medium', status: 'Submitted', submitted: '2025-01-14', escalated: false, description: 'Suspicious parcel detected during scanning', attachments: ['scan-report.pdf'] },
+  { id: 'PSIRP-2025-0024', reporter: 'Mohd Zaki', type: 'Suspicious Parcel', severity: 'Medium', status: 'Submitted', submitted: '2025-01-14', escalated: false, description: 'Suspicious parcel detected during scanning', attachments: ['scan-report.pdf'] },
   { id: 'PSIRP-2025-0023', reporter: 'Kamal Hassan', type: 'Prohibited Items', severity: 'Low', status: 'Draft', submitted: '2025-01-13', escalated: false, description: 'Prohibited items found in shipment', attachments: [] },
   { id: 'PSIRP-2025-0022', reporter: 'Fatimah Zahra', type: 'Security Breach', severity: 'High', status: 'Escalated', submitted: '2025-01-12', escalated: true, description: 'Unauthorized access to secure area', attachments: ['access-log.csv', 'photo1.jpg'] },
   { id: 'PSIRP-2025-0021', reporter: 'Azman Ali', type: 'Theft', severity: 'Critical', status: 'Closed', submitted: '2025-01-11', escalated: true, description: 'Serial theft case across multiple branches', attachments: ['police-report.pdf'] },
