@@ -30,6 +30,7 @@ import CaseOfficerSecurity from "./pages/reviewer/Security";
 import LicenseeAdminLayout from "./components/licenseeAdmin/LicenseeAdminLayout";
 import LicenseeAdminDashboard from "./pages/licenseeAdmin/Dashboard";
 import LicenseeAdminIncidents from "./pages/licenseeAdmin/Incidents";
+import LicenseeAdminIncidentDetails from "./pages/licenseeAdmin/IncidentDetails";
 import LicenseeAdminUsers from "./pages/licenseeAdmin/Users";
 import LicenseeAdminProfile from "./pages/licenseeAdmin/Profile";
 import LicenseeAdminAnalytics from "./pages/licenseeAdmin/Analytics";
@@ -113,6 +114,7 @@ const App = () => (
                 <Route path="/licensee-admin" element={<ProtectedRoute><LicenseeAdminLayout /></ProtectedRoute>}>
                   <Route path="dashboard" element={<LicenseeAdminDashboard />} />
                   <Route path="incidents" element={<LicenseeAdminIncidents />} />
+                  <Route path="incidents/:id" element={<LicenseeAdminIncidentDetails />} />
                   <Route path="users" element={<LicenseeAdminUsers />} />
                   <Route path="profile" element={<LicenseeAdminProfile />} />
                   <Route path="analytics" element={<LicenseeAdminAnalytics />} />
