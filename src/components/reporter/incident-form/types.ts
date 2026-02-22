@@ -1,24 +1,3 @@
-export interface ParcelItem {
-  trackingNumber: string;
-  parcelDeclaration: string;
-  parcelWeight: string;
-  detectedItemType: string;
-  senderName: string;
-  senderAddress: string;
-  senderStateCountry: string;
-  senderContact: string;
-  recipientName: string;
-  recipientAddress: string;
-  recipientStateCountry: string;
-  recipientContact: string;
-}
-
-export const emptyParcelItem: ParcelItem = {
-  trackingNumber: '', parcelDeclaration: '', parcelWeight: '', detectedItemType: '',
-  senderName: '', senderAddress: '', senderStateCountry: '', senderContact: '',
-  recipientName: '', recipientAddress: '', recipientStateCountry: '', recipientContact: '',
-};
-
 export interface StaffDetected {
   name: string;
   designation: string;
@@ -26,54 +5,81 @@ export interface StaffDetected {
   email: string;
 }
 
+export interface SenderRecipientInfo {
+  name: string;
+  address: string;
+  stateCountry: string;
+  contact: string;
+}
+
 export interface IncidentFormData {
-  // Section A
+  // Part 1: Reporter Information
   companyName: string;
-  licenseNumber: string;
   registeredAddress: string;
   reporterName: string;
-  designation: string;
+  position: string;
   officialEmail: string;
   contactNumber: string;
+  faxNumber: string;
 
-  // Section B
+  // Part 2: Incident Classification (kept as-is)
   incidentType: string;
 
-  // Section C
+  // Part 3: Incident Information
+  postalIncidentTypes: string[];
+  postalIncidentOther: string;
+  description: string;
   incidentDate: string;
   incidentTime: string;
   incidentLocation: string;
-  incidentBranch: string;
-  description: string;
-  systemServiceAffected: string;
   staffDetected: StaffDetected;
+  systemServiceAffected: string;
+  estimatedImpact: string; // Low | Medium | High
+  senderInfo: SenderRecipientInfo;
+  recipientInfo: SenderRecipientInfo;
+  trackingNumber: string;
+  packageDeclaration: string;
+  packageWeight: string;
+  prohibitedItemType: string;
+  otherRelatedInfo: string;
 
-  // Section D
-  parcelItems: ParcelItem[];
-
-  // Section E
-  impactAssessment: string[];
-
-  // Section F
+  // Part 4: Actions Taken
   immediateActions: string;
-  incidentStatus: string;
-  reportedToAuthorities: string;
-  authorityAgency: string;
-  authorityReference: string;
-  parcelHandedOver: string;
+  incidentContained: string; // Yes | No | Ongoing
   assistanceRequired: string[];
   assistanceOther: string;
+  reportedToAuthorities: string; // Yes | No
+  authorityDetails: string;
+  parcelHandedOver: string; // Yes | No
 
-  // Section G
+  // Part 5: Supporting Documents
   attachments: Array<{ name: string; size: number }>;
 
-  // Section H
+  // Part 6: Declaration
   declaration: boolean;
+  declarationDate: string;
 }
 
-export type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+export type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
-// Incident types grouped by category
+// Postal security incident type options for Part 3 checkboxes
+export const postalIncidentTypeOptions = [
+  'Theft or Pilferage',
+  'Loss of Postal Item',
+  'Tampering / Damage',
+  'Suspicious / Prohibited Item Detected',
+  'Counterfeit or Pirated Goods',
+  'Dangerous / Toxic / Flammable Materials',
+  'Illegal Drugs or Narcotics',
+  'Firearms / Weapons / Ammunition',
+  'Cyber Incident / Data Breach',
+  'Infrastructure Damage / Sabotage',
+  'Fraud / Scam',
+  'Natural Disaster Impact',
+  'Operational Disruption',
+];
+
+// Incident types grouped by category (for Part 2 classification)
 export const incidentTypeGroups = [
   {
     label: 'PROHIBITED POSTAL ITEMS',
@@ -128,33 +134,6 @@ export const incidentTypeGroups = [
   },
 ];
 
-// Incident types that require parcel information section
-const parcelRelatedTypes = [
-  ...incidentTypeGroups[0].options, // All prohibited postal items
-  'Theft or loss of postal items (non-dangerous)',
-  'Repeated mail tampering within a facility',
-  'Suspicious packages later found non-prohibited (false alarm)',
-  'Hold due to Customs inspection',
-];
-
-// Non-parcel types (cyber, fire, sabotage, infrastructure)
-const nonParcelTypes = [
-  'Data leakage or cyber incidents affecting postal security systems',
-  'Sabotage or large-scale damage to postal infrastructure',
-  'Gas leaks, fires, or major accidents affecting worker safety',
-  'Significant disruption to postal operations (major hub shutdown)',
-  'Disruption to postal operations (system outage)',
-  'Floods or natural disasters causing partial disruption',
-];
-
-export function isParcelRelated(incidentType: string): boolean {
-  if (!incidentType) return true; // Show by default if nothing selected
-  if (nonParcelTypes.includes(incidentType)) return false;
-  if (parcelRelatedTypes.includes(incidentType)) return true;
-  // Default: show for ambiguous types
-  return true;
-}
-
 export function getAutoCategory(incidentType: string): string {
   for (const group of incidentTypeGroups) {
     if (group.options.includes(incidentType)) {
@@ -163,3 +142,7 @@ export function getAutoCategory(incidentType: string): string {
   }
   return '';
 }
+
+export const emptySenderRecipient: SenderRecipientInfo = {
+  name: '', address: '', stateCountry: '', contact: '',
+};
