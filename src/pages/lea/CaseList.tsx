@@ -9,14 +9,14 @@ import { Search, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const cases = [
-  { id: 'ESC-2025-001', escalationDate: '2025-06-10', org: 'Express Courier', severity: 'High', status: 'Under Investigation', sla: 'On Track' },
-  { id: 'ESC-2025-002', escalationDate: '2025-06-12', org: 'Pos Malaysia', severity: 'Critical', status: 'Evidence Seized', sla: 'On Track' },
-  { id: 'ESC-2025-003', escalationDate: '2025-06-13', org: 'J&T Express', severity: 'High', status: 'Pending Further Information', sla: 'At Risk' },
-  { id: 'ESC-2025-004', escalationDate: '2025-06-14', org: 'Pos Malaysia', severity: 'High', status: 'Pending Acknowledgement', sla: 'On Track' },
-  { id: 'ESC-2025-005', escalationDate: '2025-06-15', org: 'J&T Express', severity: 'Critical', status: 'Pending Acknowledgement', sla: 'On Track' },
-  { id: 'ESC-2025-006', escalationDate: '2025-05-20', org: 'CityLink', severity: 'Medium', status: 'Prosecution Recommended', sla: 'Met' },
-  { id: 'ESC-2025-007', escalationDate: '2025-05-15', org: 'DHL eCommerce', severity: 'High', status: 'No Further Action', sla: 'Met' },
-  { id: 'ESC-2025-008', escalationDate: '2025-05-10', org: 'Express Courier', severity: 'Medium', status: 'Outcome Submitted', sla: 'Met' },
+  { id: 'ESC-2025-001', escalationDate: '2025-06-10', org: 'Express Courier', severity: 'High', status: 'Under Investigation' },
+  { id: 'ESC-2025-002', escalationDate: '2025-06-12', org: 'Pos Malaysia', severity: 'Critical', status: 'Evidence Seized' },
+  { id: 'ESC-2025-003', escalationDate: '2025-06-13', org: 'J&T Express', severity: 'High', status: 'Pending Further Information' },
+  { id: 'ESC-2025-004', escalationDate: '2025-06-14', org: 'Pos Malaysia', severity: 'High', status: 'Pending Acknowledgement' },
+  { id: 'ESC-2025-005', escalationDate: '2025-06-15', org: 'J&T Express', severity: 'Critical', status: 'Pending Acknowledgement' },
+  { id: 'ESC-2025-006', escalationDate: '2025-05-20', org: 'CityLink', severity: 'Medium', status: 'Prosecution Recommended' },
+  { id: 'ESC-2025-007', escalationDate: '2025-05-15', org: 'DHL eCommerce', severity: 'High', status: 'No Further Action' },
+  { id: 'ESC-2025-008', escalationDate: '2025-05-10', org: 'Express Courier', severity: 'Medium', status: 'Outcome Submitted' },
 ];
 
 const statusColors: Record<string, string> = {
@@ -27,13 +27,6 @@ const statusColors: Record<string, string> = {
   'Prosecution Recommended': 'border-role-investigator/50 text-role-investigator',
   'No Further Action': 'border-muted-foreground/50 text-muted-foreground',
   'Outcome Submitted': 'border-status-closed/50 text-status-closed',
-};
-
-const slaColors: Record<string, string> = {
-  'On Track': 'border-status-closed/50 text-status-closed',
-  'At Risk': 'border-status-in-review/50 text-status-in-review',
-  'Breached': 'border-destructive/50 text-destructive',
-  'Met': 'border-muted-foreground/50 text-muted-foreground',
 };
 
 export default function LEACaseList() {
@@ -99,7 +92,6 @@ export default function LEACaseList() {
                 <TableHead>Organisation</TableHead>
                 <TableHead>Severity</TableHead>
                 <TableHead>Investigation Status</TableHead>
-                <TableHead>SLA</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -111,7 +103,6 @@ export default function LEACaseList() {
                   <TableCell>{c.org}</TableCell>
                   <TableCell>{c.severity}</TableCell>
                   <TableCell><Badge variant="outline" className={statusColors[c.status] || ''}>{c.status}</Badge></TableCell>
-                  <TableCell><Badge variant="outline" className={slaColors[c.sla] || ''}>{c.sla}</Badge></TableCell>
                   <TableCell>
                     <Button size="sm" variant="ghost" onClick={() => navigate(`/lea/cases/${c.id}`)}>
                       <Eye className="h-4 w-4" />

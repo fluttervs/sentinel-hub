@@ -43,7 +43,6 @@ export default function InvestigatorDashboard() {
     { label: 'Open Cases', value: '47', icon: Clock, color: 'status-in-review' },
     { label: 'Escalated Cases', value: '18', icon: ArrowUpRight, color: 'destructive' },
     { label: 'Closed Cases', value: '68', icon: CheckCircle, color: 'status-closed' },
-    { label: 'SLA Compliance', value: '87%', icon: TrendingUp, color: 'primary' },
     { label: 'Avg Resolution', value: '6.3d', icon: Clock, color: 'role-reviewer' },
     { label: 'Escalation Ratio', value: '15.7%', icon: AlertTriangle, color: 'role-validator' },
     { label: 'High Severity', value: '38', icon: ShieldAlert, color: 'role-investigator' },

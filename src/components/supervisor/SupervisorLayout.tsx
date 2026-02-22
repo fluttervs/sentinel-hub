@@ -24,8 +24,6 @@ const navItems = [
   { title: 'All Cases', path: '/validator/cases', icon: FolderOpen },
   { title: 'Escalation Queue', path: '/validator/escalations', icon: AlertTriangle, badge: 5 },
   { title: 'Case Closure', path: '/validator/closure', icon: XCircle },
-  { title: 'SLA Governance', path: '/validator/sla', icon: ClipboardList },
-  { title: 'Officer Performance', path: '/validator/performance', icon: Users },
   { title: 'Audit & Compliance', path: '/validator/audit', icon: Shield },
   { title: 'Search & Reports', path: '/validator/reports', icon: FileBarChart },
   { title: 'Notifications', path: '/validator/notifications', icon: Bell, badge: 3 },

@@ -9,12 +9,12 @@ import { Search, Download, Eye, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const allCases = [
-  { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Under Review', sla: 'At Risk', escalation: 'None', submitted: '2025-01-16' },
-  { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', organisation: 'Swift Logistics Sdn Bhd', severity: 'High', status: 'Pending Review', sla: 'On Track', escalation: 'None', submitted: '2025-01-16' },
-  { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', organisation: 'Express Courier Sdn Bhd', severity: 'High', status: 'Clarification Requested', sla: 'On Track', escalation: 'None', submitted: '2025-01-15' },
-  { id: 'PSIRP-2025-0025', title: 'Lost Consignment Claim', organisation: 'Fast Delivery Enterprise', severity: 'Medium', status: 'Under Review', sla: 'On Track', escalation: 'None', submitted: '2025-01-15' },
-  { id: 'PSIRP-2025-0022', title: 'Suspicious Package Alert', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Escalated', sla: 'Breached', escalation: 'Approved', submitted: '2025-01-14' },
-  { id: 'PSIRP-2025-0019', title: 'Dangerous Goods Mishandling', organisation: 'Pos Malaysia Berhad', severity: 'High', status: 'Closed', sla: 'Met', escalation: 'None', submitted: '2025-01-10' },
+  { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Under Review', escalation: 'None', submitted: '2025-01-16' },
+  { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', organisation: 'Swift Logistics Sdn Bhd', severity: 'High', status: 'Pending Review', escalation: 'None', submitted: '2025-01-16' },
+  { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', organisation: 'Express Courier Sdn Bhd', severity: 'High', status: 'Clarification Requested', escalation: 'None', submitted: '2025-01-15' },
+  { id: 'PSIRP-2025-0025', title: 'Lost Consignment Claim', organisation: 'Fast Delivery Enterprise', severity: 'Medium', status: 'Under Review', escalation: 'None', submitted: '2025-01-15' },
+  { id: 'PSIRP-2025-0022', title: 'Suspicious Package Alert', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Escalated', escalation: 'Approved', submitted: '2025-01-14' },
+  { id: 'PSIRP-2025-0019', title: 'Dangerous Goods Mishandling', organisation: 'Pos Malaysia Berhad', severity: 'High', status: 'Closed', escalation: 'None', submitted: '2025-01-10' },
 ];
 
 export default function CaseOfficerSearch() {
@@ -23,13 +23,11 @@ export default function CaseOfficerSearch() {
   const [status, setStatus] = useState('all');
   const [severity, setSeverity] = useState('all');
   const [escalation, setEscalation] = useState('all');
-  const [slaRisk, setSlaRisk] = useState('all');
 
   const filtered = allCases.filter((c) => {
     if (status !== 'all' && c.status !== status) return false;
     if (severity !== 'all' && c.severity !== severity) return false;
     if (escalation !== 'all' && c.escalation !== escalation) return false;
-    if (slaRisk !== 'all' && c.sla !== slaRisk) return false;
     if (keyword && !c.title.toLowerCase().includes(keyword.toLowerCase()) && !c.id.toLowerCase().includes(keyword.toLowerCase()) && !c.organisation.toLowerCase().includes(keyword.toLowerCase())) return false;
     return true;
   });
@@ -69,7 +67,7 @@ export default function CaseOfficerSearch() {
       <Card>
         <CardHeader><CardTitle className="flex items-center gap-2"><Filter className="h-5 w-5 text-role-reviewer" />Filters</CardTitle></CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
             <div className="md:col-span-2 space-y-2">
               <Label>Keyword</Label>
               <div className="relative">
@@ -116,19 +114,6 @@ export default function CaseOfficerSearch() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>SLA Risk</Label>
-              <Select value={slaRisk} onValueChange={setSlaRisk}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="On Track">On Track</SelectItem>
-                  <SelectItem value="At Risk">At Risk</SelectItem>
-                  <SelectItem value="Breached">Breached</SelectItem>
-                  <SelectItem value="Met">Met</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -146,7 +131,6 @@ export default function CaseOfficerSearch() {
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Organisation</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Severity</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">SLA</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Action</th>
                 </tr>
               </thead>
@@ -158,11 +142,6 @@ export default function CaseOfficerSearch() {
                     <td className="px-4 py-3 text-muted-foreground">{c.organisation}</td>
                     <td className="px-4 py-3"><Badge variant="outline" className={getSeverityColor(c.severity)}>{c.severity}</Badge></td>
                     <td className="px-4 py-3"><Badge variant="outline" className={getStatusColor(c.status)}>{c.status}</Badge></td>
-                    <td className="px-4 py-3">
-                      <Badge variant="outline" className={c.sla === 'Breached' ? 'bg-destructive/20 text-destructive border-destructive/30' : c.sla === 'At Risk' ? 'bg-status-in-review/20 text-status-in-review border-status-in-review/30' : 'bg-status-closed/20 text-status-closed border-status-closed/30'}>
-                        {c.sla}
-                      </Badge>
-                    </td>
                     <td className="px-4 py-3"><Button size="sm" variant="outline" onClick={() => navigate(`/reviewer/cases/${c.id}`)}><Eye className="mr-1 h-3 w-3" />View</Button></td>
                   </tr>
                 ))}

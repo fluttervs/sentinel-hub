@@ -88,7 +88,7 @@ export default function Landing() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Real-Time Tracking</h3>
                 <p className="text-muted-foreground">
-                  Monitor incident status with live updates and SLA tracking
+                  Monitor incident status with live updates and real-time tracking
                 </p>
               </CardContent>
             </Card>

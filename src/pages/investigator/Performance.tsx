@@ -1,15 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const officerData = [
-  { name: 'Raj Kumar', cases: 18, avgDays: 5.2, escalationRate: '12%', clarifications: 4, slaCompliance: '94%' },
-  { name: 'Farah Amin', cases: 22, avgDays: 6.8, escalationRate: '18%', clarifications: 7, slaCompliance: '82%' },
-  { name: 'Lee Wei', cases: 15, avgDays: 7.1, escalationRate: '13%', clarifications: 3, slaCompliance: '87%' },
-  { name: 'Ahmad Razif', cases: 20, avgDays: 4.9, escalationRate: '10%', clarifications: 5, slaCompliance: '95%' },
-  { name: 'Nurul Hana', cases: 14, avgDays: 6.0, escalationRate: '21%', clarifications: 6, slaCompliance: '79%' },
+  { name: 'Raj Kumar', cases: 18, avgDays: 5.2, escalationRate: '12%', clarifications: 4 },
+  { name: 'Farah Amin', cases: 22, avgDays: 6.8, escalationRate: '18%', clarifications: 7 },
+  { name: 'Lee Wei', cases: 15, avgDays: 7.1, escalationRate: '13%', clarifications: 3 },
+  { name: 'Ahmad Razif', cases: 20, avgDays: 4.9, escalationRate: '10%', clarifications: 5 },
+  { name: 'Nurul Hana', cases: 14, avgDays: 6.0, escalationRate: '21%', clarifications: 6 },
 ];
 
 const officerChartData = officerData.map((o) => ({ name: o.name, cases: o.cases, avgDays: o.avgDays }));
@@ -69,7 +68,6 @@ export default function InvestigatorPerformance() {
                     <TableHead>Avg Processing (days)</TableHead>
                     <TableHead>Escalation Rate</TableHead>
                     <TableHead>Clarifications</TableHead>
-                    <TableHead>SLA Compliance</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -80,11 +78,6 @@ export default function InvestigatorPerformance() {
                       <TableCell>{o.avgDays}</TableCell>
                       <TableCell>{o.escalationRate}</TableCell>
                       <TableCell>{o.clarifications}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className={parseFloat(o.slaCompliance) >= 90 ? 'border-status-closed/50 text-status-closed' : parseFloat(o.slaCompliance) >= 80 ? 'border-status-in-review/50 text-status-in-review' : 'border-destructive/50 text-destructive'}>
-                          {o.slaCompliance}
-                        </Badge>
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

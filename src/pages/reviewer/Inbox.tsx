@@ -14,14 +14,14 @@ export default function CaseOfficerInbox() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const incidents = [
-    { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Pending Review', sla: '2h remaining', escalation: 'None', submitted: '2025-01-16' },
-    { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', organisation: 'Swift Logistics Sdn Bhd', severity: 'High', status: 'Pending Review', sla: '5h remaining', escalation: 'None', submitted: '2025-01-16' },
-    { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', organisation: 'Express Courier Sdn Bhd', severity: 'High', status: 'RFI Sent', sla: '8h remaining', escalation: 'None', submitted: '2025-01-15' },
-    { id: 'PSIRP-2025-0025', title: 'Lost Consignment Claim', organisation: 'Fast Delivery Enterprise', severity: 'Medium', status: 'Under Review', sla: '12h remaining', escalation: 'None', submitted: '2025-01-15' },
-    { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', organisation: 'Express Courier Sdn Bhd', severity: 'High', status: 'RFI Sent', sla: '3h remaining', escalation: 'None', submitted: '2025-01-15' },
-    { id: 'PSIRP-2025-0023', title: 'Damaged Goods Report', organisation: 'Swift Logistics Sdn Bhd', severity: 'Medium', status: 'Under Review', sla: '24h remaining', escalation: 'None', submitted: '2025-01-14' },
-    { id: 'PSIRP-2025-0022', title: 'Suspicious Package Alert', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Escalation Pending', sla: '1h remaining', escalation: 'Pending Approval', submitted: '2025-01-14' },
-    { id: 'PSIRP-2025-0021', title: 'Delayed Goods — Route 7', organisation: 'Pos Malaysia Berhad', severity: 'Low', status: 'Under Review', sla: 'Breached', escalation: 'None', submitted: '2025-01-13' },
+    { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Pending Review', escalation: 'None', submitted: '2025-01-16' },
+    { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', organisation: 'Swift Logistics Sdn Bhd', severity: 'High', status: 'Pending Review', escalation: 'None', submitted: '2025-01-16' },
+    { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', organisation: 'Express Courier Sdn Bhd', severity: 'High', status: 'RFI Sent', escalation: 'None', submitted: '2025-01-15' },
+    { id: 'PSIRP-2025-0025', title: 'Lost Consignment Claim', organisation: 'Fast Delivery Enterprise', severity: 'Medium', status: 'Under Review', escalation: 'None', submitted: '2025-01-15' },
+    { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', organisation: 'Express Courier Sdn Bhd', severity: 'High', status: 'RFI Sent', escalation: 'None', submitted: '2025-01-15' },
+    { id: 'PSIRP-2025-0023', title: 'Damaged Goods Report', organisation: 'Swift Logistics Sdn Bhd', severity: 'Medium', status: 'Under Review', escalation: 'None', submitted: '2025-01-14' },
+    { id: 'PSIRP-2025-0022', title: 'Suspicious Package Alert', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Escalation Pending', escalation: 'Pending Approval', submitted: '2025-01-14' },
+    { id: 'PSIRP-2025-0021', title: 'Delayed Goods — Route 7', organisation: 'Pos Malaysia Berhad', severity: 'Low', status: 'Under Review', escalation: 'None', submitted: '2025-01-13' },
   ];
 
   const filtered = incidents.filter((i) => {
@@ -52,20 +52,12 @@ export default function CaseOfficerInbox() {
     return colors[severity] || 'bg-secondary';
   };
 
-  const getSlaClass = (sla: string) => {
-    if (sla === 'Breached') return 'text-destructive font-bold';
-    const match = sla.match(/(\d+)h/);
-    if (match && parseInt(match[1]) <= 3) return 'text-destructive font-medium';
-    if (match && parseInt(match[1]) <= 8) return 'text-status-in-review font-medium';
-    return 'text-muted-foreground';
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-2">Assignment Inbox</h1>
-          <p className="text-muted-foreground">Cases assigned to you — sorted by SLA risk</p>
+          <p className="text-muted-foreground">Cases assigned to you</p>
         </div>
         <Button variant="outline"><Download className="mr-2 h-4 w-4" />Export</Button>
       </div>
@@ -116,7 +108,6 @@ export default function CaseOfficerInbox() {
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Organisation</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Severity</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">SLA</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Escalation</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Submitted</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Action</th>
@@ -130,7 +121,6 @@ export default function CaseOfficerInbox() {
                     <td className="px-4 py-3 text-muted-foreground">{incident.organisation}</td>
                     <td className="px-4 py-3"><Badge variant="outline" className={getSeverityColor(incident.severity)}>{incident.severity}</Badge></td>
                     <td className="px-4 py-3"><Badge variant="outline" className={getStatusColor(incident.status)}>{incident.status}</Badge></td>
-                    <td className="px-4 py-3"><span className={getSlaClass(incident.sla)}>{incident.sla}</span></td>
                     <td className="px-4 py-3 text-muted-foreground">{incident.escalation}</td>
                     <td className="px-4 py-3 text-muted-foreground">{incident.submitted}</td>
                     <td className="px-4 py-3">

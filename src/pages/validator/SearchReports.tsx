@@ -3,28 +3,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Download, FileBarChart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const reportData = [
-  { id: 'PSIRP-2025-0063', status: 'Under Review', severity: 'Medium', org: 'Express Courier', officer: 'Raj Kumar', sla: 'On Track' },
-  { id: 'PSIRP-2025-0060', status: 'Escalation Pending', severity: 'Critical', org: 'Pos Malaysia', officer: 'Farah Amin', sla: 'On Track' },
-  { id: 'PSIRP-2025-0058', status: 'Escalation Pending', severity: 'High', org: 'J&T Express', officer: 'Lee Wei', sla: 'At Risk' },
-  { id: 'PSIRP-2025-0045', status: 'Escalation Pending', severity: 'Critical', org: 'Express Courier', officer: 'Ahmad Razif', sla: 'On Track' },
-  { id: 'PSIRP-2025-0039', status: 'Under Review', severity: 'Medium', org: 'CityLink', officer: 'Ahmad Razif', sla: 'Breached' },
-  { id: 'PSIRP-2025-0030', status: 'Closed', severity: 'Medium', org: 'Pos Malaysia', officer: 'Nurul Hana', sla: 'Met' },
-  { id: 'PSIRP-2025-0025', status: 'Escalated', severity: 'High', org: 'DHL eCommerce', officer: 'Farah Amin', sla: 'Met' },
+  { id: 'PSIRP-2025-0063', status: 'Under Review', severity: 'Medium', org: 'Express Courier', officer: 'Raj Kumar' },
+  { id: 'PSIRP-2025-0060', status: 'Escalation Pending', severity: 'Critical', org: 'Pos Malaysia', officer: 'Farah Amin' },
+  { id: 'PSIRP-2025-0058', status: 'Escalation Pending', severity: 'High', org: 'J&T Express', officer: 'Lee Wei' },
+  { id: 'PSIRP-2025-0045', status: 'Escalation Pending', severity: 'Critical', org: 'Express Courier', officer: 'Ahmad Razif' },
+  { id: 'PSIRP-2025-0039', status: 'Under Review', severity: 'Medium', org: 'CityLink', officer: 'Ahmad Razif' },
+  { id: 'PSIRP-2025-0030', status: 'Closed', severity: 'Medium', org: 'Pos Malaysia', officer: 'Nurul Hana' },
+  { id: 'PSIRP-2025-0025', status: 'Escalated', severity: 'High', org: 'DHL eCommerce', officer: 'Farah Amin' },
 ];
-
-const slaColors: Record<string, string> = {
-  'On Track': 'border-status-closed/50 text-status-closed',
-  'At Risk': 'border-status-in-review/50 text-status-in-review',
-  'Breached': 'border-destructive/50 text-destructive',
-  'Met': 'border-muted-foreground/50 text-muted-foreground',
-};
 
 export default function SearchReports() {
   const { toast } = useToast();
@@ -65,7 +57,6 @@ export default function SearchReports() {
                     <TableHead>Severity</TableHead>
                     <TableHead>Organisation</TableHead>
                     <TableHead>Officer</TableHead>
-                    <TableHead>SLA</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -76,7 +67,6 @@ export default function SearchReports() {
                       <TableCell>{r.severity}</TableCell>
                       <TableCell>{r.org}</TableCell>
                       <TableCell>{r.officer}</TableCell>
-                      <TableCell><Badge variant="outline" className={slaColors[r.sla] || ''}>{r.sla}</Badge></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -89,8 +79,7 @@ export default function SearchReports() {
           <div className="grid gap-4 md:grid-cols-2">
             {[
               { title: 'Escalation Statistics', desc: 'Escalation approvals, rejections, and turnaround times' },
-              { title: 'SLA Compliance Report', desc: 'Officer-level SLA compliance rates and breach analysis' },
-              { title: 'Officer Performance', desc: 'Caseload, processing times, and efficiency metrics' },
+              { title: 'Officer Workload', desc: 'Caseload and efficiency metrics per officer' },
               { title: 'Case Volume by Organisation', desc: 'Incident distribution across licensed organisations' },
             ].map((report) => (
               <Card key={report.title}>

@@ -71,7 +71,6 @@ export default function CaseReview() {
     ],
   };
 
-  const sla = '2h remaining';
   const agingDays = 0;
 
   const timeline = [
@@ -128,9 +127,6 @@ export default function CaseReview() {
         <div className="flex items-center gap-2">
           <Badge variant="outline" className={getStatusColor(incident.status)}>{incident.status}</Badge>
           <Badge variant="outline" className={getSeverityColor(incident.severity)}>{incident.severity}</Badge>
-          <Badge variant="outline" className={`${sla.includes('2h') ? 'bg-destructive/20 text-destructive border-destructive/30' : 'bg-muted'}`}>
-            <Clock className="h-3 w-3 mr-1" />{sla}
-          </Badge>
         </div>
       </div>
 
@@ -197,7 +193,6 @@ export default function CaseReview() {
               </div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Case Age</span><span>{agingDays} days</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">SLA</span><span className="text-destructive font-medium">{sla}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Reporter</span><span>{incident.reporterName}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{incident.dateReported}</span></div>
               </div>

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, AlertTriangle, TrendingUp, Target, Map, BarChart3, Brain, Shield, Home, ArrowLeftRight } from 'lucide-react';
+import { FileText, AlertTriangle, TrendingUp, Map, BarChart3, Brain, Shield, Home, ArrowLeftRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -44,18 +44,18 @@ export default function SuperAdminDashboard() {
   ];
 
   const monthlyTrendData = [
-    { month: 'Jan', incidents: 210, resolved: 198, slaCompliance: 94.3 },
-    { month: 'Feb', incidents: 198, resolved: 189, slaCompliance: 95.5 },
-    { month: 'Mar', incidents: 221, resolved: 208, slaCompliance: 94.1 },
-    { month: 'Apr', incidents: 247, resolved: 231, slaCompliance: 93.5 },
-    { month: 'May', incidents: 264, resolved: 248, slaCompliance: 93.9 },
-    { month: 'Jun', incidents: 245, resolved: 233, slaCompliance: 95.1 },
-    { month: 'Jul', incidents: 292, resolved: 273, slaCompliance: 93.5 },
-    { month: 'Aug', incidents: 279, resolved: 265, slaCompliance: 95.0 },
-    { month: 'Sep', incidents: 298, resolved: 281, slaCompliance: 94.3 },
-    { month: 'Oct', incidents: 315, resolved: 296, slaCompliance: 93.9 },
-    { month: 'Nov', incidents: 322, resolved: 304, slaCompliance: 94.4 },
-    { month: 'Dec', incidents: 356, resolved: 331, slaCompliance: 93.0 },
+    { month: 'Jan', incidents: 210, resolved: 198 },
+    { month: 'Feb', incidents: 198, resolved: 189 },
+    { month: 'Mar', incidents: 221, resolved: 208 },
+    { month: 'Apr', incidents: 247, resolved: 231 },
+    { month: 'May', incidents: 264, resolved: 248 },
+    { month: 'Jun', incidents: 245, resolved: 233 },
+    { month: 'Jul', incidents: 292, resolved: 273 },
+    { month: 'Aug', incidents: 279, resolved: 265 },
+    { month: 'Sep', incidents: 298, resolved: 281 },
+    { month: 'Oct', incidents: 315, resolved: 296 },
+    { month: 'Nov', incidents: 322, resolved: 304 },
+    { month: 'Dec', incidents: 356, resolved: 331 },
   ];
 
   const colors = {
@@ -85,7 +85,7 @@ export default function SuperAdminDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="border-role-super-admin/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Incidents</CardTitle>
@@ -116,17 +116,6 @@ export default function SuperAdminDashboard() {
           <CardContent>
             <div className="text-2xl font-bold text-destructive">87</div>
             <p className="text-xs text-muted-foreground mt-1">Requires attention</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-status-closed/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">SLA Compliance</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-status-closed">94.2%</div>
-            <p className="text-xs text-muted-foreground mt-1">Overall performance</p>
           </CardContent>
         </Card>
       </div>
@@ -233,7 +222,7 @@ export default function SuperAdminDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Monthly Incident & SLA Trend</CardTitle>
+          <CardTitle>Monthly Incident Trend</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
@@ -241,8 +230,7 @@ export default function SuperAdminDashboard() {
               <LineChart data={monthlyTrendData}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                 <XAxis dataKey="month" className="text-xs" />
-                <YAxis yAxisId="left" className="text-xs" />
-                <YAxis yAxisId="right" orientation="right" className="text-xs" domain={[90, 100]} />
+                <YAxis className="text-xs" />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: 'hsl(var(--background))',
@@ -252,7 +240,6 @@ export default function SuperAdminDashboard() {
                 />
                 <Legend />
                 <Line 
-                  yAxisId="left"
                   type="monotone" 
                   dataKey="incidents" 
                   stroke="hsl(var(--primary))" 
@@ -260,20 +247,11 @@ export default function SuperAdminDashboard() {
                   name="Total Incidents"
                 />
                 <Line 
-                  yAxisId="left"
                   type="monotone" 
                   dataKey="resolved" 
                   stroke="hsl(var(--status-closed))" 
                   strokeWidth={2}
                   name="Resolved"
-                />
-                <Line 
-                  yAxisId="right"
-                  type="monotone" 
-                  dataKey="slaCompliance" 
-                  stroke="hsl(var(--role-super-admin))" 
-                  strokeWidth={2}
-                  name="SLA Compliance %"
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -403,15 +381,15 @@ export default function SuperAdminDashboard() {
             <Button 
               className="w-full justify-start" 
               variant="outline"
-              onClick={() => toast({ title: "Global Reports", description: "Report generation coming soon." })}
+              onClick={() => toast({ title: "Global Report", description: "Report generation coming soon." })}
             >
               <BarChart3 className="mr-2 h-4 w-4" />
-              Global Reports
+              Generate Global Report
             </Button>
             <Button 
               className="w-full justify-start" 
               variant="outline"
-              onClick={() => navigate('/admin/audit-logs')}
+              onClick={() => toast({ title: "Audit Center", description: "Audit center coming soon." })}
             >
               <Shield className="mr-2 h-4 w-4" />
               Audit Center
@@ -421,24 +399,21 @@ export default function SuperAdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>High-Risk Licensees</CardTitle>
+            <CardTitle>System Status</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-3">
             {[
-              { name: 'Express Courier X', incidents: 15, risk: 'High' },
-              { name: 'Postal Services Y', incidents: 12, risk: 'High' },
-              { name: 'Logistics Z', incidents: 9, risk: 'Medium' },
-            ].map((licensee) => (
-              <div key={licensee.name} className="flex items-center justify-between p-2 border-b border-border/40 last:border-0">
-                <div>
-                  <p className="text-sm">{licensee.name}</p>
-                  <p className="text-xs text-muted-foreground">{licensee.incidents} incidents YTD</p>
+              { service: 'Incident Reporting', status: 'Operational', uptime: '99.9%' },
+              { service: 'Case Management', status: 'Operational', uptime: '99.8%' },
+              { service: 'LEA Integration', status: 'Operational', uptime: '99.5%' },
+              { service: 'Analytics Engine', status: 'Operational', uptime: '99.7%' },
+            ].map((item) => (
+              <div key={item.service} className="flex items-center justify-between p-2 border border-border/40 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-status-closed" />
+                  <span className="text-sm">{item.service}</span>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded ${
-                  licensee.risk === 'High' ? 'bg-destructive/20 text-destructive' : 'bg-role-validator/20 text-role-validator'
-                }`}>
-                  {licensee.risk}
-                </span>
+                <span className="text-xs text-muted-foreground">{item.uptime}</span>
               </div>
             ))}
           </CardContent>

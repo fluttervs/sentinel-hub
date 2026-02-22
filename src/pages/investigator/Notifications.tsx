@@ -6,16 +6,16 @@ import { Bell, AlertTriangle, TrendingUp, FileBarChart, CheckCircle } from 'luci
 
 const notifications = [
   { id: 1, type: 'escalation', icon: AlertTriangle, message: 'New escalation approved for PSIRP-2025-0063 — referred to PDRM', time: '2 hours ago', read: false },
-  { id: 2, type: 'sla', icon: TrendingUp, message: 'SLA breach detected: PSIRP-2025-0045 exceeded 14-day threshold', time: '5 hours ago', read: false },
+  
   { id: 3, type: 'closure', icon: CheckCircle, message: 'Case PSIRP-2025-0055 closed by Supervisor Ahmad — Action Taken', time: '1 day ago', read: true },
-  { id: 4, type: 'report', icon: FileBarChart, message: 'Monthly SLA Compliance Report is now available', time: '2 days ago', read: true },
+  { id: 4, type: 'report', icon: FileBarChart, message: 'Monthly Compliance Report is now available', time: '2 days ago', read: true },
   { id: 5, type: 'escalation', icon: AlertTriangle, message: 'Escalation rejected for PSIRP-2025-0058 — returned to Case Officer', time: '3 days ago', read: true },
-  { id: 6, type: 'sla', icon: TrendingUp, message: '3 cases nearing SLA breach threshold across 2 organisations', time: '4 days ago', read: true },
+  
 ];
 
 const typeColors: Record<string, string> = {
   escalation: 'text-destructive',
-  sla: 'text-role-validator',
+  
   closure: 'text-status-closed',
   report: 'text-role-investigator',
 };
