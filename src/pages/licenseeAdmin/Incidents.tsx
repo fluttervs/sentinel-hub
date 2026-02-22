@@ -7,10 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Search, Filter, Download, Clock, Paperclip, MessageSquare, Send } from 'lucide-react';
+import { Search, Filter, Download, Paperclip, Send } from 'lucide-react';
 import CaseDetailsView, { CaseData } from '@/components/shared/CaseDetailsView';
 
 const incidents = [
@@ -237,124 +236,125 @@ export default function LicenseeAdminIncidents() {
         </CardContent>
       </Card>
 
-      {/* Case Detail Dialog with RFI */}
+      {/* Case Detail Dialog — matches Reporter's IncidentDetails layout */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-3">
-              <span className="font-mono text-primary">{selectedIncident?.id}</span>
-              {selectedIncident && <Badge variant="outline" className={statusColors[selectedIncident.status]}>{selectedIncident.status}</Badge>}
-            </DialogTitle>
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <DialogTitle className="text-2xl font-bold">{selectedIncident?.description}</DialogTitle>
+                <p className="font-mono text-sm text-primary">{selectedIncident?.id}</p>
+              </div>
+              {selectedIncident && (
+                <div className="flex gap-2">
+                  <Badge variant="outline" className={statusColors[selectedIncident.status]}>{selectedIncident.status}</Badge>
+                  <Badge variant="outline" className={severityColors[selectedIncident.severity]}>{selectedIncident.severity}</Badge>
+                </div>
+              )}
+            </div>
           </DialogHeader>
 
           {selectedIncident && (
-            <Tabs defaultValue="details" className="mt-4">
-              <TabsList>
-                <TabsTrigger value="details">Case Details</TabsTrigger>
-                <TabsTrigger value="rfi" className="flex items-center gap-1.5">
-                  <MessageSquare className="h-3.5 w-3.5" />
-                  RFIs & Communication
-                </TabsTrigger>
-              </TabsList>
+            <div className="grid gap-6 lg:grid-cols-3 mt-4">
+              {/* Left — Case Details (2 cols) */}
+              <div className="lg:col-span-2">
+                <CaseDetailsView incident={mapToCaseData(selectedIncident)} />
+              </div>
 
-              {/* Details Tab */}
-              <TabsContent value="details">
-                <div className="grid lg:grid-cols-5 gap-6 mt-4">
-                  <div className="lg:col-span-3">
-                    <CaseDetailsView incident={mapToCaseData(selectedIncident)} />
-                  </div>
-
-                  <div className="lg:col-span-2 space-y-6">
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Status</h3>
-                      <div className="p-4 rounded-lg bg-muted/30 border border-border text-center">
-                        <Badge variant="outline" className={`text-base px-4 py-1 ${statusColors[selectedIncident.status]}`}>{selectedIncident.status}</Badge>
-                      </div>
-                      {selectedIncident.escalated && (
-                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
-                          <span className="text-sm text-destructive font-medium">⚠ Escalated to LEA</span>
-                        </div>
-                      )}
+              {/* Right — Status card + Timeline/RFI tabs (1 col) */}
+              <div className="space-y-6">
+                {/* Status Card */}
+                <Card className="border-primary/20">
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="text-center">
+                      <Badge variant="outline" className={`text-lg px-4 py-1 ${statusColors[selectedIncident.status]}`}>{selectedIncident.status}</Badge>
                     </div>
-
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        Timeline
-                      </h3>
-                      <div className="space-y-0">
-                        {timeline.map((event, i) => (
-                          <div key={i} className="flex gap-3">
-                            <div className="flex flex-col items-center">
-                              <div className={`h-3 w-3 rounded-full shrink-0 ${i === 0 ? 'bg-role-licensee-admin' : 'bg-border'}`} />
-                              {i < timeline.length - 1 && <div className="w-px flex-1 bg-border" />}
-                            </div>
-                            <div className="pb-4">
-                              <p className="text-sm font-medium">{event.action}</p>
-                              <p className="text-xs text-muted-foreground">{event.user} • {event.date}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{selectedIncident.submitted}</span></div>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Last Updated</span><span>{timeline[timeline.length - 1]?.date || '—'}</span></div>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Reporter</span><span>{selectedIncident.reporter}</span></div>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Assigned To</span><span>MCMC Case Officer</span></div>
                     </div>
-                  </div>
-                </div>
-              </TabsContent>
+                    {selectedIncident.escalated && (
+                      <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
+                        <span className="text-sm text-destructive font-medium">⚠ Escalated to LEA</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
 
-              {/* RFI & Communication Tab */}
-              <TabsContent value="rfi">
-                <div className="mt-4 space-y-4">
-                  <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                    {rfiMessages.map((msg) => {
-                      const isMCMC = msg.role === 'MCMC Case Officer';
-                      return (
-                        <div key={msg.id} className={`flex ${isMCMC ? 'justify-start' : 'justify-end'}`}>
-                          <div className={`max-w-[75%] p-3 rounded-lg border ${isMCMC ? 'bg-muted/50 border-border' : 'bg-role-licensee-admin/10 border-role-licensee-admin/20'}`}>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-semibold">{msg.from}</span>
-                              <Badge variant="outline" className="text-[10px] px-1.5 py-0">{msg.role}</Badge>
-                              {msg.status && (
-                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-status-rfi/20 text-status-rfi border-status-rfi/30">{msg.status}</Badge>
-                              )}
-                            </div>
-                            <p className="text-sm">{msg.message}</p>
-                            {msg.attachment && (
-                              <div className="mt-2 flex items-center gap-2 p-1.5 rounded bg-background/60 border border-border text-xs">
-                                <Paperclip className="h-3 w-3 text-muted-foreground" />
-                                <span>{msg.attachment}</span>
-                                <Button size="sm" variant="ghost" className="h-5 text-[10px] px-1.5 ml-auto">Download</Button>
+                {/* Timeline & RFI Tabs */}
+                <Card>
+                  <CardContent className="pt-6">
+                    <Tabs defaultValue="timeline">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="timeline">Timeline</TabsTrigger>
+                        <TabsTrigger value="rfis">RFIs</TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="timeline" className="mt-4">
+                        <div className="space-y-4">
+                          {timeline.map((event, i) => (
+                            <div key={i} className="flex gap-3">
+                              <div className="flex flex-col items-center">
+                                <div className={`h-3 w-3 rounded-full ${i === 0 ? 'bg-primary' : 'bg-muted-foreground'}`} />
+                                {i < timeline.length - 1 && <div className="w-px h-full bg-border mt-1" />}
                               </div>
-                            )}
-                            <p className="text-[10px] text-muted-foreground mt-1">{msg.date}</p>
+                              <div className="pb-4">
+                                <p className="text-sm font-medium">{event.action}</p>
+                                <p className="text-xs text-muted-foreground">{event.user}</p>
+                                <p className="text-xs text-muted-foreground">{event.date}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="rfis" className="mt-4">
+                        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+                          {rfiMessages.map((msg) => {
+                            const isMCMC = msg.role === 'MCMC Case Officer';
+                            return (
+                              <div key={msg.id} className={`flex ${isMCMC ? 'justify-start' : 'justify-end'}`}>
+                                <div className={`max-w-[90%] rounded-lg p-3 ${
+                                  isMCMC
+                                    ? 'bg-muted border border-border'
+                                    : 'bg-primary/10 border border-primary/20'
+                                }`}>
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <p className="text-xs font-semibold">{msg.from}</p>
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0">{msg.role}</Badge>
+                                    {msg.status && (
+                                      <Badge variant="destructive" className="text-[10px] px-1 py-0">Action Required</Badge>
+                                    )}
+                                  </div>
+                                  <p className="text-xs leading-relaxed">{msg.message}</p>
+                                  {msg.attachment && (
+                                    <div className="mt-2 flex items-center gap-2 p-1.5 rounded bg-background/60 border border-border text-xs">
+                                      <Paperclip className="h-3 w-3 text-muted-foreground" />
+                                      <span>{msg.attachment}</span>
+                                      <Button size="sm" variant="ghost" className="h-5 text-[10px] px-1.5 ml-auto">Download</Button>
+                                    </div>
+                                  )}
+                                  <p className="text-[10px] text-muted-foreground mt-1">{msg.date}</p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="border-t pt-3 mt-3 space-y-2">
+                          <Textarea placeholder="Type your response..." value={replyText} onChange={(e) => setReplyText(e.target.value)} rows={3} className="resize-none text-sm" />
+                          <div className="flex justify-between">
+                            <Button variant="outline" size="sm"><Paperclip className="h-4 w-4 mr-1" />Attach</Button>
+                            <Button onClick={() => { if (replyText.trim()) setReplyText(''); }} disabled={!replyText.trim()} size="sm"><Send className="h-4 w-4 mr-1" />Send</Button>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-
-                  <Separator />
-
-                  <div className="flex gap-2">
-                    <Textarea
-                      placeholder="Type a message or clarification..."
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      className="flex-1 min-h-[60px]"
-                    />
-                    <div className="flex flex-col gap-1">
-                      <Button size="sm" disabled={!replyText.trim()}>
-                        <Send className="h-4 w-4 mr-1" />
-                        Send
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Paperclip className="h-4 w-4 mr-1" />
-                        Attach
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>
