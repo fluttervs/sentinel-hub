@@ -23,25 +23,35 @@ export default function IncidentDetails() {
     description: 'A high-value package containing electronic goods was reported missing from the KL Distribution Center during the morning shift. The package was last scanned at 08:45 AM and could not be located during the 10:00 AM audit.',
     incidentDate: '2025-01-15',
     incidentTime: '08:45',
+    incidentLocation: 'Lot 5, Jalan Teknologi, Taman Sains Selangor, Shah Alam',
     dateReported: '2025-01-15 10:30',
     branchName: 'KL Main Distribution Center',
     address: 'Lot 5, Jalan Teknologi, Taman Sains Selangor',
     state: 'Selangor',
     postalCode: '47810',
     companyName: 'Pos Malaysia Berhad',
+    registeredAddress: 'Dayabumi Complex, Jalan Sultan Hishamuddin, 50670 Kuala Lumpur',
     reporterName: 'Ahmad bin Ibrahim',
     reporterDesignation: 'Security Manager',
+    reporterEmail: 'ahmad.ibrahim@posmalaysia.com.my',
+    reporterPhone: '+60 12-345 6789',
     leaEscalation: 'No',
     systemServiceAffected: 'Parcel Tracking System',
-    impactIndicators: ['Operational Disruption', 'Financial Impact', 'Reputational Risk'],
-    items: [
-      { tracking: 'EC20250115-12345', type: 'Parcel', declaration: 'Electronic goods - Laptop', weight: '2.5 kg', detectedItemType: 'Consumer Electronics', sender: { name: 'TechCo Sdn Bhd', address: '12 Jalan Tech, KL', stateCountry: 'Kuala Lumpur, Malaysia', contact: '+60123456789' }, receiver: { name: 'Ahmad bin Ibrahim', address: '45 Jalan Mawar, Shah Alam', stateCountry: 'Selangor, Malaysia', contact: '+60198765432' } },
-    ],
+    estimatedImpact: 'High',
+    postalIncidentTypes: ['Theft or Pilferage', 'Loss of Postal Item'],
+    staffDetected: { name: 'Ali bin Hassan', designation: 'Warehouse Supervisor', contactNumber: '+60 13-456 7890', email: 'ali.hassan@posmalaysia.com.my' },
+    senderInfo: { name: 'TechCo Sdn Bhd', address: '12 Jalan Tech, KL', stateCountry: 'Kuala Lumpur, Malaysia', contact: '+60123456789' },
+    recipientInfo: { name: 'Ahmad bin Ibrahim', address: '45 Jalan Mawar, Shah Alam', stateCountry: 'Selangor, Malaysia', contact: '+60198765432' },
+    trackingNumber: 'EC20250115-12345',
+    packageDeclaration: 'Electronic goods - Laptop',
+    packageWeight: '2.5',
+    prohibitedItemType: '',
+    otherRelatedInfo: '',
     immediateActions: 'Area secured, CCTV footage preserved, internal investigation initiated. All staff on shift have been interviewed.',
+    incidentContained: 'Ongoing',
     incidentControlStatus: 'Under Monitoring',
     reportedToAuthority: 'Yes',
-    authorityAgency: 'PDRM',
-    authorityReference: 'RPT-2025-KL-0045',
+    authorityDetails: 'PDRM — RPT-2025-KL-0045',
     parcelHandedOver: 'No',
     assistanceRequested: ['Investigation Support', 'Legal Advice'],
     documents: [
@@ -92,19 +102,17 @@ export default function IncidentDetails() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left - Structured Report Details */}
         <div className="lg:col-span-2">
           <CaseDetailsView incident={incident} />
         </div>
 
-        {/* Right - Timeline & Tabs */}
         <div className="space-y-6">
           <Card className="border-primary/20">
             <CardContent className="pt-6 space-y-4">
               <div className="text-center">
                 <Badge variant="outline" className={`text-lg px-4 py-1 ${getStatusColor(incident.status)}`}>{incident.status}</Badge>
               </div>
-                <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{incident.dateReported}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Last Updated</span><span>2025-01-15 14:45</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">Assigned To</span><span>MCMC Case Officer</span></div>

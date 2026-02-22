@@ -1,6 +1,5 @@
 import BasicCaseInfo from '@/components/reporter/incident-details/BasicCaseInfo';
 import IncidentDescription from '@/components/reporter/incident-details/IncidentDescription';
-import ParcelInformation from '@/components/reporter/incident-details/ParcelInformation';
 import ActionsTaken from '@/components/reporter/incident-details/ActionsTaken';
 import SupportingDocuments from '@/components/reporter/incident-details/SupportingDocuments';
 import ClassificationNote from '@/components/reporter/incident-details/ClassificationNote';
@@ -14,19 +13,34 @@ export interface CaseData {
   dateReported: string;
   incidentDate: string;
   incidentTime: string;
+  incidentLocation?: string;
   branchName: string;
   address: string;
   state: string;
   postalCode: string;
   companyName: string;
+  registeredAddress?: string;
   reporterName: string;
   reporterDesignation: string;
+  reporterEmail?: string;
+  reporterPhone?: string;
+  faxNumber?: string;
   status: string;
   severity: string;
   leaEscalation: string;
   description: string;
   systemServiceAffected?: string;
-  impactIndicators?: string[];
+  estimatedImpact?: string;
+  postalIncidentTypes?: string[];
+  staffDetected?: { name: string; designation: string; contactNumber: string; email: string };
+  senderInfo?: { name: string; address: string; stateCountry: string; contact: string };
+  recipientInfo?: { name: string; address: string; stateCountry: string; contact: string };
+  trackingNumber?: string;
+  packageDeclaration?: string;
+  packageWeight?: string;
+  prohibitedItemType?: string;
+  otherRelatedInfo?: string;
+  // Legacy parcel items support
   items?: {
     tracking: string;
     type: string;
@@ -37,13 +51,17 @@ export interface CaseData {
     receiver: { name: string; address: string; stateCountry: string; contact: string };
   }[];
   immediateActions: string;
+  incidentContained?: string;
   incidentControlStatus: string;
   reportedToAuthority: string;
   authorityAgency?: string;
   authorityReference?: string;
+  authorityDetails?: string;
   parcelHandedOver: string;
   assistanceRequested: string[];
   documents: { name: string; size: string; uploadedBy: string; uploadDate: string }[];
+  // Legacy
+  impactIndicators?: string[];
 }
 
 const statusColors: Record<string, string> = {
@@ -77,16 +95,23 @@ interface Props {
 }
 
 export default function CaseDetailsView({ incident, children }: Props) {
-  const isParcelIncident = incident.items && incident.items.length > 0;
-
   return (
     <div className="space-y-6">
+      {/* Part 1: Reporter Information */}
       <BasicCaseInfo incident={incident} getStatusColor={getStatusColor} getSeverityColor={getSeverityColor} />
+
+      {/* Part 2: Classification Note */}
       <ClassificationNote />
+
+      {/* Part 3: Incident Information */}
       <IncidentDescription incident={incident} />
-      {isParcelIncident && <ParcelInformation items={incident.items!} />}
+
+      {/* Part 4: Actions Taken */}
       <ActionsTaken incident={incident} />
+
+      {/* Part 5: Supporting Documents */}
       <SupportingDocuments documents={incident.documents} />
+
       {children}
     </div>
   );

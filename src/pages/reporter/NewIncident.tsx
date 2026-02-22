@@ -4,44 +4,51 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Save, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { IncidentFormData, Step, emptyParcelItem, isParcelRelated } from '@/components/reporter/incident-form/types';
+import { IncidentFormData, Step, emptySenderRecipient } from '@/components/reporter/incident-form/types';
 import SectionA from '@/components/reporter/incident-form/SectionA';
 import SectionB from '@/components/reporter/incident-form/SectionB';
-import SectionC from '@/components/reporter/incident-form/SectionC';
-import SectionD from '@/components/reporter/incident-form/SectionD';
-import SectionE from '@/components/reporter/incident-form/SectionE';
-import SectionF from '@/components/reporter/incident-form/SectionF';
+import Part3IncidentInfo from '@/components/reporter/incident-form/Part3IncidentInfo';
+import Part4ActionsTaken from '@/components/reporter/incident-form/Part4ActionsTaken';
 import SectionG from '@/components/reporter/incident-form/SectionG';
-import SectionH from '@/components/reporter/incident-form/SectionH';
+import Part6Declaration from '@/components/reporter/incident-form/Part6Declaration';
+
+const today = new Date().toISOString().split('T')[0];
 
 const initialFormData: IncidentFormData = {
   companyName: 'Pos Malaysia Berhad',
-  licenseNumber: 'MCMC-L-2024-0012',
   registeredAddress: 'Dayabumi Complex, Jalan Sultan Hishamuddin, 50670 Kuala Lumpur',
   reporterName: 'Ahmad bin Ismail',
-  designation: '',
+  position: 'Security Officer',
   officialEmail: 'ahmad.ismail@posmalaysia.com.my',
   contactNumber: '+60 12-345 6789',
+  faxNumber: '',
   incidentType: '',
+  postalIncidentTypes: [],
+  postalIncidentOther: '',
+  description: '',
   incidentDate: '',
   incidentTime: '',
   incidentLocation: '',
-  incidentBranch: '',
-  description: '',
-  systemServiceAffected: '',
   staffDetected: { name: '', designation: '', contactNumber: '', email: '' },
-  parcelItems: [{ ...emptyParcelItem }],
-  impactAssessment: [],
+  systemServiceAffected: '',
+  estimatedImpact: '',
+  senderInfo: { ...emptySenderRecipient },
+  recipientInfo: { ...emptySenderRecipient },
+  trackingNumber: '',
+  packageDeclaration: '',
+  packageWeight: '',
+  prohibitedItemType: '',
+  otherRelatedInfo: '',
   immediateActions: '',
-  incidentStatus: '',
-  reportedToAuthorities: '',
-  authorityAgency: '',
-  authorityReference: '',
-  parcelHandedOver: '',
+  incidentContained: '',
   assistanceRequired: [],
   assistanceOther: '',
+  reportedToAuthorities: '',
+  authorityDetails: '',
+  parcelHandedOver: '',
   attachments: [],
   declaration: false,
+  declarationDate: today,
 };
 
 export default function NewIncident() {
@@ -57,31 +64,24 @@ export default function NewIncident() {
     return () => clearInterval(interval);
   }, []);
 
-  // Dynamic steps — skip Section D if incident type is not parcel-related
-  const showParcelSection = isParcelRelated(formData.incidentType);
-
-  const allSteps = [
-    { number: 1, title: 'A – Reporter Information', short: 'Reporter' },
-    { number: 2, title: 'B – Incident Classification', short: 'Classification' },
-    { number: 3, title: 'C – Incident Details', short: 'Details' },
-    { number: 4, title: 'D – Parcel Information', short: 'Parcel' },
-    { number: 5, title: 'E – Impact Assessment', short: 'Impact' },
-    { number: 6, title: 'F – Actions Taken', short: 'Actions' },
-    { number: 7, title: 'G – Supporting Documents', short: 'Documents' },
-    { number: 8, title: 'H – Declaration & Submit', short: 'Submit' },
+  const steps = [
+    { number: 1 as Step, title: 'Part 1 – Reporter Information', short: 'Reporter' },
+    { number: 2 as Step, title: 'Part 2 – Incident Classification', short: 'Classification' },
+    { number: 3 as Step, title: 'Part 3 – Incident Information', short: 'Incident' },
+    { number: 4 as Step, title: 'Part 4 – Actions Taken', short: 'Actions' },
+    { number: 5 as Step, title: 'Part 5 – Supporting Documents', short: 'Documents' },
+    { number: 6 as Step, title: 'Part 6 – Declaration', short: 'Declaration' },
   ];
 
-  const steps = showParcelSection ? allSteps : allSteps.filter((s) => s.number !== 4);
-  const stepNumbers = steps.map((s) => s.number);
-  const currentIdx = stepNumbers.indexOf(currentStep);
+  const currentIdx = steps.findIndex((s) => s.number === currentStep);
   const isLastStep = currentIdx === steps.length - 1;
   const isFirstStep = currentIdx === 0;
 
   const nextStep = () => {
-    if (!isLastStep) setCurrentStep(stepNumbers[currentIdx + 1] as Step);
+    if (!isLastStep) setCurrentStep(steps[currentIdx + 1].number);
   };
   const prevStep = () => {
-    if (!isFirstStep) setCurrentStep(stepNumbers[currentIdx - 1] as Step);
+    if (!isFirstStep) setCurrentStep(steps[currentIdx - 1].number);
   };
 
   const updateField = (field: keyof IncidentFormData, value: any) => {
@@ -128,7 +128,7 @@ export default function NewIncident() {
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
                     currentStep === step.number
                       ? 'bg-primary text-primary-foreground ring-4 ring-primary/20'
-                      : stepNumbers.indexOf(currentStep) > index
+                      : currentIdx > index
                       ? 'bg-status-closed text-status-closed-foreground'
                       : 'bg-muted text-muted-foreground'
                   }`}>
@@ -138,7 +138,7 @@ export default function NewIncident() {
                   <div className="text-xs mt-2 text-center md:hidden">{step.short}</div>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`h-1 flex-1 mx-2 rounded ${stepNumbers.indexOf(currentStep) > index ? 'bg-status-closed' : 'bg-muted'}`} />
+                  <div className={`h-1 flex-1 mx-2 rounded ${currentIdx > index ? 'bg-status-closed' : 'bg-muted'}`} />
                 )}
               </div>
             ))}
@@ -152,12 +152,10 @@ export default function NewIncident() {
         <CardContent className="space-y-6">
           {currentStep === 1 && <SectionA data={formData} onChange={updateField} />}
           {currentStep === 2 && <SectionB data={formData} onChange={updateField} />}
-          {currentStep === 3 && <SectionC data={formData} onChange={updateField} />}
-          {currentStep === 4 && <SectionD parcelItems={formData.parcelItems} onUpdate={(items) => updateField('parcelItems', items)} />}
-          {currentStep === 5 && <SectionE selected={formData.impactAssessment} onChange={(v) => updateField('impactAssessment', v)} />}
-          {currentStep === 6 && <SectionF data={formData} onChange={updateField} />}
-          {currentStep === 7 && <SectionG attachments={formData.attachments} onChange={(v) => updateField('attachments', v)} />}
-          {currentStep === 8 && <SectionH data={formData} declaration={declaration} onDeclarationChange={setDeclaration} />}
+          {currentStep === 3 && <Part3IncidentInfo data={formData} onChange={updateField} />}
+          {currentStep === 4 && <Part4ActionsTaken data={formData} onChange={updateField} />}
+          {currentStep === 5 && <SectionG attachments={formData.attachments} onChange={(v) => updateField('attachments', v)} />}
+          {currentStep === 6 && <Part6Declaration data={formData} declaration={declaration} onDeclarationChange={setDeclaration} onDateChange={(d) => updateField('declarationDate', d)} />}
         </CardContent>
       </Card>
 
