@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const notifications = [
   { id: 1, type: 'assignment', title: 'New Case Assigned', message: 'Case #PSIRP-2025-0028 (Critical Security Breach) has been assigned to you.', time: '1 hour ago', read: false, icon: FileText, action: '/reviewer/cases/PSIRP-2025-0028', actionLabel: 'Review' },
-  { id: 2, type: 'sla', title: 'SLA Warning', message: 'Case #PSIRP-2025-0024 has only 3 hours remaining before SLA breach.', time: '2 hours ago', read: false, icon: Clock, action: '/reviewer/cases/PSIRP-2025-0024', actionLabel: 'View' },
+  
   { id: 3, type: 'clarification', title: 'Clarification Response', message: 'Reporter has responded to your clarification request for #PSIRP-2025-0026.', time: '3 hours ago', read: false, icon: MessageSquare, action: '/reviewer/cases/PSIRP-2025-0026', actionLabel: 'Review' },
   { id: 4, type: 'escalation', title: 'Escalation Approved', message: 'Supervisor approved escalation for case #PSIRP-2025-0022. Case forwarded to PDRM.', time: '5 hours ago', read: false, icon: ArrowUpRight, action: '/reviewer/cases/PSIRP-2025-0022', actionLabel: 'View' },
   { id: 5, type: 'escalation_rejected', title: 'Escalation Rejected', message: 'Supervisor rejected escalation for case #PSIRP-2025-0020. Case returned to Under Review.', time: '1 day ago', read: true, icon: AlertCircle, action: '/reviewer/cases/PSIRP-2025-0020', actionLabel: 'View' },
@@ -15,7 +15,7 @@ const notifications = [
 
 const typeColors: Record<string, string> = {
   assignment: 'text-role-reviewer',
-  sla: 'text-destructive',
+  
   clarification: 'text-status-rfi',
   escalation: 'text-status-in-review',
   escalation_rejected: 'text-destructive',

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import {
-  FolderOpen, AlertTriangle, Clock, CheckCircle, XCircle, Shield, TrendingUp, Inbox,
+  FolderOpen, AlertTriangle, CheckCircle, Shield, Inbox,
 } from 'lucide-react';
 
 const escalationQueue = [
@@ -12,12 +12,6 @@ const escalationQueue = [
   { id: 'PSIRP-2025-0058', title: 'Suspicious parcel pattern', officer: 'Lee Wei', severity: 'High', days: 3 },
   { id: 'PSIRP-2025-0060', title: 'Cross-border contraband attempt', officer: 'Farah Amin', severity: 'Critical', days: 1 },
   { id: 'PSIRP-2025-0063', title: 'Tampering at sorting centre', officer: 'Raj Kumar', severity: 'Medium', days: 4 },
-];
-
-const slaRiskCases = [
-  { id: 'PSIRP-2025-0039', officer: 'Ahmad Razif', daysOpen: 12, threshold: 14 },
-  { id: 'PSIRP-2025-0041', officer: 'Lee Wei', daysOpen: 13, threshold: 14 },
-  { id: 'PSIRP-2025-0044', officer: 'Nurul Hana', daysOpen: 10, threshold: 10 },
 ];
 
 const recentClosed = [
@@ -32,11 +26,8 @@ export default function SupervisorDashboard() {
   const kpis = [
     { label: 'Total Open Cases', value: 34, icon: FolderOpen, color: 'text-role-validator' },
     { label: 'Escalation Pending', value: 5, icon: AlertTriangle, color: 'text-destructive' },
-    { label: 'Near SLA Breach', value: 3, icon: Clock, color: 'text-status-in-review' },
-    { label: 'SLA Breached', value: 1, icon: XCircle, color: 'text-destructive' },
     { label: 'Closed This Month', value: 12, icon: CheckCircle, color: 'text-status-closed' },
     { label: 'Escalated Cases', value: 8, icon: Shield, color: 'text-role-reviewer' },
-    { label: 'High Severity', value: 11, icon: TrendingUp, color: 'text-status-investigation' },
   ];
 
   return (
@@ -52,7 +43,7 @@ export default function SupervisorDashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {kpis.map((kpi) => (
           <Card key={kpi.label} className="border-border/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -92,51 +83,23 @@ export default function SupervisorDashboard() {
           </CardContent>
         </Card>
 
-        {/* SLA Risk + Recently Closed */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>SLA Risk List</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {slaRiskCases.map((c) => {
-                const pct = Math.round((c.daysOpen / c.threshold) * 100);
-                const breached = c.daysOpen >= c.threshold;
-                return (
-                  <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium">{c.id}</p>
-                      <p className="text-xs text-muted-foreground">Officer: {c.officer}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className={cn('text-sm font-bold', breached ? 'text-destructive' : 'text-status-in-review')}>
-                        {c.daysOpen}/{c.threshold} days
-                      </p>
-                      <p className="text-xs text-muted-foreground">{pct}% elapsed</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Recently Closed Cases</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {recentClosed.map((c) => (
-                <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
-                  <div>
-                    <p className="text-sm font-medium">{c.id}</p>
-                    <p className="text-xs text-muted-foreground">{c.date}</p>
-                  </div>
-                  <Badge variant="outline" className="border-status-closed/50 text-status-closed text-xs">{c.outcome}</Badge>
+        {/* Recently Closed */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Recently Closed Cases</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {recentClosed.map((c) => (
+              <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
+                <div>
+                  <p className="text-sm font-medium">{c.id}</p>
+                  <p className="text-xs text-muted-foreground">{c.date}</p>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
+                <Badge variant="outline" className="border-status-closed/50 text-status-closed text-xs">{c.outcome}</Badge>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Officer Workload */}
@@ -147,20 +110,17 @@ export default function SupervisorDashboard() {
         <CardContent>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { name: 'Ahmad Razif', cases: 8, sla: 87 },
-              { name: 'Nurul Hana', cases: 6, sla: 92 },
-              { name: 'Lee Wei', cases: 9, sla: 78 },
-              { name: 'Farah Amin', cases: 5, sla: 100 },
-              { name: 'Raj Kumar', cases: 4, sla: 95 },
-              { name: 'Siti Mariam', cases: 2, sla: 100 },
+              { name: 'Ahmad Razif', cases: 8 },
+              { name: 'Nurul Hana', cases: 6 },
+              { name: 'Lee Wei', cases: 9 },
+              { name: 'Farah Amin', cases: 5 },
+              { name: 'Raj Kumar', cases: 4 },
+              { name: 'Siti Mariam', cases: 2 },
             ].map((o) => (
               <div key={o.name} className="p-3 border border-border/40 rounded-lg">
                 <p className="text-sm font-medium">{o.name}</p>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-xs text-muted-foreground">{o.cases} cases</span>
-                  <span className={cn('text-xs font-medium', o.sla >= 90 ? 'text-status-closed' : o.sla >= 80 ? 'text-status-in-review' : 'text-destructive')}>
-                    {o.sla}% SLA
-                  </span>
                 </div>
               </div>
             ))}

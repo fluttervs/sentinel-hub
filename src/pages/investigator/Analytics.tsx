@@ -14,14 +14,6 @@ const caseVolume = [
   { month: 'Jun', cases: 30, prev: 25 },
 ];
 
-const slaData = [
-  { org: 'Express Courier', compliant: 85, breached: 15 },
-  { org: 'Pos Malaysia', compliant: 78, breached: 22 },
-  { org: 'J&T Express', compliant: 92, breached: 8 },
-  { org: 'CityLink', compliant: 88, breached: 12 },
-  { org: 'DHL eCommerce', compliant: 95, breached: 5 },
-];
-
 const categoryTrend = [
   { month: 'Jan', theft: 5, damage: 8, tampering: 3, hazmat: 2 },
   { month: 'Feb', theft: 7, damage: 9, tampering: 4, hazmat: 2 },
@@ -64,7 +56,6 @@ export default function InvestigatorAnalytics() {
       <Tabs defaultValue="volume" className="space-y-4">
         <TabsList className="flex-wrap">
           <TabsTrigger value="volume">Case Volume</TabsTrigger>
-          <TabsTrigger value="sla">SLA Compliance</TabsTrigger>
           <TabsTrigger value="category">Incident Types</TabsTrigger>
           <TabsTrigger value="escalation">Escalation</TabsTrigger>
           <TabsTrigger value="resolution">Resolution Time</TabsTrigger>
@@ -87,29 +78,6 @@ export default function InvestigatorAnalytics() {
                     <Line type="monotone" dataKey="cases" stroke="hsl(var(--role-investigator))" strokeWidth={2} name="Current Period" />
                     <Line type="monotone" dataKey="prev" stroke="hsl(var(--muted-foreground))" strokeWidth={2} strokeDasharray="5 5" name="Previous Period" />
                   </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="sla">
-          <Card>
-            <CardHeader>
-              <CardTitle>SLA Compliance by Organisation</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[350px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={slaData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis type="number" domain={[0, 100]} unit="%" />
-                    <YAxis type="category" dataKey="org" width={120} tick={{ fontSize: 12 }} />
-                    <Tooltip contentStyle={tooltipStyle} />
-                    <Legend />
-                    <Bar dataKey="compliant" stackId="a" fill="hsl(var(--status-closed))" name="Compliant %" />
-                    <Bar dataKey="breached" stackId="a" fill="hsl(var(--destructive))" name="Breached %" />
-                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>

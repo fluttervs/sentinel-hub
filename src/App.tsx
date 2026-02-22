@@ -43,8 +43,6 @@ import AllCases from "./pages/validator/AllCases";
 import CaseDetail from "./pages/validator/CaseDetail";
 import EscalationQueue from "./pages/validator/EscalationQueue";
 import CaseClosure from "./pages/validator/CaseClosure";
-import SLAGovernance from "./pages/validator/SLAGovernance";
-import OfficerPerformance from "./pages/validator/OfficerPerformance";
 import AuditCompliance from "./pages/validator/AuditCompliance";
 import SearchReports from "./pages/validator/SearchReports";
 import SupervisorNotifications from "./pages/validator/Notifications";
@@ -145,8 +143,6 @@ const App = () => (
                   <Route path="escalations" element={<EscalationQueue />} />
                   <Route path="escalations/:id" element={<EscalationQueue />} />
                   <Route path="closure" element={<CaseClosure />} />
-                  <Route path="sla" element={<SLAGovernance />} />
-                  <Route path="performance" element={<OfficerPerformance />} />
                   <Route path="audit" element={<AuditCompliance />} />
                   <Route path="reports" element={<SearchReports />} />
                   <Route path="notifications" element={<SupervisorNotifications />} />

@@ -9,14 +9,14 @@ import { Search, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const casesData = [
-  { id: 'PSIRP-2025-0063', org: 'Express Courier', reporter: 'Ali Hassan', officer: 'Raj Kumar', severity: 'Medium', status: 'Under Review', escalation: 'None', sla: 'On Track', submitted: '2025-06-10', closed: '-' },
-  { id: 'PSIRP-2025-0060', org: 'Pos Malaysia', reporter: 'Siti Aisyah', officer: 'Farah Amin', severity: 'Critical', status: 'Escalation Pending', escalation: 'Pending', sla: 'On Track', submitted: '2025-06-08', closed: '-' },
-  { id: 'PSIRP-2025-0058', org: 'J&T Express', reporter: 'Lim Wei Jie', officer: 'Lee Wei', severity: 'High', status: 'Under Review', escalation: 'None', sla: 'At Risk', submitted: '2025-06-07', closed: '-' },
-  { id: 'PSIRP-2025-0055', org: 'Express Courier', reporter: 'Ahmad Zulkifli', officer: 'Ahmad Razif', severity: 'Medium', status: 'Closed', escalation: 'None', sla: 'Met', submitted: '2025-06-05', closed: '2025-06-09' },
-  { id: 'PSIRP-2025-0052', org: 'J&T Express', reporter: 'Tan Mei Ling', officer: 'Nurul Hana', severity: 'High', status: 'Escalated', escalation: 'PDRM', sla: 'Met', submitted: '2025-06-03', closed: '-' },
-  { id: 'PSIRP-2025-0049', org: 'CityLink', reporter: 'Kumar Raj', officer: 'Ahmad Razif', severity: 'Low', status: 'Closed', escalation: 'None', sla: 'Met', submitted: '2025-06-01', closed: '2025-06-06' },
-  { id: 'PSIRP-2025-0045', org: 'DHL eCommerce', reporter: 'Wong Kai Wen', officer: 'Farah Amin', severity: 'Critical', status: 'Escalated', escalation: 'Customs', sla: 'Breached', submitted: '2025-05-28', closed: '-' },
-  { id: 'PSIRP-2025-0039', org: 'Pos Malaysia', reporter: 'Nurul Izzah', officer: 'Lee Wei', severity: 'Medium', status: 'Closed', escalation: 'None', sla: 'Met', submitted: '2025-05-25', closed: '2025-05-30' },
+  { id: 'PSIRP-2025-0063', org: 'Express Courier', reporter: 'Ali Hassan', officer: 'Raj Kumar', severity: 'Medium', status: 'Under Review', escalation: 'None', submitted: '2025-06-10', closed: '-' },
+  { id: 'PSIRP-2025-0060', org: 'Pos Malaysia', reporter: 'Siti Aisyah', officer: 'Farah Amin', severity: 'Critical', status: 'Escalation Pending', escalation: 'Pending', submitted: '2025-06-08', closed: '-' },
+  { id: 'PSIRP-2025-0058', org: 'J&T Express', reporter: 'Lim Wei Jie', officer: 'Lee Wei', severity: 'High', status: 'Under Review', escalation: 'None', submitted: '2025-06-07', closed: '-' },
+  { id: 'PSIRP-2025-0055', org: 'Express Courier', reporter: 'Ahmad Zulkifli', officer: 'Ahmad Razif', severity: 'Medium', status: 'Closed', escalation: 'None', submitted: '2025-06-05', closed: '2025-06-09' },
+  { id: 'PSIRP-2025-0052', org: 'J&T Express', reporter: 'Tan Mei Ling', officer: 'Nurul Hana', severity: 'High', status: 'Escalated', escalation: 'PDRM', submitted: '2025-06-03', closed: '-' },
+  { id: 'PSIRP-2025-0049', org: 'CityLink', reporter: 'Kumar Raj', officer: 'Ahmad Razif', severity: 'Low', status: 'Closed', escalation: 'None', submitted: '2025-06-01', closed: '2025-06-06' },
+  { id: 'PSIRP-2025-0045', org: 'DHL eCommerce', reporter: 'Wong Kai Wen', officer: 'Farah Amin', severity: 'Critical', status: 'Escalated', escalation: 'Customs', submitted: '2025-05-28', closed: '-' },
+  { id: 'PSIRP-2025-0039', org: 'Pos Malaysia', reporter: 'Nurul Izzah', officer: 'Lee Wei', severity: 'Medium', status: 'Closed', escalation: 'None', submitted: '2025-05-25', closed: '2025-05-30' },
 ];
 
 const statusColors: Record<string, string> = {
@@ -25,13 +25,6 @@ const statusColors: Record<string, string> = {
   'Escalated': 'border-destructive/50 text-destructive',
   'Closed': 'border-status-closed/50 text-status-closed',
   'Submitted': 'border-status-submitted/50 text-status-submitted',
-};
-
-const slaColors: Record<string, string> = {
-  'On Track': 'border-status-closed/50 text-status-closed',
-  'At Risk': 'border-status-in-review/50 text-status-in-review',
-  'Breached': 'border-destructive/50 text-destructive',
-  'Met': 'border-muted-foreground/50 text-muted-foreground',
 };
 
 export default function InvestigatorAllCases() {
@@ -97,7 +90,6 @@ export default function InvestigatorAllCases() {
                 <TableHead>Severity</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Escalation</TableHead>
-                <TableHead>SLA</TableHead>
                 <TableHead>Submitted</TableHead>
                 <TableHead></TableHead>
               </TableRow>
@@ -112,7 +104,6 @@ export default function InvestigatorAllCases() {
                   <TableCell>{c.severity}</TableCell>
                   <TableCell><Badge variant="outline" className={statusColors[c.status] || ''}>{c.status}</Badge></TableCell>
                   <TableCell>{c.escalation}</TableCell>
-                  <TableCell><Badge variant="outline" className={slaColors[c.sla] || ''}>{c.sla}</Badge></TableCell>
                   <TableCell>{c.submitted}</TableCell>
                   <TableCell>
                     <Button size="sm" variant="ghost" onClick={() => navigate(`/investigator/cases/${c.id}`)}>

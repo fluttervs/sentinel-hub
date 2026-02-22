@@ -9,15 +9,15 @@ import { Search, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const allCases = [
-  { id: 'PSIRP-2025-0063', org: 'Express Courier', officer: 'Raj Kumar', severity: 'Medium', status: 'Under Review', escalation: 'None', sla: 4, date: '2025-06-09' },
-  { id: 'PSIRP-2025-0060', org: 'Pos Malaysia', officer: 'Farah Amin', severity: 'Critical', status: 'Escalation Pending', escalation: 'Pending', sla: 1, date: '2025-06-10' },
-  { id: 'PSIRP-2025-0058', org: 'J&T Express', officer: 'Lee Wei', severity: 'High', status: 'Escalation Pending', escalation: 'Pending', sla: 3, date: '2025-06-08' },
-  { id: 'PSIRP-2025-0055', org: 'DHL eCommerce', officer: 'Ahmad Razif', severity: 'High', status: 'Under Review', escalation: 'None', sla: 6, date: '2025-06-06' },
-  { id: 'PSIRP-2025-0052', org: 'Ninja Van', officer: 'Nurul Hana', severity: 'High', status: 'Escalation Pending', escalation: 'Pending', sla: 1, date: '2025-06-10' },
-  { id: 'PSIRP-2025-0048', org: 'CityLink', officer: 'Lee Wei', severity: 'Low', status: 'Clarification Requested', escalation: 'None', sla: 8, date: '2025-06-03' },
-  { id: 'PSIRP-2025-0045', org: 'Express Courier', officer: 'Ahmad Razif', severity: 'Critical', status: 'Escalation Pending', escalation: 'Pending', sla: 2, date: '2025-06-09' },
-  { id: 'PSIRP-2025-0030', org: 'Pos Malaysia', officer: 'Nurul Hana', severity: 'Medium', status: 'Closed', escalation: 'None', sla: 0, date: '2025-05-28' },
-  { id: 'PSIRP-2025-0025', org: 'DHL eCommerce', officer: 'Farah Amin', severity: 'High', status: 'Escalated', escalation: 'Approved', sla: 0, date: '2025-05-22' },
+  { id: 'PSIRP-2025-0063', org: 'Express Courier', officer: 'Raj Kumar', severity: 'Medium', status: 'Under Review', escalation: 'None', date: '2025-06-09' },
+  { id: 'PSIRP-2025-0060', org: 'Pos Malaysia', officer: 'Farah Amin', severity: 'Critical', status: 'Escalation Pending', escalation: 'Pending', date: '2025-06-10' },
+  { id: 'PSIRP-2025-0058', org: 'J&T Express', officer: 'Lee Wei', severity: 'High', status: 'Escalation Pending', escalation: 'Pending', date: '2025-06-08' },
+  { id: 'PSIRP-2025-0055', org: 'DHL eCommerce', officer: 'Ahmad Razif', severity: 'High', status: 'Under Review', escalation: 'None', date: '2025-06-06' },
+  { id: 'PSIRP-2025-0052', org: 'Ninja Van', officer: 'Nurul Hana', severity: 'High', status: 'Escalation Pending', escalation: 'Pending', date: '2025-06-10' },
+  { id: 'PSIRP-2025-0048', org: 'CityLink', officer: 'Lee Wei', severity: 'Low', status: 'Clarification Requested', escalation: 'None', date: '2025-06-03' },
+  { id: 'PSIRP-2025-0045', org: 'Express Courier', officer: 'Ahmad Razif', severity: 'Critical', status: 'Escalation Pending', escalation: 'Pending', date: '2025-06-09' },
+  { id: 'PSIRP-2025-0030', org: 'Pos Malaysia', officer: 'Nurul Hana', severity: 'Medium', status: 'Closed', escalation: 'None', date: '2025-05-28' },
+  { id: 'PSIRP-2025-0025', org: 'DHL eCommerce', officer: 'Farah Amin', severity: 'High', status: 'Escalated', escalation: 'Approved', date: '2025-05-22' },
 ];
 
 const statusColors: Record<string, string> = {
@@ -106,7 +106,6 @@ export default function AllCases() {
                 <TableHead>Severity</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Escalation</TableHead>
-                <TableHead>SLA (days)</TableHead>
                 <TableHead>Submitted</TableHead>
                 <TableHead></TableHead>
               </TableRow>
@@ -126,7 +125,6 @@ export default function AllCases() {
                     <Badge variant="outline" className={statusColors[c.status] || ''}>{c.status}</Badge>
                   </TableCell>
                   <TableCell>{c.escalation}</TableCell>
-                  <TableCell>{c.sla > 0 ? c.sla : '—'}</TableCell>
                   <TableCell className="text-muted-foreground">{c.date}</TableCell>
                   <TableCell>
                     <Button size="sm" variant="ghost" onClick={() => navigate(`/validator/cases/${c.id}`)}>

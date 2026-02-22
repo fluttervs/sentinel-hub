@@ -8,10 +8,10 @@ export default function ReviewerDashboard() {
   const navigate = useNavigate();
 
   const priorityIncidents = [
-    { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', licensee: 'Express Courier Sdn Bhd', severity: 'Critical', sla: '2h remaining', status: 'Pending Review' },
-    { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', licensee: 'Swift Logistics Sdn Bhd', severity: 'High', sla: '5h remaining', status: 'Pending Review' },
-    { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', licensee: 'Express Courier Sdn Bhd', severity: 'High', sla: '8h remaining', status: 'RFI Sent' },
-    { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', licensee: 'Express Courier Sdn Bhd', severity: 'High', sla: '3h remaining', status: 'RFI Sent' },
+    { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', licensee: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Pending Review' },
+    { id: 'PSIRP-2025-0027', title: 'High-Value Theft Investigation', licensee: 'Swift Logistics Sdn Bhd', severity: 'High', status: 'Pending Review' },
+    { id: 'PSIRP-2025-0026', title: 'Package Tampering Report', licensee: 'Express Courier Sdn Bhd', severity: 'High', status: 'RFI Sent' },
+    { id: 'PSIRP-2025-0024', title: 'Fraud Attempt Documentation', licensee: 'Express Courier Sdn Bhd', severity: 'High', status: 'RFI Sent' },
   ];
 
   const recentUpdates = [
@@ -117,12 +117,7 @@ export default function ReviewerDashboard() {
                     <p className="font-medium">{incident.title}</p>
                     <p className="text-sm text-muted-foreground">{incident.licensee}</p>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <p className={`text-sm font-medium ${incident.sla.includes('2h') || incident.sla.includes('3h') ? 'text-destructive' : 'text-muted-foreground'}`}>
-                      {incident.sla}
-                    </p>
-                    <Button size="sm" variant="outline"><Eye className="mr-2 h-4 w-4" />Review</Button>
-                  </div>
+                  <Button size="sm" variant="outline"><Eye className="mr-2 h-4 w-4" />Review</Button>
                 </div>
               ))}
             </div>
