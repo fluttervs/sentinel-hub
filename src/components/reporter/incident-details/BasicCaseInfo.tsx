@@ -5,8 +5,6 @@ import { FileText, User } from 'lucide-react';
 interface Props {
   incident: {
     id: string;
-    incidentType: string;
-    category: string;
     dateReported: string;
     companyName: string;
     registeredAddress?: string;

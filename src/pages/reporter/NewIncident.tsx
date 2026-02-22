@@ -23,7 +23,7 @@ const initialFormData: IncidentFormData = {
   faxNumber: '',
   additionalPhone: '',
   alternativeEmail: '',
-  incidentType: '',
+  
   postalIncidentTypes: [],
   postalIncidentOther: '',
   description: '',

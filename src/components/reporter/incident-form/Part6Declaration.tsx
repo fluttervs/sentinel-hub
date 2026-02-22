@@ -1,7 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { IncidentFormData, getAutoCategory } from './types';
+import { IncidentFormData } from './types';
 
 interface Props {
   data: IncidentFormData;
@@ -37,8 +37,6 @@ export default function Part6Declaration({ data, declaration, onDeclarationChang
           <div className="flex justify-between"><span className="text-muted-foreground">Company:</span><span className="font-medium truncate ml-4">{data.companyName || '—'}</span></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Reporter:</span><span className="font-medium truncate ml-4">{data.reporterName || '—'}</span></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Date:</span><span className="font-medium">{data.incidentDate || '—'}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Classification:</span><span className="font-medium truncate ml-4">{data.incidentType || '—'}</span></div>
-          <div className="flex justify-between"><span className="text-muted-foreground">Category:</span><span className="font-medium">{data.incidentType ? getAutoCategory(data.incidentType) : '—'}</span></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Impact:</span><span className="font-medium">{data.estimatedImpact || '—'}</span></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Contained:</span><span className="font-medium">{data.incidentContained || '—'}</span></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Attachments:</span><span className="font-medium">{data.attachments.length} file(s)</span></div>

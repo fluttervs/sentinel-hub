@@ -34,8 +34,6 @@ export default function LEACaseDetail() {
   const incident: CaseData = {
     id: id || 'ESC-2025-001',
     title: 'Theft of High-Value Consignment',
-    incidentType: 'Theft or loss of postal items (non-dangerous)',
-    category: 'Medium Severity Incident',
     dateReported: '2025-06-08 14:00',
     incidentDate: '2025-06-08',
     incidentTime: '14:22',

@@ -50,8 +50,6 @@ const rfiMessages = [
 const mapToCaseData = (inc: typeof incidents[0]): CaseData => ({
   id: inc.id,
   title: inc.description,
-  incidentType: inc.type,
-  category: inc.type,
   dateReported: inc.submitted,
   incidentDate: inc.submitted,
   incidentTime: '—',

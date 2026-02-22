@@ -2,13 +2,11 @@ import BasicCaseInfo from '@/components/reporter/incident-details/BasicCaseInfo'
 import IncidentDescription from '@/components/reporter/incident-details/IncidentDescription';
 import ActionsTaken from '@/components/reporter/incident-details/ActionsTaken';
 import SupportingDocuments from '@/components/reporter/incident-details/SupportingDocuments';
-import { getAutoCategory } from '@/components/reporter/incident-form/types';
+
 
 export interface CaseData {
   id: string;
   title: string;
-  incidentType: string;
-  category: string;
   dateReported: string;
   incidentDate: string;
   incidentTime: string;
@@ -113,4 +111,4 @@ export default function CaseDetailsView({ incident, children }: Props) {
   );
 }
 
-export { getAutoCategory };
+

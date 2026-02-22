@@ -21,8 +21,6 @@ export default function CaseDetail() {
   const incident: CaseData = {
     id: id || 'PSIRP-2025-0042',
     title: 'High-value theft at KL Central Hub',
-    incidentType: 'Theft or loss of postal items (non-dangerous)',
-    category: 'Medium Severity Incident',
     dateReported: '2025-06-09 09:15',
     incidentDate: '2025-06-08',
     incidentTime: '02:15',
@@ -85,7 +83,7 @@ export default function CaseDetail() {
             <CardHeader><CardTitle>Case Officer Assessment</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               {[
-                ['Classification', 'Criminal – Theft'],
+                
                 ['Severity Level', 'Critical'],
                 ['Preliminary Findings', 'Evidence suggests organised theft ring operating within the hub. Pattern matches 3 prior incidents in Q1. CCTV evidence confirms unauthorized entry at 02:15 AM.'],
                 ['Risk Indicator', 'High – Potential for recurrence'],
