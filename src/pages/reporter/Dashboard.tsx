@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Plus, MessageSquare, Clock, AlertCircle, CheckCircle2, Trash2, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { FileText, Plus, MessageSquare, Clock, CheckCircle2, Trash2, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ReporterDashboard() {
@@ -12,12 +12,6 @@ export default function ReporterDashboard() {
     { id: 'draft-3', title: 'Lost Consignment', updated: '3 days ago', daysLeft: 1 },
   ];
 
-  const activities = [
-    { type: 'rfi', message: 'RFI received for incident #PSIRP-2025-0023', time: '1 hour ago', urgent: true },
-    { type: 'update', message: 'Incident #PSIRP-2025-0020 moved to Investigation', time: '3 hours ago', urgent: false },
-    { type: 'acknowledged', message: 'Your submission #PSIRP-2025-0025 was acknowledged', time: '5 hours ago', urgent: false },
-    { type: 'closed', message: 'Incident #PSIRP-2025-0019 has been closed', time: '1 day ago', urgent: false },
-  ];
 
   const announcements = [
     { id: '1', title: 'System Maintenance Scheduled', message: 'The system will undergo maintenance this Saturday from 2 AM to 6 AM.', from: 'System Admin', time: '2 hours ago', priority: 'high' },
@@ -34,7 +28,7 @@ export default function ReporterDashboard() {
 
       {/* KPI Cards - 5 cards */}
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
-        <Card className="border-primary/20 hover:border-primary/40 transition-all cursor-pointer" onClick={() => navigate('/reporter/incidents')}>
+        <Card className="border-primary/20 transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Drafts</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -86,7 +80,7 @@ export default function ReporterDashboard() {
       </div>
 
       {/* Pending RFI Alert */}
-      <Card className="border-destructive/40 bg-destructive/5">
+      <Card className="border-destructive/40 bg-destructive/5 cursor-pointer hover:border-destructive/60 transition-all" onClick={() => navigate('/reporter/incidents?filter=rfi')}>
         <CardContent className="flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-destructive/20 flex items-center justify-center">
@@ -97,7 +91,7 @@ export default function ReporterDashboard() {
               <p className="text-sm text-muted-foreground">You have requests for information awaiting your response</p>
             </div>
           </div>
-          <Button variant="outline" className="border-destructive/30 text-destructive hover:bg-destructive/10" onClick={() => navigate('/reporter/incidents')}>
+          <Button variant="outline" className="border-destructive/30 text-destructive hover:bg-destructive/10">
             View & Respond
           </Button>
         </CardContent>
@@ -182,43 +176,6 @@ export default function ReporterDashboard() {
         </Card>
       </div>
 
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {activities.map((activity, index) => (
-              <div
-                key={index}
-                className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
-                  activity.urgent
-                    ? 'border-destructive/40 bg-destructive/5'
-                    : 'border-border hover:border-primary/20'
-                }`}
-              >
-                <div className="mt-1">
-                  {activity.urgent ? (
-                    <AlertCircle className="h-4 w-4 text-destructive" />
-                  ) : (
-                    <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{activity.message}</p>
-                  <p className="text-xs text-muted-foreground">{activity.time}</p>
-                </div>
-                {activity.urgent && (
-                  <Button size="sm" variant="outline" className="text-xs">
-                    Respond
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

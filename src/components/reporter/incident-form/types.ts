@@ -21,6 +21,8 @@ export interface IncidentFormData {
   officialEmail: string;
   contactNumber: string;
   faxNumber: string;
+  additionalPhone: string;
+  alternativeEmail: string;
 
   // Part 2: Incident Classification (kept as-is)
   incidentType: string;
@@ -60,7 +62,7 @@ export interface IncidentFormData {
   declarationDate: string;
 }
 
-export type Step = 1 | 2 | 3 | 4 | 5 | 6;
+export type Step = 1 | 2 | 3 | 4 | 5;
 
 // Postal security incident type options for Part 3 checkboxes
 export const postalIncidentTypeOptions = [
