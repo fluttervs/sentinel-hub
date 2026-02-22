@@ -6,15 +6,13 @@ import {
   FolderOpen,
   AlertTriangle,
   XCircle,
-  Search,
-  FileBarChart,
-  Users,
-  ClipboardList,
-  Bell,
   Shield,
+  FileBarChart,
+  Bell,
   ChevronLeft,
   ChevronRight,
   BadgeCheck,
+  BarChart3,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +22,7 @@ const navItems = [
   { title: 'All Cases', path: '/validator/cases', icon: FolderOpen },
   { title: 'Escalation Queue', path: '/validator/escalations', icon: AlertTriangle, badge: 5 },
   { title: 'Case Closure', path: '/validator/closure', icon: XCircle },
+  { title: 'Analytics', path: '/validator/analytics', icon: BarChart3 },
   { title: 'Audit & Compliance', path: '/validator/audit', icon: Shield },
   { title: 'Search & Reports', path: '/validator/reports', icon: FileBarChart },
   { title: 'Notifications', path: '/validator/notifications', icon: Bell, badge: 3 },

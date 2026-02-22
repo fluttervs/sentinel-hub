@@ -8,6 +8,7 @@ import {
   Shield,
   ChevronLeft,
   ChevronRight,
+  BarChart3,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 const navItems = [
   { title: 'Dashboard', path: '/lea/dashboard', icon: LayoutDashboard },
   { title: 'Escalated Cases', path: '/lea/cases', icon: FolderOpen },
+  { title: 'Analytics', path: '/lea/analytics', icon: BarChart3 },
   { title: 'Notifications', path: '/lea/notifications', icon: Bell, badge: 3 },
   { title: 'Security', path: '/lea/security', icon: Shield },
 ];
