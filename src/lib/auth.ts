@@ -26,7 +26,7 @@ export const login = (email: string, password: string, role: Role): User => {
     'reporter': 'Licensee Reporter',
     'licensee-admin': 'Licensee Admin',
     'reviewer': 'MCMC Case Officer',
-    'validator': 'MCMC Validator',
+    'validator': 'MCMC Supervisor',
     'investigator': 'MCMC Investigator',
     'system-admin': 'MCMC System Admin',
     'super-admin': 'MCMC Super Admin',
