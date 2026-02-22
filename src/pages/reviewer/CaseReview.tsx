@@ -30,6 +30,12 @@ export default function CaseReview() {
   const [escalationJustification, setEscalationJustification] = useState('');
   const [selectedAgencies, setSelectedAgencies] = useState<string[]>([]);
   const [replyText, setReplyText] = useState('');
+  const [peerComment, setPeerComment] = useState('');
+
+  const peerComments = [
+    { author: 'Nurul Hana (CO-2024-018)', comment: 'Similar MO observed in PSIRP-2025-0030 — recommend cross-referencing access logs.', date: '2025-01-16 11:00' },
+    { author: 'Lee Wei (CO-2024-022)', comment: 'Confirmed pattern matches with Warehouse Break-in case from last week.', date: '2025-01-16 14:30' },
+  ];
 
   const incident: CaseData = {
     id: id || 'PSIRP-2025-0028',
@@ -160,6 +166,23 @@ export default function CaseReview() {
                 <Textarea value={internalNotes} onChange={(e) => setInternalNotes(e.target.value)} placeholder="Private notes — not visible to the reporter..." rows={3} className="border-role-reviewer/20" />
               </div>
               <Button onClick={handleSaveAssessment} className="glow-blue">Save Assessment</Button>
+
+              {/* Peer Comments */}
+              <div className="pt-4 border-t border-border space-y-3">
+                <Label className="flex items-center gap-2"><User className="h-4 w-4" />Peer Comments</Label>
+                {peerComments.map((pc, i) => (
+                  <div key={i} className="p-3 border border-border/40 rounded-lg bg-accent/20">
+                    <p className="text-sm">{pc.comment}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{pc.author} · {pc.date}</p>
+                  </div>
+                ))}
+                <div className="flex gap-2">
+                  <Textarea value={peerComment} onChange={(e) => setPeerComment(e.target.value)} placeholder="Add a comment on this assessment..." rows={2} className="flex-1" />
+                  <Button variant="outline" className="self-end" disabled={!peerComment.trim()} onClick={() => { toast({ title: 'Comment Added', description: 'Your comment has been posted.' }); setPeerComment(''); }}>
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -189,27 +212,35 @@ export default function CaseReview() {
                 <CheckCircle2 className="mr-2 h-4 w-4 text-status-submitted" />Under Review
               </Button>
 
-              {/* Request Clarification */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start">
-                    <MessageSquare className="mr-2 h-4 w-4 text-status-rfi" />Request Clarification
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader><DialogTitle>Request Clarification</DialogTitle></DialogHeader>
-                  <Textarea value={clarificationMessage} onChange={(e) => setClarificationMessage(e.target.value)} placeholder="Enter your clarification request..." rows={4} />
-                  <DialogFooter>
-                    <Button onClick={handleRequestClarification} disabled={!clarificationMessage.trim()}>
-                      <Send className="mr-2 h-4 w-4" />Send Request
+              {/* Case Closure - severity-based logic */}
+              {(incident.severity === 'Low' || incident.severity === 'Medium') ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start">
+                      <CheckCircle2 className="mr-2 h-4 w-4 text-status-closed" />Close Case
                     </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-
-              <Button variant="outline" className="w-full justify-start" onClick={() => handleUpdateStatus('Recommendation for Closure')}>
-                <CheckCircle2 className="mr-2 h-4 w-4 text-status-closed" />Recommend Closure
-              </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader><DialogTitle>Close Case – {incident.id}</DialogTitle></DialogHeader>
+                    <p className="text-sm text-muted-foreground">As a Case Officer, you can close Low/Medium severity cases directly.</p>
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label>Closure Summary *</Label>
+                        <Textarea value={clarificationMessage} onChange={(e) => setClarificationMessage(e.target.value)} placeholder="Provide closure summary..." rows={4} />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={() => { toast({ title: 'Case Closed', description: `${incident.id} has been closed.` }); setClarificationMessage(''); }} disabled={!clarificationMessage.trim()}>
+                        <CheckCircle2 className="mr-2 h-4 w-4" />Confirm Closure
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              ) : (
+                <Button variant="outline" className="w-full justify-start" onClick={() => { handleUpdateStatus('Recommendation for Closure'); toast({ title: 'Closure Request Submitted', description: 'High/Critical severity — routed to Supervisor for approval.' }); }}>
+                  <CheckCircle2 className="mr-2 h-4 w-4 text-status-closed" />Request Closure Approval
+                </Button>
+              )}
 
               {/* Escalation */}
               <Dialog>

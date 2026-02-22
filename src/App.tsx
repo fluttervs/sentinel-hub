@@ -25,6 +25,7 @@ import CaseOfficerInbox from "./pages/reviewer/Inbox";
 import CaseReview from "./pages/reviewer/CaseReview";
 import CaseOfficerSearch from "./pages/reviewer/Search";
 import CaseOfficerReports from "./pages/reviewer/Reports";
+import ReviewerAllCases from "./pages/reviewer/AllCases";
 import CaseOfficerNotifications from "./pages/reviewer/Notifications";
 import CaseOfficerSecurity from "./pages/reviewer/Security";
 import LicenseeAdminLayout from "./components/licenseeAdmin/LicenseeAdminLayout";
@@ -126,6 +127,7 @@ const App = () => (
                 <Route path="/reviewer" element={<ProtectedRoute><CaseOfficerLayout /></ProtectedRoute>}>
                   <Route path="dashboard" element={<ReviewerDashboard />} />
                   <Route path="inbox" element={<CaseOfficerInbox />} />
+                  <Route path="all-cases" element={<ReviewerAllCases />} />
                   <Route path="incidents" element={<ReviewerIncidents />} />
                   <Route path="cases/:id" element={<CaseReview />} />
                   <Route path="search" element={<CaseOfficerSearch />} />

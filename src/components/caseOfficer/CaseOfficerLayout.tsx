@@ -6,6 +6,7 @@ import {
   Inbox,
   Search,
   FileBarChart,
+  Users,
   Bell,
   Shield,
   ChevronLeft,
@@ -18,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 const navItems = [
   { title: 'Dashboard', path: '/reviewer/dashboard', icon: LayoutDashboard },
   { title: 'Assignment Inbox', path: '/reviewer/inbox', icon: Inbox, badge: 8 },
+  { title: 'All Cases', path: '/reviewer/all-cases', icon: Users },
   { title: 'Search & Filter', path: '/reviewer/search', icon: Search },
   { title: 'Reports', path: '/reviewer/reports', icon: FileBarChart },
   { title: 'Notifications', path: '/reviewer/notifications', icon: Bell, badge: 4 },
