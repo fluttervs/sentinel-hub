@@ -12,14 +12,14 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-role-validator/10 pointer-events-none" />
-        
+
         <div className="container relative z-10 mx-auto max-w-6xl">
           <div className="text-center space-y-8">
             <div className="inline-block">
               <div className="flex items-center justify-center gap-3 mb-6">
-                <img 
-                  src={mcmcLogo} 
-                  alt="MCMC Logo" 
+                <img
+                  src={mcmcLogo}
+                  alt="MCMC Logo"
                   className="h-24 w-auto object-contain"
                 />
               </div>
@@ -31,22 +31,22 @@ export default function Landing() {
                 </span>
               </h1>
             </div>
-            
+
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Report, track, and analyze postal security incidents securely with real-time collaboration and AI-powered insights.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 onClick={() => navigate('/choose-role')}
                 className="text-lg px-8 glow-cyan"
               >
                 Choose Role
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 variant="outline"
                 onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-lg px-8"
