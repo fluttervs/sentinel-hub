@@ -15,10 +15,10 @@ import { Badge } from '@/components/ui/badge';
 
 const navItems = [
   { title: 'Dashboard', path: '/lea/dashboard', icon: LayoutDashboard },
+  { title: 'Notifications', path: '/lea/notifications', icon: Bell, badge: 3 },
   { title: 'Escalated Cases', path: '/lea/cases', icon: FolderOpen },
   { title: 'Analytics', path: '/lea/analytics', icon: BarChart3 },
-  { title: 'Notifications', path: '/lea/notifications', icon: Bell, badge: 3 },
-  { title: 'Security', path: '/lea/security', icon: Shield },
+  { title: 'Profile', path: '/lea/security', icon: Shield },
 ];
 
 export default function LEALayout() {

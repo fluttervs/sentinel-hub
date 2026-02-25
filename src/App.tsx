@@ -53,7 +53,7 @@ import InvestigatorDashboard from "./pages/investigator/Dashboard";
 import InvestigatorAnalytics from "./pages/investigator/Analytics";
 import InvestigatorAllCases from "./pages/investigator/AllCases";
 import InvestigatorCaseDetail from "./pages/investigator/CaseDetail";
-import InvestigatorPerformance from "./pages/investigator/Performance";
+
 import InvestigatorReports from "./pages/investigator/Reports";
 import InvestigatorAuditCompliance from "./pages/investigator/AuditCompliance";
 import InvestigatorNotifications from "./pages/investigator/Notifications";
@@ -158,7 +158,7 @@ const App = () => (
                   <Route path="analytics" element={<InvestigatorAnalytics />} />
                   <Route path="cases" element={<InvestigatorAllCases />} />
                   <Route path="cases/:id" element={<InvestigatorCaseDetail />} />
-                  <Route path="performance" element={<InvestigatorPerformance />} />
+                  
                   <Route path="reports" element={<InvestigatorReports />} />
                   <Route path="audit" element={<InvestigatorAuditCompliance />} />
                   <Route path="notifications" element={<InvestigatorNotifications />} />

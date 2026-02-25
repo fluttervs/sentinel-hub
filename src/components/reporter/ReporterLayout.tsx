@@ -17,11 +17,11 @@ import { Badge } from '@/components/ui/badge';
 
 const navItems = [
   { title: 'Dashboard', path: '/reporter/dashboard', icon: LayoutDashboard },
+  { title: 'Notifications', path: '/reporter/notifications', icon: Bell, badge: 3 },
   { title: 'New Incident', path: '/reporter/incidents/new', icon: PlusCircle },
   { title: 'My Submissions', path: '/reporter/incidents', icon: FolderOpen },
-  { title: 'Notifications', path: '/reporter/notifications', icon: Bell, badge: 3 },
   { title: 'My Analytics', path: '/reporter/analytics', icon: BarChart3 },
-  { title: 'Profile & Security', path: '/reporter/profile', icon: Shield },
+  { title: 'Profile', path: '/reporter/profile', icon: Shield },
 ];
 
 export default function ReporterLayout() {

@@ -69,8 +69,8 @@ export default function LicenseeAdminAnalytics() {
         <div className="grid gap-4 grid-cols-3 mb-6">
           <Card>
             <CardContent className="p-4 text-center">
-              <p className="text-xs text-muted-foreground mb-1">This Month</p>
-              <p className="text-3xl font-bold text-primary">5</p>
+              <p className="text-xs text-muted-foreground mb-1">This Year</p>
+              <p className="text-3xl font-bold text-primary">47</p>
             </CardContent>
           </Card>
           <Card>
@@ -81,8 +81,8 @@ export default function LicenseeAdminAnalytics() {
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <p className="text-xs text-muted-foreground mb-1">This Year</p>
-              <p className="text-3xl font-bold text-primary">47</p>
+              <p className="text-xs text-muted-foreground mb-1">This Month</p>
+              <p className="text-3xl font-bold text-primary">5</p>
             </CardContent>
           </Card>
         </div>

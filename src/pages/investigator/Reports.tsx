@@ -5,11 +5,8 @@ import { useToast } from '@/hooks/use-toast';
 
 const reports = [
   { title: 'Case Volume Report', desc: 'Total cases by organisation, severity, and period' },
-  { title: 'SLA Compliance Report', desc: 'Compliance rates, breach counts by officer and organisation' },
-  { title: 'Escalation Report', desc: 'Escalation statistics, LEA referrals, approval turnaround' },
   { title: 'Incident Type Analysis', desc: 'Category distribution, trends, and anomaly detection' },
   { title: 'Organisation Comparison', desc: 'Cross-organisation risk profiles and benchmarks' },
-  { title: 'Officer Performance Report', desc: 'Individual officer metrics, caseload, and efficiency' },
 ];
 
 export default function InvestigatorReports() {
