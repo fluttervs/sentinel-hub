@@ -1,8 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Shield, Clock, Upload, CheckCircle2, AlertCircle, Bell } from 'lucide-react';
+import { Shield, Clock, Upload, CheckCircle2, AlertCircle, Bell, TrendingUp, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend, LineChart, Line,
+} from 'recharts';
 
 const pendingAck = [
   { id: 'ESC-2025-004', title: 'Counterfeit stamps distribution', org: 'Pos Malaysia', severity: 'High', escalatedDate: '2025-06-14' },
@@ -21,6 +25,37 @@ const statusBreakdown = [
   { status: 'Pending Info', count: 2, color: 'status-rfi' },
   { status: 'Outcome Submitted', count: 3, color: 'status-closed' },
 ];
+
+const monthlyEscalations = [
+  { month: 'Jan', escalated: 3, resolved: 2 },
+  { month: 'Feb', escalated: 5, resolved: 3 },
+  { month: 'Mar', escalated: 4, resolved: 4 },
+  { month: 'Apr', escalated: 6, resolved: 5 },
+  { month: 'May', escalated: 7, resolved: 4 },
+  { month: 'Jun', escalated: 5, resolved: 6 },
+];
+
+const severityDistribution = [
+  { name: 'Critical', value: 4, color: 'hsl(var(--destructive))' },
+  { name: 'High', value: 8, color: 'hsl(var(--role-validator))' },
+  { name: 'Medium', value: 6, color: 'hsl(var(--primary))' },
+  { name: 'Low', value: 3, color: 'hsl(var(--status-closed))' },
+];
+
+const casesByCategory = [
+  { category: 'Theft', count: 5 },
+  { category: 'Narcotics', count: 3 },
+  { category: 'Tampering', count: 4 },
+  { category: 'Fraud', count: 2 },
+  { category: 'Dangerous Goods', count: 2 },
+];
+
+const tooltipStyle = {
+  backgroundColor: 'hsl(var(--card))',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: '8px',
+  color: 'hsl(var(--foreground))',
+};
 
 export default function LEADashboard() {
   const navigate = useNavigate();
@@ -107,6 +142,78 @@ export default function LEADashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Analytics Section */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Monthly Escalation Trend</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[280px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={monthlyEscalations}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="month" className="text-xs" />
+                  <YAxis className="text-xs" allowDecimals={false} />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Legend />
+                  <Line type="monotone" dataKey="escalated" stroke="hsl(220 70% 50%)" strokeWidth={2} name="Escalated" />
+                  <Line type="monotone" dataKey="resolved" stroke="hsl(var(--status-closed))" strokeWidth={2} name="Resolved" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Severity Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <ResponsiveContainer width="55%" height={250}>
+                <PieChart>
+                  <Pie data={severityDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={3}>
+                    {severityDistribution.map((entry, idx) => (
+                      <Cell key={idx} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={tooltipStyle} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="w-[45%] space-y-2">
+                {severityDistribution.map((s) => (
+                  <div key={s.name} className="flex items-center gap-2 text-sm">
+                    <span className="h-3 w-3 rounded-sm shrink-0" style={{ backgroundColor: s.color }} />
+                    <span className="text-muted-foreground">{s.name}</span>
+                    <span className="ml-auto font-medium">{s.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><BarChart3 className="h-4 w-4" /> Cases by Category</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[260px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={casesByCategory}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="category" className="text-xs" />
+                <YAxis className="text-xs" allowDecimals={false} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar dataKey="count" fill="hsl(220 70% 50%)" radius={[4, 4, 0, 0]} name="Cases" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

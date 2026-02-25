@@ -18,12 +18,12 @@ import { Badge } from '@/components/ui/badge';
 
 const navItems = [
   { title: 'Dashboard', path: '/reviewer/dashboard', icon: LayoutDashboard },
+  { title: 'Notifications', path: '/reviewer/notifications', icon: Bell, badge: 4 },
   { title: 'Assignment Inbox', path: '/reviewer/inbox', icon: Inbox, badge: 8 },
   { title: 'All Cases', path: '/reviewer/all-cases', icon: Users },
   { title: 'Search & Filter', path: '/reviewer/search', icon: Search },
   { title: 'Reports', path: '/reviewer/reports', icon: FileBarChart },
-  { title: 'Notifications', path: '/reviewer/notifications', icon: Bell, badge: 4 },
-  { title: 'Security Settings', path: '/reviewer/security', icon: Shield },
+  { title: 'Profile', path: '/reviewer/security', icon: Shield },
 ];
 
 export default function CaseOfficerLayout() {

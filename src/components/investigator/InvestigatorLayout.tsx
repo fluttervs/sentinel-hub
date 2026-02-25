@@ -5,13 +5,11 @@ import {
   LayoutDashboard,
   FolderOpen,
   BarChart3,
-  Users,
   FileBarChart,
   Shield,
   Bell,
   ChevronLeft,
   ChevronRight,
-  Search as SearchIcon,
   Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,13 +17,12 @@ import { Badge } from '@/components/ui/badge';
 
 const navItems = [
   { title: 'Dashboard', path: '/investigator/dashboard', icon: LayoutDashboard },
-  { title: 'Strategic Analytics', path: '/investigator/analytics', icon: BarChart3 },
+  { title: 'Notifications', path: '/investigator/notifications', icon: Bell, badge: 2 },
   { title: 'All Cases', path: '/investigator/cases', icon: FolderOpen },
-  { title: 'Performance', path: '/investigator/performance', icon: Users },
   { title: 'Reports', path: '/investigator/reports', icon: FileBarChart },
   { title: 'Audit & Compliance', path: '/investigator/audit', icon: Shield },
-  { title: 'Notifications', path: '/investigator/notifications', icon: Bell, badge: 2 },
-  { title: 'Security', path: '/investigator/security', icon: Shield },
+  { title: 'Strategic Analytics', path: '/investigator/analytics', icon: BarChart3 },
+  { title: 'Profile', path: '/investigator/security', icon: Shield },
 ];
 
 export default function InvestigatorLayout() {
