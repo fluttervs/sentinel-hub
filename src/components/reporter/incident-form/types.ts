@@ -88,6 +88,7 @@ export const incidentTypeGroups: IncidentTypeGroup[] = [
       'Pornographic materials',
       'Wildlife or exotic animals',
       'Items prohibited under Federal, State, or local laws',
+      'Other (Prohibited Postal Items)',
     ],
   },
   {
@@ -99,6 +100,7 @@ export const incidentTypeGroups: IncidentTypeGroup[] = [
       'Criminal activities within postal hubs',
       'Gas leaks, fires, or major accidents',
       'Significant disruption to postal operations',
+      'Other (Serious Threat)',
     ],
   },
   {
@@ -112,6 +114,7 @@ export const incidentTypeGroups: IncidentTypeGroup[] = [
       'Suspicious package (false alarm)',
       'Non-compliance with postal procedures',
       'Limited impact data access incidents',
+      'Other (Medium Severity Incident)',
     ],
   },
   {
@@ -124,6 +127,7 @@ export const incidentTypeGroups: IncidentTypeGroup[] = [
       'Customer complaints (non-security)',
       'Administrative issues',
       'Minor system/process issues',
+      'Other (Operational Issues)',
     ],
   },
 ];
