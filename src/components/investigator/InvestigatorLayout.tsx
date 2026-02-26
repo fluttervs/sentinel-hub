@@ -5,7 +5,6 @@ import {
   LayoutDashboard,
   FolderOpen,
   BarChart3,
-  FileBarChart,
   Shield,
   Bell,
   ChevronLeft,
@@ -19,9 +18,7 @@ const navItems = [
   { title: 'Dashboard', path: '/investigator/dashboard', icon: LayoutDashboard },
   { title: 'Notifications', path: '/investigator/notifications', icon: Bell, badge: 2 },
   { title: 'All Cases', path: '/investigator/cases', icon: FolderOpen },
-  { title: 'Reports', path: '/investigator/reports', icon: FileBarChart },
-  { title: 'Audit & Compliance', path: '/investigator/audit', icon: Shield },
-  { title: 'Strategic Analytics', path: '/investigator/analytics', icon: BarChart3 },
+  { title: 'Analytics & Report', path: '/investigator/analytics', icon: BarChart3 },
   { title: 'Profile', path: '/investigator/security', icon: Shield },
 ];
 
