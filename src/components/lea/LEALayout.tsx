@@ -17,7 +17,7 @@ const navItems = [
   { title: 'Dashboard', path: '/lea/dashboard', icon: LayoutDashboard },
   { title: 'Notifications', path: '/lea/notifications', icon: Bell, badge: 3 },
   { title: 'Escalated Cases', path: '/lea/cases', icon: FolderOpen },
-  { title: 'Analytics', path: '/lea/analytics', icon: BarChart3 },
+  { title: 'Analytics & Report', path: '/lea/analytics', icon: BarChart3 },
   { title: 'Profile', path: '/lea/security', icon: Shield },
 ];
 
@@ -41,7 +41,7 @@ export default function LEALayout() {
                 <Shield className="h-5 w-5" style={{ color: 'hsl(220 70% 50%)' }} />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold truncate">LEA Case Viewer</p>
+                <p className="text-sm font-semibold truncate">Agency</p>
                 <p className="text-xs text-muted-foreground truncate">PDRM — Cybercrime Unit</p>
               </div>
             </div>

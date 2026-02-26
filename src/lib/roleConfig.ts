@@ -77,7 +77,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
   },
   'lea-viewer': {
     id: 'lea-viewer',
-    name: 'LEA Case Viewer',
+    name: 'Agency',
     description: 'View and investigate escalated cases from MCMC.',
     color: 'hsl(220 70% 50%)',
     glowClass: 'glow-indigo',

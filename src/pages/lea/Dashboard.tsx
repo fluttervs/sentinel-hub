@@ -1,53 +1,42 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Shield, Clock, Upload, CheckCircle2, AlertCircle, Bell, TrendingUp, BarChart3 } from 'lucide-react';
+import {
+  FolderOpen, AlertTriangle, Clock, CheckCircle, TrendingUp,
+  ArrowUpRight, BarChart3, ShieldAlert, Shield, Bell, Upload, CheckCircle2, AlertCircle,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, LineChart, Line,
 } from 'recharts';
 
+/* ── Static data ── */
+const orgData = [
+  { name: 'Express Courier', cases: 28, escalated: 5 },
+  { name: 'Pos Malaysia', cases: 42, escalated: 8 },
+  { name: 'J&T Express', cases: 19, escalated: 3 },
+  { name: 'CityLink', cases: 15, escalated: 2 },
+  { name: 'DHL eCommerce', cases: 11, escalated: 4 },
+];
+
+const severityData = [
+  { name: 'Low', value: 32, color: 'hsl(var(--status-closed))' },
+  { name: 'Medium', value: 45, color: 'hsl(var(--status-in-review))' },
+  { name: 'High', value: 25, color: 'hsl(var(--role-investigator))' },
+  { name: 'Critical', value: 13, color: 'hsl(var(--destructive))' },
+];
+
+const recentClosed = [
+  { id: 'PSIRP-2025-0059', org: 'Pos Malaysia', outcome: 'Action Taken', date: '2025-06-10' },
+  { id: 'PSIRP-2025-0055', org: 'Express Courier', outcome: 'No Further Action', date: '2025-06-09' },
+  { id: 'PSIRP-2025-0052', org: 'J&T Express', outcome: 'Referred to LEA', date: '2025-06-08' },
+  { id: 'PSIRP-2025-0049', org: 'CityLink', outcome: 'Action Taken', date: '2025-06-06' },
+];
+
 const pendingAck = [
   { id: 'ESC-2025-004', title: 'Counterfeit stamps distribution', org: 'Pos Malaysia', severity: 'High', escalatedDate: '2025-06-14' },
   { id: 'ESC-2025-005', title: 'Organised parcel interception ring', org: 'J&T Express', severity: 'Critical', escalatedDate: '2025-06-15' },
-];
-
-const recentCases = [
-  { id: 'ESC-2025-001', title: 'Theft of High-Value Consignment', status: 'Under Investigation', escalatedDate: '2025-06-10' },
-  { id: 'ESC-2025-002', title: 'Tampering with Postal Items', status: 'Evidence Seized', escalatedDate: '2025-06-12' },
-  { id: 'ESC-2025-003', title: 'Narcotics via Postal Channel', status: 'Pending Further Information', escalatedDate: '2025-06-13' },
-];
-
-const statusBreakdown = [
-  { status: 'Under Investigation', count: 4, color: 'primary' },
-  { status: 'Evidence Seized', count: 2, color: 'role-validator' },
-  { status: 'Pending Info', count: 2, color: 'status-rfi' },
-  { status: 'Outcome Submitted', count: 3, color: 'status-closed' },
-];
-
-const monthlyEscalations = [
-  { month: 'Jan', escalated: 3, resolved: 2 },
-  { month: 'Feb', escalated: 5, resolved: 3 },
-  { month: 'Mar', escalated: 4, resolved: 4 },
-  { month: 'Apr', escalated: 6, resolved: 5 },
-  { month: 'May', escalated: 7, resolved: 4 },
-  { month: 'Jun', escalated: 5, resolved: 6 },
-];
-
-const severityDistribution = [
-  { name: 'Critical', value: 4, color: 'hsl(var(--destructive))' },
-  { name: 'High', value: 8, color: 'hsl(var(--role-validator))' },
-  { name: 'Medium', value: 6, color: 'hsl(var(--primary))' },
-  { name: 'Low', value: 3, color: 'hsl(var(--status-closed))' },
-];
-
-const casesByCategory = [
-  { category: 'Theft', count: 5 },
-  { category: 'Narcotics', count: 3 },
-  { category: 'Tampering', count: 4 },
-  { category: 'Fraud', count: 2 },
-  { category: 'Dangerous Goods', count: 2 },
 ];
 
 const tooltipStyle = {
@@ -60,21 +49,25 @@ const tooltipStyle = {
 export default function LEADashboard() {
   const navigate = useNavigate();
 
+  const kpis = [
+    { label: 'Total Cases', value: '115', icon: FolderOpen, color: 'hsl(220 70% 50%)' },
+    { label: 'Open Cases', value: '47', icon: Clock, color: 'hsl(var(--status-in-review))' },
+    { label: 'Escalated Cases', value: '18', icon: ArrowUpRight, color: 'hsl(var(--destructive))' },
+    { label: 'Closed Cases', value: '68', icon: CheckCircle, color: 'hsl(var(--status-closed))' },
+    { label: 'Avg Resolution', value: '6.3d', icon: TrendingUp, color: 'hsl(var(--role-reviewer))' },
+    { label: 'High Severity', value: '38', icon: ShieldAlert, color: 'hsl(var(--role-investigator))' },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">LEA Dashboard</h1>
-        <p className="text-muted-foreground">PDRM — Escalated case overview and investigation management</p>
+        <h1 className="text-3xl font-bold">Agency Dashboard</h1>
+        <p className="text-muted-foreground">PDRM — Strategic oversight and escalated case analytics</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        {[
-          { label: 'Total Escalated', value: '11', icon: Shield, color: 'hsl(220 70% 50%)' },
-          { label: 'Under Investigation', value: '4', icon: Clock, color: 'hsl(var(--role-validator))' },
-          { label: 'Pending Clarification', value: '2', icon: AlertCircle, color: 'hsl(var(--status-rfi))' },
-          { label: 'Evidence Submitted', value: '7', icon: Upload, color: 'hsl(var(--primary))' },
-          { label: 'Outcome Submitted', value: '3', icon: CheckCircle2, color: 'hsl(var(--status-closed))' },
-        ].map((k) => (
+      {/* KPI Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        {kpis.map((k) => (
           <Card key={k.label}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{k.label}</CardTitle>
@@ -105,62 +98,23 @@ export default function LEADashboard() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Recent Cases */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recently Escalated Cases</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {recentCases.map((c) => (
-              <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">{c.id}</p>
-                  <p className="text-xs text-muted-foreground">{c.title}</p>
-                </div>
-                <div className="text-right space-y-1">
-                  <Badge variant="outline" className="text-xs">{c.status}</Badge>
-                  <p className="text-xs text-muted-foreground">{c.escalatedDate}</p>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Status Breakdown */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Investigation Status Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {statusBreakdown.map((s) => (
-              <div key={s.status} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
-                <span className="text-sm">{s.status}</span>
-                <span className={`text-lg font-bold text-${s.color}`}>{s.count}</span>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Analytics Section */}
+      {/* Analytics Charts — matching MCMC Internal style */}
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2"><TrendingUp className="h-4 w-4" /> Monthly Escalation Trend</CardTitle>
+            <CardTitle className="flex items-center gap-2"><BarChart3 className="h-4 w-4" /> Cases by Organisation</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyEscalations}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="month" className="text-xs" />
-                  <YAxis className="text-xs" allowDecimals={false} />
+                <BarChart data={orgData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
                   <Tooltip contentStyle={tooltipStyle} />
-                  <Legend />
-                  <Line type="monotone" dataKey="escalated" stroke="hsl(220 70% 50%)" strokeWidth={2} name="Escalated" />
-                  <Line type="monotone" dataKey="resolved" stroke="hsl(var(--status-closed))" strokeWidth={2} name="Resolved" />
-                </LineChart>
+                  <Bar dataKey="cases" fill="hsl(220 70% 50%)" radius={[4, 4, 0, 0]} name="Total Cases" />
+                  <Bar dataKey="escalated" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} name="Escalated" />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
@@ -172,10 +126,10 @@ export default function LEADashboard() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <ResponsiveContainer width="55%" height={250}>
+              <ResponsiveContainer width="55%" height={260}>
                 <PieChart>
-                  <Pie data={severityDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={85} paddingAngle={3}>
-                    {severityDistribution.map((entry, idx) => (
+                  <Pie data={severityData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={3}>
+                    {severityData.map((entry, idx) => (
                       <Cell key={idx} fill={entry.color} />
                     ))}
                   </Pie>
@@ -183,7 +137,7 @@ export default function LEADashboard() {
                 </PieChart>
               </ResponsiveContainer>
               <div className="w-[45%] space-y-2">
-                {severityDistribution.map((s) => (
+                {severityData.map((s) => (
                   <div key={s.name} className="flex items-center gap-2 text-sm">
                     <span className="h-3 w-3 rounded-sm shrink-0" style={{ backgroundColor: s.color }} />
                     <span className="text-muted-foreground">{s.name}</span>
@@ -196,22 +150,24 @@ export default function LEADashboard() {
         </Card>
       </div>
 
+      {/* Recently Closed Cases */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><BarChart3 className="h-4 w-4" /> Cases by Category</CardTitle>
+          <CardTitle>Recently Closed Cases</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="h-[260px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={casesByCategory}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="category" className="text-xs" />
-                <YAxis className="text-xs" allowDecimals={false} />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="count" fill="hsl(220 70% 50%)" radius={[4, 4, 0, 0]} name="Cases" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <CardContent className="space-y-3">
+          {recentClosed.map((c) => (
+            <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">{c.id}</p>
+                <p className="text-xs text-muted-foreground">{c.org}</p>
+              </div>
+              <div className="text-right space-y-1">
+                <Badge variant="outline" className="text-xs">{c.outcome}</Badge>
+                <p className="text-xs text-muted-foreground">{c.date}</p>
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
     </div>
