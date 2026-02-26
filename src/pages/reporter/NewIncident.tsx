@@ -100,6 +100,9 @@ export default function NewIncident() {
       return;
     }
     const reportId = 'ABXX0020';
+    const submittedAt = new Date().toISOString();
+    // Persist form data so IncidentDetails can display it
+    localStorage.setItem(`incident_${reportId}`, JSON.stringify({ ...formData, linkDescription, submittedAt }));
     toast({ title: 'Incident Submitted', description: `Reference: ${reportId}. Submission timestamp recorded.` });
     navigate(`/reporter/incidents/${reportId}`);
   };

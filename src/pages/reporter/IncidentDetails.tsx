@@ -5,73 +5,136 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Paperclip, Send } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import CaseDetailsView, { getStatusColor, getSeverityColor, type CaseData } from '@/components/shared/CaseDetailsView';
+import { IncidentFormData } from '@/components/reporter/incident-form/types';
+
+function mapFormToCaseData(id: string, form: IncidentFormData & { submittedAt?: string }): CaseData {
+  const submittedAt = form.submittedAt ? new Date(form.submittedAt) : new Date();
+  const dateReported = `${submittedAt.toISOString().split('T')[0]} ${submittedAt.toTimeString().slice(0, 5)}`;
+
+  return {
+    id,
+    title: form.primaryIncidentType?.startsWith('Other') ? (form.otherRelatedInfo || 'Other Incident') : (form.primaryIncidentType || 'Incident Report'),
+    status: 'Submitted',
+    severity: 'Medium',
+    description: form.description,
+    incidentDate: form.incidentDate,
+    incidentTime: form.incidentTime,
+    incidentLocation: form.incidentLocation,
+    dateReported,
+    branchName: '',
+    address: form.incidentLocation,
+    state: '',
+    postalCode: '',
+    companyName: form.companyName,
+    registeredAddress: form.registeredAddress,
+    reporterName: form.reporterName,
+    reporterDesignation: form.position,
+    reporterEmail: form.officialEmail,
+    reporterPhone: form.contactNumber,
+    faxNumber: form.faxNumber || undefined,
+    leaEscalation: form.reportedToAuthorities === 'Yes' ? 'Yes' : 'No',
+    systemServiceAffected: form.systemServiceAffected || undefined,
+    observedImpact: form.observedImpact || undefined,
+    primaryIncidentType: form.primaryIncidentType,
+    staffDetected: form.staffDetected?.name ? form.staffDetected : undefined,
+    senderInfo: form.senderInfo?.name ? form.senderInfo : undefined,
+    recipientInfo: form.recipientInfo?.name ? form.recipientInfo : undefined,
+    trackingNumber: form.trackingNumber || undefined,
+    packageDeclaration: form.packageDeclaration || undefined,
+    packageWeight: form.packageWeight || undefined,
+    prohibitedItemType: form.prohibitedItemType || undefined,
+    otherRelatedInfo: form.otherRelatedInfo || undefined,
+    immediateActions: form.immediateActions,
+    incidentContained: form.incidentContained || undefined,
+    incidentControlStatus: form.incidentContained || '',
+    reportedToAuthority: form.reportedToAuthorities || 'No',
+    authorityDetails: form.authorityDetails || undefined,
+    parcelHandedOver: form.parcelHandedOver || 'No',
+    assistanceRequested: form.assistanceRequired || [],
+    documents: form.attachments?.map((a) => ({
+      name: a.name,
+      size: `${(a.size / (1024 * 1024)).toFixed(1)} MB`,
+      uploadedBy: form.reporterName,
+      uploadDate: dateReported,
+    })) || [],
+  };
+}
+
+// Fallback hardcoded data for non-submitted incidents
+const fallbackIncident = (id: string): CaseData => ({
+  id: id || 'PSIRP-2025-0025',
+  title: 'High-Value Package Theft',
+  status: 'In Review',
+  severity: 'High',
+  description: 'A high-value package containing electronic goods was reported missing from the KL Distribution Center during the morning shift. The package was last scanned at 08:45 AM and could not be located during the 10:00 AM audit.',
+  incidentDate: '2025-01-15',
+  incidentTime: '08:45',
+  incidentLocation: 'Lot 5, Jalan Teknologi, Taman Sains Selangor, Shah Alam',
+  dateReported: '2025-01-15 10:30',
+  branchName: 'KL Main Distribution Center',
+  address: 'Lot 5, Jalan Teknologi, Taman Sains Selangor',
+  state: 'Selangor',
+  postalCode: '47810',
+  companyName: 'Pos Malaysia Berhad',
+  registeredAddress: 'Dayabumi Complex, Jalan Sultan Hishamuddin, 50670 Kuala Lumpur',
+  reporterName: 'Ahmad bin Ibrahim',
+  reporterDesignation: 'Security Manager',
+  reporterEmail: 'ahmad.ibrahim@posmalaysia.com.my',
+  reporterPhone: '+60 12-345 6789',
+  leaEscalation: 'No',
+  systemServiceAffected: 'Parcel Tracking System',
+  observedImpact: 'Financial Impact',
+  primaryIncidentType: 'Theft or loss of postal items',
+  staffDetected: { name: 'Ali bin Hassan', designation: 'Warehouse Supervisor', contactNumber: '+60 13-456 7890', email: 'ali.hassan@posmalaysia.com.my' },
+  senderInfo: { name: 'TechCo Sdn Bhd', address: '12 Jalan Tech, KL', stateCountry: 'Kuala Lumpur, Malaysia', contact: '+60123456789' },
+  recipientInfo: { name: 'Ahmad bin Ibrahim', address: '45 Jalan Mawar, Shah Alam', stateCountry: 'Selangor, Malaysia', contact: '+60198765432' },
+  trackingNumber: 'EC20250115-12345',
+  packageDeclaration: 'Electronic goods - Laptop',
+  packageWeight: '2.5',
+  prohibitedItemType: '',
+  otherRelatedInfo: '',
+  immediateActions: 'Area secured, CCTV footage preserved, internal investigation initiated. All staff on shift have been interviewed.',
+  incidentContained: 'Ongoing',
+  incidentControlStatus: 'Under Monitoring',
+  reportedToAuthority: 'Yes',
+  authorityDetails: 'PDRM — RPT-2025-KL-0045',
+  parcelHandedOver: 'No',
+  assistanceRequested: ['Investigation Support', 'Legal Advice'],
+  documents: [
+    { name: 'CCTV_Footage_Screenshot.png', size: '2.4 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:25' },
+    { name: 'Incident_Report_Internal.pdf', size: '1.1 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:28' },
+  ],
+});
 
 export default function IncidentDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [replyText, setReplyText] = useState('');
 
-  const incident: CaseData = {
-    id: id || 'PSIRP-2025-0025',
-    title: 'High-Value Package Theft',
-    status: 'In Review',
-    severity: 'High',
-    description: 'A high-value package containing electronic goods was reported missing from the KL Distribution Center during the morning shift. The package was last scanned at 08:45 AM and could not be located during the 10:00 AM audit.',
-    incidentDate: '2025-01-15',
-    incidentTime: '08:45',
-    incidentLocation: 'Lot 5, Jalan Teknologi, Taman Sains Selangor, Shah Alam',
-    dateReported: '2025-01-15 10:30',
-    branchName: 'KL Main Distribution Center',
-    address: 'Lot 5, Jalan Teknologi, Taman Sains Selangor',
-    state: 'Selangor',
-    postalCode: '47810',
-    companyName: 'Pos Malaysia Berhad',
-    registeredAddress: 'Dayabumi Complex, Jalan Sultan Hishamuddin, 50670 Kuala Lumpur',
-    reporterName: 'Ahmad bin Ibrahim',
-    reporterDesignation: 'Security Manager',
-    reporterEmail: 'ahmad.ibrahim@posmalaysia.com.my',
-    reporterPhone: '+60 12-345 6789',
-    leaEscalation: 'No',
-    systemServiceAffected: 'Parcel Tracking System',
-    observedImpact: 'Financial Impact',
-    primaryIncidentType: 'Theft or loss of postal items',
-    staffDetected: { name: 'Ali bin Hassan', designation: 'Warehouse Supervisor', contactNumber: '+60 13-456 7890', email: 'ali.hassan@posmalaysia.com.my' },
-    senderInfo: { name: 'TechCo Sdn Bhd', address: '12 Jalan Tech, KL', stateCountry: 'Kuala Lumpur, Malaysia', contact: '+60123456789' },
-    recipientInfo: { name: 'Ahmad bin Ibrahim', address: '45 Jalan Mawar, Shah Alam', stateCountry: 'Selangor, Malaysia', contact: '+60198765432' },
-    trackingNumber: 'EC20250115-12345',
-    packageDeclaration: 'Electronic goods - Laptop',
-    packageWeight: '2.5',
-    prohibitedItemType: '',
-    otherRelatedInfo: '',
-    immediateActions: 'Area secured, CCTV footage preserved, internal investigation initiated. All staff on shift have been interviewed.',
-    incidentContained: 'Ongoing',
-    incidentControlStatus: 'Under Monitoring',
-    reportedToAuthority: 'Yes',
-    authorityDetails: 'PDRM — RPT-2025-KL-0045',
-    parcelHandedOver: 'No',
-    assistanceRequested: ['Investigation Support', 'Legal Advice'],
-    documents: [
-      { name: 'CCTV_Footage_Screenshot.png', size: '2.4 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:25' },
-      { name: 'Incident_Report_Internal.pdf', size: '1.1 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:28' },
-    ],
-  };
+  const incident: CaseData = useMemo(() => {
+    // Try to load submitted form data from localStorage
+    const stored = localStorage.getItem(`incident_${id}`);
+    if (stored) {
+      try {
+        const formData = JSON.parse(stored) as IncidentFormData & { submittedAt?: string };
+        return mapFormToCaseData(id || 'ABXX0020', formData);
+      } catch {
+        // Fall through to default
+      }
+    }
+    return fallbackIncident(id || 'PSIRP-2025-0025');
+  }, [id]);
 
   const timeline = [
-    { event: 'Draft Created', actor: 'Reporter', time: '2025-01-15 09:00', type: 'system' },
-    { event: 'Incident Submitted', actor: 'Licensee Reporter', time: '2025-01-15 10:30', type: 'submission' },
-    { event: 'Acknowledged by System', actor: 'System', time: '2025-01-15 10:32', type: 'system' },
-    { event: 'Assigned to Case Officer', actor: 'System', time: '2025-01-15 11:00', type: 'system' },
-    { event: 'Clarification Requested', actor: 'MCMC Case Officer', time: '2025-01-15 15:30', type: 'rfi' },
-    { event: 'Clarification Responded', actor: 'Reporter', time: '2025-01-15 16:15', type: 'response' },
-    { event: 'Under Review', actor: 'MCMC Case Officer', time: '2025-01-15 14:45', type: 'update' },
+    { event: 'Incident Submitted', actor: 'Licensee Reporter', time: incident.dateReported, type: 'submission' },
+    { event: 'Acknowledged by System', actor: 'System', time: incident.dateReported, type: 'system' },
+    { event: 'Pending Assignment', actor: 'System', time: incident.dateReported, type: 'system' },
   ];
 
   const communications = [
-    { id: 1, type: 'rfi', from: 'MCMC Case Officer', fromRole: 'reviewer', message: 'Please provide additional information regarding the exact time the package was last seen at the distribution center. Also, clarify if CCTV footage is available.', timestamp: '2025-01-15 15:30', urgent: true },
-    { id: 2, type: 'reply', from: 'Licensee Reporter', fromRole: 'reporter', message: 'The package was last scanned at 08:45 AM on January 15th. CCTV footage for the warehouse area from 08:00 AM to 10:00 AM has been secured.', timestamp: '2025-01-15 16:15', urgent: false },
-    { id: 3, type: 'comment', from: 'MCMC Case Officer', fromRole: 'reviewer', message: 'Thank you. Please upload the CCTV footage and confirm insurance and declared value.', timestamp: '2025-01-15 16:45', urgent: false },
+    { id: 1, type: 'system', from: 'System', fromRole: 'system', message: 'Your incident report has been received and is pending review by an MCMC Case Officer.', timestamp: incident.dateReported, urgent: false },
   ];
 
   const handleSendReply = () => {
@@ -112,8 +175,8 @@ export default function IncidentDetails() {
               </div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">Submitted</span><span>{incident.dateReported}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Last Updated</span><span>2025-01-15 14:45</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Assigned To</span><span>MCMC Case Officer</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Last Updated</span><span>{incident.dateReported}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Assigned To</span><span className="text-muted-foreground italic">Pending</span></div>
               </div>
             </CardContent>
           </Card>
@@ -157,8 +220,6 @@ export default function IncidentDetails() {
                         }`}>
                           <div className="flex items-center gap-2 mb-1">
                             <p className="text-xs font-semibold">{comm.from}</p>
-                            {comm.type === 'rfi' && <Badge variant="destructive" className="text-[10px] px-1 py-0">RFI</Badge>}
-                            {comm.urgent && <Badge variant="destructive" className="text-[10px] px-1 py-0">Action Required</Badge>}
                           </div>
                           <p className="text-xs leading-relaxed">{comm.message}</p>
                           <p className="text-[10px] text-muted-foreground mt-1">{comm.timestamp}</p>
