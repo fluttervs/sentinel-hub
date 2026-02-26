@@ -51,7 +51,7 @@ export const roleConfigs: Record<Role, RoleConfig> = {
   'investigator': {
     id: 'investigator',
     name: 'MCMC Internal',
-    description: 'Conduct in-depth incident investigations.',
+    description: 'Strategic oversight and governance analytics.',
     color: 'hsl(0 78% 62%)',
     glowClass: 'glow-red',
     basePath: '/investigator',
