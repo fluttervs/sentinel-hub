@@ -3,8 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import {
-  FolderOpen, AlertTriangle, CheckCircle, Shield, Inbox,
+  FolderOpen, AlertTriangle, CheckCircle, Shield, Inbox, TrendingUp,
 } from 'lucide-react';
+import {
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Legend,
+} from 'recharts';
 
 const escalationQueue = [
   { id: 'PSIRP-2025-0045', title: 'High-value theft – KL hub', officer: 'Ahmad Razif', severity: 'Critical', days: 2 },
@@ -20,12 +24,35 @@ const recentClosed = [
   { id: 'PSIRP-2025-0025', outcome: 'Closed – Referred to LEA', date: '2025-06-05' },
 ];
 
+const statusDistribution = [
+  { name: 'Under Review', value: 14, color: 'hsl(var(--primary))' },
+  { name: 'Escalation Pending', value: 5, color: 'hsl(var(--destructive))' },
+  { name: 'Escalated', value: 8, color: 'hsl(var(--role-reviewer))' },
+  { name: 'Closed', value: 12, color: 'hsl(var(--status-closed))' },
+];
+
+const monthlyTrend = [
+  { month: 'Oct', submitted: 18, closed: 14, escalated: 4 },
+  { month: 'Nov', submitted: 15, closed: 12, escalated: 2 },
+  { month: 'Dec', submitted: 20, closed: 16, escalated: 5 },
+  { month: 'Jan', submitted: 22, closed: 18, escalated: 6 },
+  { month: 'Feb', submitted: 17, closed: 13, escalated: 4 },
+  { month: 'Mar', submitted: 19, closed: 15, escalated: 3 },
+];
+
+const chartTooltipStyle = {
+  backgroundColor: 'hsl(var(--card))',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: '8px',
+  color: 'hsl(var(--foreground))',
+};
+
 export default function SupervisorDashboard() {
   const navigate = useNavigate();
 
   const kpis = [
     { label: 'Total Open Cases', value: 34, icon: FolderOpen, color: 'text-role-validator' },
-    { label: 'Escalation Pending', value: 5, icon: AlertTriangle, color: 'text-destructive' },
+    { label: 'Pending Tasks', value: 5, icon: AlertTriangle, color: 'text-destructive' },
     { label: 'Closed This Month', value: 12, icon: CheckCircle, color: 'text-status-closed' },
     { label: 'Escalated Cases', value: 8, icon: Shield, color: 'text-role-reviewer' },
   ];
@@ -38,7 +65,7 @@ export default function SupervisorDashboard() {
           <p className="text-muted-foreground">Governance overview & escalation management</p>
         </div>
         <Button onClick={() => navigate('/validator/escalations')} className="bg-role-validator text-primary-foreground hover:bg-role-validator/90">
-          <Inbox className="mr-2 h-4 w-4" /> Escalation Queue
+          <Inbox className="mr-2 h-4 w-4" /> Pending Tasks
         </Button>
       </div>
 
@@ -57,11 +84,65 @@ export default function SupervisorDashboard() {
         ))}
       </div>
 
+      {/* Case Summary at a Glance */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-role-validator" /> Monthly Case Trend
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={monthlyTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip contentStyle={chartTooltipStyle} />
+                <Legend />
+                <Line type="monotone" dataKey="submitted" stroke="hsl(var(--primary))" strokeWidth={2} name="Submitted" />
+                <Line type="monotone" dataKey="closed" stroke="hsl(var(--status-closed))" strokeWidth={2} name="Closed" />
+                <Line type="monotone" dataKey="escalated" stroke="hsl(var(--destructive))" strokeWidth={2} name="Escalated" />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Case Status Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <ResponsiveContainer width="55%" height={240}>
+                <PieChart>
+                  <Pie data={statusDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={3} dataKey="value">
+                    {statusDistribution.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={chartTooltipStyle} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="w-[45%] space-y-2">
+                {statusDistribution.map((s) => (
+                  <div key={s.name} className="flex items-center gap-2 text-sm">
+                    <span className="h-3 w-3 rounded-sm shrink-0" style={{ backgroundColor: s.color }} />
+                    <span className="text-muted-foreground text-xs">{s.name}</span>
+                    <span className="ml-auto font-medium">{s.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Escalation Approval Queue */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Escalation Approval Queue</CardTitle>
+            <CardTitle>Pending Tasks Queue</CardTitle>
             <Badge variant="outline" className="bg-destructive/20 text-destructive border-destructive/30">{escalationQueue.length} pending</Badge>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -83,50 +164,49 @@ export default function SupervisorDashboard() {
           </CardContent>
         </Card>
 
-        {/* Recently Closed */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recently Closed Cases</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {recentClosed.map((c) => (
-              <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium">{c.id}</p>
-                  <p className="text-xs text-muted-foreground">{c.date}</p>
+        {/* Recently Closed + Officer Workload */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Recently Closed Cases</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {recentClosed.map((c) => (
+                <div key={c.id} className="flex items-center justify-between p-3 border border-border/40 rounded-lg">
+                  <div>
+                    <p className="text-sm font-medium">{c.id}</p>
+                    <p className="text-xs text-muted-foreground">{c.date}</p>
+                  </div>
+                  <Badge variant="outline" className="border-status-closed/50 text-status-closed text-xs">{c.outcome}</Badge>
                 </div>
-                <Badge variant="outline" className="border-status-closed/50 text-status-closed text-xs">{c.outcome}</Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+              ))}
+            </CardContent>
+          </Card>
 
-      {/* Officer Workload */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Officer Workload Distribution</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { name: 'Ahmad Razif', cases: 8 },
-              { name: 'Nurul Hana', cases: 6 },
-              { name: 'Lee Wei', cases: 9 },
-              { name: 'Farah Amin', cases: 5 },
-              { name: 'Raj Kumar', cases: 4 },
-              { name: 'Siti Mariam', cases: 2 },
-            ].map((o) => (
-              <div key={o.name} className="p-3 border border-border/40 rounded-lg">
-                <p className="text-sm font-medium">{o.name}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-xs text-muted-foreground">{o.cases} cases</span>
-                </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Officer Workload</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-2 grid-cols-2">
+                {[
+                  { name: 'Ahmad Razif', cases: 8 },
+                  { name: 'Nurul Hana', cases: 6 },
+                  { name: 'Lee Wei', cases: 9 },
+                  { name: 'Farah Amin', cases: 5 },
+                  { name: 'Raj Kumar', cases: 4 },
+                  { name: 'Siti Mariam', cases: 2 },
+                ].map((o) => (
+                  <div key={o.name} className="p-2 border border-border/40 rounded-lg">
+                    <p className="text-sm font-medium">{o.name}</p>
+                    <span className="text-xs text-muted-foreground">{o.cases} cases</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

@@ -116,7 +116,7 @@ export default function EscalationQueue() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Escalation Approval Queue</h1>
+          <h1 className="text-3xl font-bold">Pending Tasks</h1>
           <p className="text-muted-foreground">Review and approve/reject escalation requests from Case Officers</p>
         </div>
         <Badge variant="outline" className="bg-destructive/20 text-destructive border-destructive/30 text-sm px-3 py-1">
