@@ -58,7 +58,15 @@ export interface IncidentFormData {
   declarationDate: string;
 }
 
-export type Step = 1 | 2 | 3 | 4 | 5;
+export type Step = 1 | 2 | 3 | 4 | 5 | 6;
+
+export const simplifiedIncidentTypes = [
+  'Prohibited Items',
+  'Postal Operation Disruption',
+  'Security Threat',
+  'Customer Information Leakage',
+  'Others',
+];
 
 // Grouped incident type options for Part 3
 export interface IncidentTypeGroup {
