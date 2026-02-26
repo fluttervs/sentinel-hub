@@ -20,7 +20,7 @@ const navItems = [
   { title: 'Notifications', path: '/reporter/notifications', icon: Bell, badge: 3 },
   { title: 'New Incident', path: '/reporter/incidents/new', icon: PlusCircle },
   { title: 'My Submissions', path: '/reporter/incidents', icon: FolderOpen },
-  { title: 'My Analytics', path: '/reporter/analytics', icon: BarChart3 },
+  { title: 'Analytics', path: '/reporter/analytics', icon: BarChart3 },
   { title: 'Profile', path: '/reporter/profile', icon: Shield },
 ];
 
