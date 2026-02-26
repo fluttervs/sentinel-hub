@@ -39,15 +39,14 @@ import LicenseeAdminNotifications from "./pages/licenseeAdmin/Notifications";
 import LicenseeAdminSecuritySettings from "./pages/licenseeAdmin/SecuritySettings";
 import SupervisorLayout from "./components/supervisor/SupervisorLayout";
 import ValidatorDashboard from "./pages/validator/Dashboard";
-import AllCases from "./pages/validator/AllCases";
+import CaseMonitoring from "./pages/validator/AllCases";
 import CaseDetail from "./pages/validator/CaseDetail";
 import EscalationQueue from "./pages/validator/EscalationQueue";
-import CaseClosure from "./pages/validator/CaseClosure";
 import AuditCompliance from "./pages/validator/AuditCompliance";
-import SearchReports from "./pages/validator/SearchReports";
 import SupervisorNotifications from "./pages/validator/Notifications";
 import SupervisorSecurity from "./pages/validator/Security";
 import SupervisorAnalytics from "./pages/validator/Analytics";
+import SupervisorSearchFilter from "./pages/validator/SearchFilter";
 import InvestigatorLayout from "./components/investigator/InvestigatorLayout";
 import InvestigatorDashboard from "./pages/investigator/Dashboard";
 import InvestigatorAnalytics from "./pages/investigator/Analytics";
@@ -139,14 +138,13 @@ const App = () => (
                 {/* Validator Routes */}
                 {/* Supervisor Routes - with sidebar layout */}
                 <Route path="/validator" element={<ProtectedRoute><SupervisorLayout /></ProtectedRoute>}>
+                  <Route path="search" element={<SupervisorSearchFilter />} />
                   <Route path="dashboard" element={<ValidatorDashboard />} />
-                  <Route path="cases" element={<AllCases />} />
+                  <Route path="cases" element={<CaseMonitoring />} />
                   <Route path="cases/:id" element={<CaseDetail />} />
                   <Route path="escalations" element={<EscalationQueue />} />
                   <Route path="escalations/:id" element={<EscalationQueue />} />
-                  <Route path="closure" element={<CaseClosure />} />
                   <Route path="audit" element={<AuditCompliance />} />
-                  <Route path="reports" element={<SearchReports />} />
                   <Route path="notifications" element={<SupervisorNotifications />} />
                   <Route path="analytics" element={<SupervisorAnalytics />} />
                   <Route path="security" element={<SupervisorSecurity />} />
