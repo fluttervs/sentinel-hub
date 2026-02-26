@@ -17,12 +17,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 const navItems = [
+  { title: 'Search & Filter', path: '/reviewer/search', icon: Search },
   { title: 'Dashboard', path: '/reviewer/dashboard', icon: LayoutDashboard },
   { title: 'Notifications', path: '/reviewer/notifications', icon: Bell, badge: 4 },
   { title: 'Assignment Inbox', path: '/reviewer/inbox', icon: Inbox, badge: 8 },
-  { title: 'All Cases', path: '/reviewer/all-cases', icon: Users },
-  { title: 'Search & Filter', path: '/reviewer/search', icon: Search },
-  { title: 'Reports', path: '/reviewer/reports', icon: FileBarChart },
+  { title: 'Case Monitoring', path: '/reviewer/all-cases', icon: Users },
+  { title: 'Analytics & Report', path: '/reviewer/reports', icon: FileBarChart },
   { title: 'Profile', path: '/reviewer/security', icon: Shield },
 ];
 

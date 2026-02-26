@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, MessageSquare, Clock, Eye, Inbox, ArrowUpRight, ShieldAlert } from 'lucide-react';
+import { FileText, MessageSquare, Clock, Eye, Inbox, ArrowUpRight, ShieldAlert, Megaphone, Pin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ReviewerDashboard() {
@@ -124,8 +124,9 @@ export default function ReviewerDashboard() {
           </CardContent>
         </Card>
 
-        {/* Recently Updated */}
+        {/* Right Column */}
         <div className="space-y-6">
+          {/* Recently Updated */}
           <Card>
             <CardHeader><CardTitle>Recently Updated</CardTitle></CardHeader>
             <CardContent className="space-y-3">
@@ -138,6 +139,39 @@ export default function ReviewerDashboard() {
                   </div>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+
+          {/* Announcements */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Megaphone className="h-4 w-4 text-role-reviewer" />
+                Announcements
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                { title: 'New SOP for Critical Case Escalation', date: '18 Jan 2025', priority: 'high' },
+                { title: 'System Maintenance — 25 Jan 2025', date: '17 Jan 2025', priority: 'medium' },
+                { title: 'Q4 2024 Incident Report Published', date: '15 Jan 2025', priority: 'low' },
+              ].map((a, i) => (
+                <div key={i} className="flex items-start gap-2 p-2 rounded-lg border border-border">
+                  <Pin className="h-3.5 w-3.5 text-role-reviewer mt-0.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{a.title}</p>
+                    <p className="text-xs text-muted-foreground">{a.date}</p>
+                  </div>
+                  <Badge variant="outline" className={
+                    a.priority === 'high' ? 'bg-destructive/20 text-destructive border-destructive/30 text-xs' :
+                    a.priority === 'medium' ? 'bg-status-rfi/20 text-status-rfi border-status-rfi/30 text-xs' :
+                    'bg-muted text-muted-foreground border-border text-xs'
+                  }>{a.priority}</Badge>
+                </div>
+              ))}
+              <Button variant="ghost" size="sm" className="w-full text-role-reviewer" onClick={() => navigate('/reviewer/reports')}>
+                View All Announcements
+              </Button>
             </CardContent>
           </Card>
         </div>

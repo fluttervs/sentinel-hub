@@ -54,8 +54,8 @@ export default function ReviewerAllCases() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">All Cases</h1>
-        <p className="text-muted-foreground">View all cases across Case Officers — you can comment on colleagues' assessments</p>
+        <h1 className="text-3xl font-bold mb-2">Case Monitoring</h1>
+        <p className="text-muted-foreground">Monitor all cases across Case Officers — you can comment on colleagues' assessments</p>
       </div>
 
       <Card>
