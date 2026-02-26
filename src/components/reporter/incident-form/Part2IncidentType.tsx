@@ -1,7 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { IncidentFormData, simplifiedIncidentTypes } from './types';
+import { IncidentFormData, incidentTypeGroups } from './types';
 
 interface Props {
   data: IncidentFormData;
@@ -9,41 +8,69 @@ interface Props {
 }
 
 export default function Part2IncidentType({ data, onChange }: Props) {
+  const allOptions = incidentTypeGroups.flatMap((g) => g.options);
+  const isOther = data.primaryIncidentType === 'Other';
+
+  const handleSelect = (value: string) => {
+    onChange('primaryIncidentType', value);
+    if (value !== 'Other') onChange('otherRelatedInfo', '');
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
-        <Label>Primary Incident Type *</Label>
-        <p className="text-xs text-muted-foreground">Select the category that best describes the incident</p>
-        <RadioGroup value={data.primaryIncidentType} onValueChange={(v) => onChange('primaryIncidentType', v)}>
-          <div className="space-y-2">
-            {simplifiedIncidentTypes.map((opt) => (
-              <div
-                key={opt}
-                className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
-                  data.primaryIncidentType === opt
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border hover:bg-muted/30'
-                }`}
-                onClick={() => onChange('primaryIncidentType', opt)}
-              >
-                <RadioGroupItem value={opt} id={`incident-type-${opt}`} />
-                <Label htmlFor={`incident-type-${opt}`} className="cursor-pointer text-sm flex-1">{opt}</Label>
-              </div>
-            ))}
-          </div>
-        </RadioGroup>
+    <div className="space-y-8">
+      <div>
+        <Label className="text-base font-semibold">Primary Incident Type *</Label>
+        <p className="text-xs text-muted-foreground mt-1">Select one that best describes the incident</p>
       </div>
 
-      {data.primaryIncidentType === 'Others' && (
-        <div className="space-y-2">
-          <Label>Please specify *</Label>
-          <Input
-            value={data.otherRelatedInfo}
-            onChange={(e) => onChange('otherRelatedInfo', e.target.value)}
-            placeholder="Describe the incident type..."
-          />
+      {incidentTypeGroups.map((group) => (
+        <div key={group.label} className="space-y-3">
+          <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">{group.label}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {group.options.map((opt) => {
+              const selected = data.primaryIncidentType === opt;
+              return (
+                <button
+                  type="button"
+                  key={opt}
+                  onClick={() => handleSelect(opt)}
+                  className={`text-left p-3 border rounded-lg text-sm transition-colors ${
+                    selected
+                      ? 'border-primary bg-primary/5 font-medium'
+                      : 'border-border hover:bg-muted/30'
+                  }`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      )}
+      ))}
+
+      {/* Other option */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">Other</h3>
+        <button
+          type="button"
+          onClick={() => handleSelect('Other')}
+          className={`w-full text-left p-3 border rounded-lg text-sm transition-colors ${
+            isOther ? 'border-primary bg-primary/5 font-medium' : 'border-border hover:bg-muted/30'
+          }`}
+        >
+          Other
+        </button>
+        {isOther && (
+          <div className="space-y-2 pt-2">
+            <Label>Please specify the incident type *</Label>
+            <Input
+              value={data.otherRelatedInfo}
+              onChange={(e) => onChange('otherRelatedInfo', e.target.value)}
+              placeholder="Describe the incident type..."
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
