@@ -30,7 +30,7 @@ export const login = (email: string, password: string, role: Role): User => {
     'investigator': 'MCMC Internal',
     'system-admin': 'MCMC System Admin',
     'super-admin': 'MCMC Super Admin',
-    'lea-viewer': 'LEA Case Viewer',
+    'lea-viewer': 'Agency',
   };
 
   const user: User = {
