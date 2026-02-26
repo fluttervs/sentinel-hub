@@ -1,15 +1,18 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Upload, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Props {
   attachments: Array<{ name: string; size: number }>;
   onChange: (attachments: Array<{ name: string; size: number }>) => void;
+  linkDescription: string;
+  onLinkDescriptionChange: (value: string) => void;
 }
 
-export default function SectionG({ attachments, onChange }: Props) {
+export default function SectionG({ attachments, onChange, linkDescription, onLinkDescriptionChange }: Props) {
   const { toast } = useToast();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +56,17 @@ export default function SectionG({ attachments, onChange }: Props) {
           ))}
         </div>
       )}
+
+      {/* Link or Description */}
+      <div className="space-y-2">
+        <Label>Link or Description</Label>
+        <Textarea
+          value={linkDescription}
+          onChange={(e) => onLinkDescriptionChange(e.target.value)}
+          placeholder="Provide a URL link to external evidence or a description of supporting documents..."
+          rows={3}
+        />
+      </div>
     </div>
   );
 }

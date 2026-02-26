@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { IncidentFormData, Step, emptySenderRecipient } from '@/components/reporter/incident-form/types';
 import SectionA from '@/components/reporter/incident-form/SectionA';
+import Part2IncidentType from '@/components/reporter/incident-form/Part2IncidentType';
 import Part3IncidentInfo from '@/components/reporter/incident-form/Part3IncidentInfo';
 import Part4ActionsTaken from '@/components/reporter/incident-form/Part4ActionsTaken';
 import SectionG from '@/components/reporter/incident-form/SectionG';
@@ -23,7 +24,6 @@ const initialFormData: IncidentFormData = {
   faxNumber: '',
   additionalPhone: '',
   alternativeEmail: '',
-  
   primaryIncidentType: '',
   description: '',
   incidentDate: '',
@@ -58,6 +58,7 @@ export default function NewIncident() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [formData, setFormData] = useState<IncidentFormData>(initialFormData);
   const [declaration, setDeclaration] = useState(false);
+  const [linkDescription, setLinkDescription] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => setLastSaved(new Date()), 15000);
@@ -66,10 +67,11 @@ export default function NewIncident() {
 
   const steps = [
     { number: 1 as Step, title: 'Reporter Information', short: 'Reporter' },
-    { number: 2 as Step, title: 'Incident Information', short: 'Incident' },
-    { number: 3 as Step, title: 'Actions Taken', short: 'Actions' },
-    { number: 4 as Step, title: 'Supporting Documents', short: 'Documents' },
-    { number: 5 as Step, title: 'Declaration', short: 'Declaration' },
+    { number: 2 as Step, title: 'Incident Type', short: 'Type' },
+    { number: 3 as Step, title: 'Incident Details', short: 'Details' },
+    { number: 4 as Step, title: 'Actions Taken', short: 'Actions' },
+    { number: 5 as Step, title: 'Supporting Documents', short: 'Documents' },
+    { number: 6 as Step, title: 'Review & Declaration', short: 'Review' },
   ];
 
   const currentIdx = steps.findIndex((s) => s.number === currentStep);
@@ -151,10 +153,11 @@ export default function NewIncident() {
         <CardHeader><CardTitle>{currentStepInfo?.title}</CardTitle></CardHeader>
         <CardContent className="space-y-6">
           {currentStep === 1 && <SectionA data={formData} onChange={updateField} />}
-          {currentStep === 2 && <Part3IncidentInfo data={formData} onChange={updateField} />}
-          {currentStep === 3 && <Part4ActionsTaken data={formData} onChange={updateField} />}
-          {currentStep === 4 && <SectionG attachments={formData.attachments} onChange={(v) => updateField('attachments', v)} />}
-          {currentStep === 5 && <Part6Declaration data={formData} declaration={declaration} onDeclarationChange={setDeclaration} onDateChange={(d) => updateField('declarationDate', d)} />}
+          {currentStep === 2 && <Part2IncidentType data={formData} onChange={updateField} />}
+          {currentStep === 3 && <Part3IncidentInfo data={formData} onChange={updateField} />}
+          {currentStep === 4 && <Part4ActionsTaken data={formData} onChange={updateField} />}
+          {currentStep === 5 && <SectionG attachments={formData.attachments} onChange={(v) => updateField('attachments', v)} linkDescription={linkDescription} onLinkDescriptionChange={setLinkDescription} />}
+          {currentStep === 6 && <Part6Declaration data={formData} declaration={declaration} onDeclarationChange={setDeclaration} onDateChange={(d) => updateField('declarationDate', d)} />}
         </CardContent>
       </Card>
 

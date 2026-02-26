@@ -39,7 +39,7 @@ export default function Part4ActionsTaken({ data, onChange }: Props) {
       <div className="space-y-3">
         <Label>Is the Incident Contained? *</Label>
         <RadioGroup value={data.incidentContained} onValueChange={(v) => onChange('incidentContained', v)} className="flex gap-6">
-          {['Yes', 'No', 'Ongoing'].map((opt) => (
+          {['Yes', 'No', 'In Progress'].map((opt) => (
             <div key={opt} className="flex items-center gap-2">
               <RadioGroupItem value={opt} id={`contained-${opt}`} />
               <Label htmlFor={`contained-${opt}`} className="cursor-pointer">{opt}</Label>
