@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, FileBarChart, Printer, Megaphone, Pin, TrendingUp, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
+import { Download, FileBarChart, Printer, TrendingUp, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   PieChart, Pie, Cell, BarChart, Bar, LineChart, Line,
@@ -52,13 +52,6 @@ const orgBreakdown = [
   { org: 'Pos Malaysia', cases: 4, escalated: 1 },
 ];
 
-const announcements = [
-  { id: 1, title: 'New SOP for Critical Case Escalation', content: 'All critical severity cases must now be escalated within 24 hours of receipt. Updated guidelines are available in the knowledge base.', date: '2025-01-18', priority: 'high', pinned: true },
-  { id: 2, title: 'System Maintenance — 25 Jan 2025', content: 'Scheduled maintenance window from 02:00 to 06:00 MYT. The portal will be unavailable during this period.', date: '2025-01-17', priority: 'medium', pinned: true },
-  { id: 3, title: 'Q4 2024 Incident Report Published', content: 'The quarterly incident summary for all licensees has been published. Case officers are encouraged to review trends.', date: '2025-01-15', priority: 'low', pinned: false },
-  { id: 4, title: 'Training: Advanced Case Assessment Techniques', content: 'Mandatory training session on 28 Jan 2025 at 10:00 MYT. All case officers must attend via the internal training portal.', date: '2025-01-14', priority: 'medium', pinned: false },
-];
-
 export default function CaseOfficerReports() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('analytics');
@@ -78,21 +71,12 @@ export default function CaseOfficerReports() {
     return colors[s] || 'bg-secondary';
   };
 
-  const getPriorityStyle = (p: string) => {
-    const styles: Record<string, string> = {
-      high: 'border-destructive/30 bg-destructive/5',
-      medium: 'border-status-rfi/30 bg-status-rfi/5',
-      low: 'border-border',
-    };
-    return styles[p] || 'border-border';
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-2">Analytics & Report</h1>
-          <p className="text-muted-foreground">Incident trend analytics, reports, and announcements</p>
+          <p className="text-muted-foreground">Incident trend analytics and reports</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => handleExport('PDF')}><Download className="mr-2 h-4 w-4" />Export PDF</Button>
@@ -102,15 +86,13 @@ export default function CaseOfficerReports() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="analytics">Summary Analytics</TabsTrigger>
           <TabsTrigger value="reports">Case Reports</TabsTrigger>
-          <TabsTrigger value="announcements">Announcements</TabsTrigger>
         </TabsList>
 
         {/* ===== ANALYTICS TAB ===== */}
         <TabsContent value="analytics" className="space-y-6 mt-6">
-          {/* KPI Cards */}
           <div className="grid gap-4 md:grid-cols-4">
             <Card>
               <CardContent className="pt-6 flex items-center gap-4">
@@ -138,7 +120,6 @@ export default function CaseOfficerReports() {
             </Card>
           </div>
 
-          {/* Charts Row 1: Trend + Severity */}
           <div className="grid gap-6 lg:grid-cols-3">
             <Card className="lg:col-span-2">
               <CardHeader><CardTitle>Monthly Case Trend</CardTitle></CardHeader>
@@ -181,7 +162,6 @@ export default function CaseOfficerReports() {
             </Card>
           </div>
 
-          {/* Charts Row 2: Status + Org */}
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader><CardTitle>Status Overview</CardTitle></CardHeader>
@@ -253,42 +233,6 @@ export default function CaseOfficerReports() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        {/* ===== ANNOUNCEMENTS TAB ===== */}
-        <TabsContent value="announcements" className="space-y-6 mt-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Megaphone className="h-5 w-5 text-role-reviewer" />
-              <h2 className="text-xl font-semibold">MCMC Announcements</h2>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {announcements.map(a => (
-              <Card key={a.id} className={getPriorityStyle(a.priority)}>
-                <CardContent className="pt-5 pb-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        {a.pinned && <Pin className="h-3.5 w-3.5 text-role-reviewer" />}
-                        <h3 className="font-semibold">{a.title}</h3>
-                        <Badge variant="outline" className={
-                          a.priority === 'high' ? 'bg-destructive/20 text-destructive border-destructive/30' :
-                          a.priority === 'medium' ? 'bg-status-rfi/20 text-status-rfi border-status-rfi/30' :
-                          'bg-muted text-muted-foreground border-border'
-                        }>
-                          {a.priority}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{a.content}</p>
-                    </div>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">{a.date}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
         </TabsContent>
       </Tabs>
     </div>

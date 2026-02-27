@@ -25,6 +25,7 @@ import CaseOfficerInbox from "./pages/reviewer/Inbox";
 import CaseReview from "./pages/reviewer/CaseReview";
 import CaseOfficerSearch from "./pages/reviewer/Search";
 import CaseOfficerReports from "./pages/reviewer/Reports";
+import CaseOfficerAnnouncements from "./pages/reviewer/Announcements";
 import ReviewerAllCases from "./pages/reviewer/AllCases";
 import CaseOfficerNotifications from "./pages/reviewer/Notifications";
 import CaseOfficerSecurity from "./pages/reviewer/Security";
@@ -130,6 +131,7 @@ const App = () => (
                   <Route path="cases/:id" element={<CaseReview />} />
                   <Route path="search" element={<CaseOfficerSearch />} />
                   <Route path="reports" element={<CaseOfficerReports />} />
+                  <Route path="announcements" element={<CaseOfficerAnnouncements />} />
                   <Route path="notifications" element={<CaseOfficerNotifications />} />
                   <Route path="security" element={<CaseOfficerSecurity />} />
                 </Route>

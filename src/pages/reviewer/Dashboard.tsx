@@ -169,7 +169,7 @@ export default function ReviewerDashboard() {
                   }>{a.priority}</Badge>
                 </div>
               ))}
-              <Button variant="ghost" size="sm" className="w-full text-role-reviewer" onClick={() => navigate('/reviewer/reports')}>
+              <Button variant="ghost" size="sm" className="w-full text-role-reviewer" onClick={() => navigate('/reviewer/announcements')}>
                 View All Announcements
               </Button>
             </CardContent>

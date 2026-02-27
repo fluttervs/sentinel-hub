@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardCheck,
+  Megaphone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +24,7 @@ const navItems = [
   { title: 'Assignment Inbox', path: '/reviewer/inbox', icon: Inbox, badge: 8 },
   { title: 'Case Monitoring', path: '/reviewer/all-cases', icon: Users },
   { title: 'Analytics & Report', path: '/reviewer/reports', icon: FileBarChart },
+  { title: 'Post Announcement', path: '/reviewer/announcements', icon: Megaphone },
   { title: 'Profile', path: '/reviewer/security', icon: Shield },
 ];
 

@@ -19,7 +19,7 @@ const navItems = [
   { title: 'Dashboard', path: '/licensee-admin/dashboard', icon: LayoutDashboard },
   { title: 'Notifications', path: '/licensee-admin/notifications', icon: Bell, badge: 5 },
   { title: 'Case Monitoring', path: '/licensee-admin/incidents', icon: FolderSearch },
-  { title: 'Analytics', path: '/licensee-admin/analytics', icon: BarChart3 },
+  { title: 'Analytics & Report', path: '/licensee-admin/analytics', icon: BarChart3 },
   { title: 'Reporter Management', path: '/licensee-admin/users', icon: Users },
   { title: 'Profile', path: '/licensee-admin/security', icon: Shield },
 ];

@@ -2,6 +2,32 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Plus, MessageSquare, Clock, CheckCircle2, Trash2, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+} from 'recharts';
+
+const chartTooltipStyle = {
+  backgroundColor: 'hsl(var(--card))',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: '8px',
+  color: 'hsl(var(--foreground))',
+};
+
+const statusDistribution = [
+  { name: 'Submitted', value: 12, color: 'hsl(var(--status-submitted))' },
+  { name: 'Under Review', value: 4, color: 'hsl(var(--status-in-review))' },
+  { name: 'Escalated', value: 2, color: 'hsl(var(--destructive))' },
+  { name: 'Closed', value: 8, color: 'hsl(var(--status-closed))' },
+];
+
+const monthlySubmissions = [
+  { month: 'Aug', count: 1 },
+  { month: 'Sep', count: 2 },
+  { month: 'Oct', count: 3 },
+  { month: 'Nov', count: 1 },
+  { month: 'Dec', count: 4 },
+  { month: 'Jan', count: 7 },
+];
 
 export default function ReporterDashboard() {
   const navigate = useNavigate();
@@ -11,7 +37,6 @@ export default function ReporterDashboard() {
     { id: 'draft-2', title: 'Tampered Shipment', updated: '1 day ago', daysLeft: 3 },
     { id: 'draft-3', title: 'Lost Consignment', updated: '3 days ago', daysLeft: 1 },
   ];
-
 
   const announcements = [
     { id: '1', title: 'System Maintenance Scheduled', message: 'The system will undergo maintenance this Saturday from 2 AM to 6 AM.', from: 'System Admin', time: '2 hours ago', priority: 'high' },
@@ -75,6 +100,49 @@ export default function ReporterDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-status-closed">8</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Data Visualizations */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader><CardTitle className="text-base">Case Status Distribution</CardTitle></CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <ResponsiveContainer width="55%" height={200}>
+                <PieChart>
+                  <Pie data={statusDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={75} paddingAngle={3} dataKey="value">
+                    {statusDistribution.map((e, i) => <Cell key={i} fill={e.color} />)}
+                  </Pie>
+                  <Tooltip contentStyle={chartTooltipStyle} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="w-[45%] space-y-2">
+                {statusDistribution.map(s => (
+                  <div key={s.name} className="flex items-center gap-2 text-sm">
+                    <span className="h-3 w-3 rounded-sm shrink-0" style={{ backgroundColor: s.color }} />
+                    <span className="text-muted-foreground">{s.name}</span>
+                    <span className="ml-auto font-medium">{s.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader><CardTitle className="text-base">Monthly Submissions</CardTitle></CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={monthlySubmissions}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} allowDecimals={false} />
+                <Tooltip contentStyle={chartTooltipStyle} />
+                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Submissions" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
@@ -175,7 +243,6 @@ export default function ReporterDashboard() {
           </CardContent>
         </Card>
       </div>
-
     </div>
   );
 }

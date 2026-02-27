@@ -29,8 +29,7 @@ export default function LEACaseDetail() {
   const [investigationStatus, setInvestigationStatus] = useState('Under Investigation');
   const [acknowledged, setAcknowledged] = useState(true);
   const [clarificationMsg, setClarificationMsg] = useState('');
-  const [outcomeType, setOutcomeType] = useState('');
-  const [outcomeSummary, setOutcomeSummary] = useState('');
+  const [internalNotes, setInternalNotes] = useState('');
 
   const incident: CaseData = {
     id: id || 'ESC-2025-001',
@@ -84,9 +83,9 @@ export default function LEACaseDetail() {
     setClarificationMsg('');
   };
 
-  const handleOutcome = () => {
-    if (!outcomeType || !outcomeSummary.trim()) return;
-    toast({ title: 'Outcome Submitted', description: `Outcome "${outcomeType}" submitted to MCMC for review.` });
+  const handleSaveNotes = () => {
+    if (!internalNotes.trim()) return;
+    toast({ title: 'Notes Saved', description: 'Internal notes have been saved successfully.' });
   };
 
   return (
@@ -151,10 +150,9 @@ export default function LEACaseDetail() {
       <Tabs defaultValue="details" className="space-y-4">
         <TabsList className="flex-wrap">
           <TabsTrigger value="details">Case Details</TabsTrigger>
-          <TabsTrigger value="investigation">Investigation</TabsTrigger>
+          <TabsTrigger value="investigation">Case Update</TabsTrigger>
           <TabsTrigger value="uploads">Reports & Evidence</TabsTrigger>
           <TabsTrigger value="clarification">Clarification</TabsTrigger>
-          <TabsTrigger value="outcome">Outcome</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
         </TabsList>
 
@@ -164,7 +162,7 @@ export default function LEACaseDetail() {
 
         <TabsContent value="investigation">
           <Card>
-            <CardHeader><CardTitle>Update Investigation Status</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Case Update</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label>Investigation Status</Label>
@@ -183,6 +181,39 @@ export default function LEACaseDetail() {
                 <p className="text-xs text-muted-foreground mb-1">Current Status</p>
                 <Badge variant="outline" className="border-primary/50 text-primary">{investigationStatus}</Badge>
                 <p className="text-xs text-muted-foreground mt-2">All status changes are logged with timestamp and user ID.</p>
+              </div>
+
+              {/* Internal Notes */}
+              <div className="border-t border-border pt-4 space-y-3">
+                <Label className="text-base font-semibold">Internal Notes</Label>
+                <p className="text-xs text-muted-foreground">Record case status updates, observations, or any relevant information.</p>
+                <Textarea
+                  value={internalNotes}
+                  onChange={(e) => setInternalNotes(e.target.value)}
+                  placeholder="Write internal notes about the case status, findings, or observations..."
+                  rows={4}
+                />
+                <Button onClick={handleSaveNotes} disabled={!internalNotes.trim()}>
+                  Save Notes
+                </Button>
+              </div>
+
+              {/* Previous Notes */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-muted-foreground">Previous Notes</Label>
+                {[
+                  { date: '2025-06-22 16:00', author: 'Insp. Razak', note: 'Investigation report completed. Evidence collected from sorting hub confirms internal involvement. Recommending prosecution.' },
+                  { date: '2025-06-18 14:00', author: 'Insp. Razak', note: 'Evidence seized from sorting hub. CCTV footage confirms parcel was diverted at lane 3. Staff member identified.' },
+                  { date: '2025-06-16 09:00', author: 'Insp. Razak', note: 'Case received and acknowledged. Initial review of MCMC evidence package completed. Will proceed with on-site investigation.' },
+                ].map((n, i) => (
+                  <div key={i} className="p-3 border border-border/40 rounded-lg bg-muted/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-xs font-medium">{n.author}</p>
+                      <p className="text-xs text-muted-foreground">{n.date}</p>
+                    </div>
+                    <p className="text-sm">{n.note}</p>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -244,36 +275,6 @@ export default function LEACaseDetail() {
                   <Send className="h-4 w-4 mr-2" /> Send Request
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="outcome">
-          <Card>
-            <CardHeader><CardTitle>Investigation Outcome</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Outcome</Label>
-                <Select value={outcomeType} onValueChange={setOutcomeType}>
-                  <SelectTrigger><SelectValue placeholder="Select outcome" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Prosecution Recommended">Prosecution Recommended</SelectItem>
-                    <SelectItem value="No Further Action">No Further Action</SelectItem>
-                    <SelectItem value="Ongoing Investigation">Ongoing Investigation</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Outcome Summary</Label>
-                <Textarea placeholder="Provide a summary of the investigation findings and outcome..." value={outcomeSummary} onChange={(e) => setOutcomeSummary(e.target.value)} rows={4} />
-              </div>
-              <div className="flex items-center gap-3">
-                <Button onClick={handleOutcome} disabled={!outcomeType || !outcomeSummary.trim()}>Submit Outcome</Button>
-                <Button variant="outline" onClick={() => toast({ title: 'Closure Recommendation', description: 'Recommendation sent to MCMC Supervisor for final closure.' })} disabled={!outcomeType}>
-                  Recommend Case Closure to MCMC
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground">Final case closure authority remains with MCMC. Your recommendation will be reviewed by the MCMC Supervisor.</p>
             </CardContent>
           </Card>
         </TabsContent>
