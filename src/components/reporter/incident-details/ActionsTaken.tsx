@@ -6,7 +6,10 @@ interface Props {
   incident: {
     immediateActions: string;
     incidentContained?: string;
+    incidentControlStatus?: string;
     reportedToAuthority: string;
+    authorityAgency?: string;
+    authorityReference?: string;
     authorityDetails?: string;
     parcelHandedOver: string;
     assistanceRequested: string[];
@@ -23,12 +26,14 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 export default function ActionsTaken({ incident }: Props) {
+  const controlStatus = incident.incidentContained || incident.incidentControlStatus || '—';
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CheckCircle className="h-5 w-5 text-primary" />
-          Part 4: Actions Taken
+          Part 5: Action &amp; Authority Tracking
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -37,9 +42,9 @@ export default function ActionsTaken({ incident }: Props) {
           <p className="text-sm text-muted-foreground leading-relaxed">{incident.immediateActions}</p>
         </div>
         <div className="grid md:grid-cols-2 gap-4">
-          <Field label="Is the Incident Contained?" value={incident.incidentContained || '—'} />
+          <Field label="Incident Control Status" value={controlStatus} />
           <div>
-            <p className="text-xs text-muted-foreground">Report to Authorities</p>
+            <p className="text-xs text-muted-foreground">Reported to Authorities</p>
             <p className="text-sm font-medium">
               {incident.reportedToAuthority}
               {incident.reportedToAuthority === 'Yes' && incident.authorityDetails && (
@@ -47,6 +52,8 @@ export default function ActionsTaken({ incident }: Props) {
               )}
             </p>
           </div>
+          {incident.authorityAgency && <Field label="Authority/Agency" value={incident.authorityAgency} />}
+          {incident.authorityReference && <Field label="Authority Reference No." value={incident.authorityReference} />}
           <Field label="Handover of Package to Authorities" value={incident.parcelHandedOver} />
           <div>
             <p className="text-xs text-muted-foreground mb-1">Assistance Required from Authorities</p>

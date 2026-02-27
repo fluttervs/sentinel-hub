@@ -43,6 +43,8 @@ export default function CaseReview() {
     status: 'Under Review',
     severity: 'Critical',
     description: 'A critical security breach was detected at the main sorting facility. Unauthorized access to restricted areas was recorded by security systems during the early morning hours of January 16th.',
+    primaryIncidentType: 'Criminal activities within postal hubs',
+    observedImpact: 'High',
     incidentDate: '2025-01-16',
     incidentTime: '03:15',
     dateReported: '2025-01-16 06:30',
@@ -69,6 +71,8 @@ export default function CaseReview() {
       { name: 'Access_Control_Report.xlsx', size: '0.8 MB', uploadedBy: 'Ahmad bin Abdullah', uploadDate: '2025-01-16 06:27' },
       { name: 'Incident_Photo_01.jpg', size: '2.1 MB', uploadedBy: 'Ahmad bin Abdullah', uploadDate: '2025-01-16 06:29' },
     ],
+    declarationAgreed: true,
+    declarationDate: '2025-01-16',
   };
 
   const agingDays = 0;

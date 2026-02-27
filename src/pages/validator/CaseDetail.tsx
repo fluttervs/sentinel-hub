@@ -82,6 +82,8 @@ export default function CaseDetail() {
     severity: 'Critical',
     leaEscalation: 'Yes',
     description: 'Multiple high-value parcels reported missing from sorting facility during overnight shift. Security footage shows unauthorized access to restricted zone.',
+    primaryIncidentType: 'Theft or loss of postal items',
+    observedImpact: 'High',
     systemServiceAffected: 'Sorting Facility Security System',
     impactIndicators: ['Operational Disruption', 'Financial Impact', 'Safety Risk'],
     items: [
@@ -98,6 +100,8 @@ export default function CaseDetail() {
       { name: 'Security_Log_20250608.pdf', size: '0.9 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-09 09:12' },
       { name: 'Missing_Parcel_List.xlsx', size: '0.3 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-09 09:14' },
     ],
+    declarationAgreed: true,
+    declarationDate: '2025-06-09',
   };
 
   return (

@@ -59,6 +59,8 @@ function mapFormToCaseData(id: string, form: IncidentFormData & { submittedAt?: 
       uploadedBy: form.reporterName,
       uploadDate: dateReported,
     })) || [],
+    declarationAgreed: form.declaration ?? true,
+    declarationDate: form.declarationDate || submittedAt.toISOString().split('T')[0],
   };
 }
 
@@ -106,6 +108,8 @@ const fallbackIncident = (id: string): CaseData => ({
     { name: 'CCTV_Footage_Screenshot.png', size: '2.4 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:25' },
     { name: 'Incident_Report_Internal.pdf', size: '1.1 MB', uploadedBy: 'Ahmad bin Ibrahim', uploadDate: '2025-01-15 10:28' },
   ],
+  declarationAgreed: true,
+  declarationDate: '2025-01-15',
 });
 
 export default function IncidentDetails() {
