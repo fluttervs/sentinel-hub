@@ -48,6 +48,8 @@ export default function LEACaseDetail() {
     severity: 'High',
     leaEscalation: 'Yes',
     description: 'A high-value consignment containing electronic goods went missing during transit. CCTV footage confirms the parcel entered sorting lane but did not reach dispatch area. Evidence suggests possible internal theft.',
+    primaryIncidentType: 'Theft or loss of postal items',
+    observedImpact: 'High',
     systemServiceAffected: 'Sorting & Dispatch System',
     items: [
       { tracking: 'EC-2025-KL-89012', type: 'Standard Parcel', declaration: 'Wireless headphones (RM 450 declared value)', weight: '0.8 kg', detectedItemType: 'Consumer Electronics', sender: { name: 'TechStore Online', address: 'Penang', stateCountry: 'Penang, Malaysia', contact: '+60124567890' }, receiver: { name: 'Ahmad bin Ismail', address: 'Kuala Lumpur', stateCountry: 'KL, Malaysia', contact: '+60198765432' } },
@@ -64,6 +66,8 @@ export default function LEACaseDetail() {
       { name: 'Sorting_Log_20250608.pdf', size: '0.6 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-08 14:32' },
       { name: 'Escalation_Justification.pdf', size: '0.4 MB', uploadedBy: 'Ahmad Razif', uploadDate: '2025-06-15 08:00' },
     ],
+    declarationAgreed: true,
+    declarationDate: '2025-06-08',
   };
 
   const handleAcknowledge = () => {

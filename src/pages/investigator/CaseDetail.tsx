@@ -38,6 +38,8 @@ export default function InvestigatorCaseDetail() {
     severity: 'Medium',
     leaEscalation: 'Yes',
     description: 'A parcel containing electronic goods went missing during the sorting process at KL Hub. CCTV footage shows the parcel entering the sorting lane but not arriving at the dispatch area.',
+    primaryIncidentType: 'Theft or loss of postal items',
+    observedImpact: 'Medium',
     systemServiceAffected: 'Sorting & Dispatch System',
     items: [
       { tracking: 'EC-2025-KL-89012', type: 'Standard Parcel', declaration: 'Wireless headphones (RM 450 declared value)', weight: '0.8 kg', detectedItemType: 'Consumer Electronics', sender: { name: 'TechStore Online', address: 'Penang', stateCountry: 'Penang, Malaysia', contact: '+60124567890' }, receiver: { name: 'Ahmad bin Ismail', address: 'Kuala Lumpur', stateCountry: 'KL, Malaysia', contact: '+60198765432' } },
@@ -54,6 +56,8 @@ export default function InvestigatorCaseDetail() {
       { name: 'Sorting_Log_20250608.pdf', size: '0.6 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-10 09:12' },
       { name: 'Dispatch_Record.xlsx', size: '0.4 MB', uploadedBy: 'Ali Hassan', uploadDate: '2025-06-10 09:14' },
     ],
+    declarationAgreed: true,
+    declarationDate: '2025-06-10',
   };
 
   return (

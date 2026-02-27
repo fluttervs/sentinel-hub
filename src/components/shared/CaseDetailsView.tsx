@@ -1,7 +1,9 @@
 import BasicCaseInfo from '@/components/reporter/incident-details/BasicCaseInfo';
+import IncidentClassification from '@/components/reporter/incident-details/IncidentClassification';
 import IncidentDescription from '@/components/reporter/incident-details/IncidentDescription';
+import LogisticsData from '@/components/reporter/incident-details/LogisticsData';
 import ActionsTaken from '@/components/reporter/incident-details/ActionsTaken';
-import SupportingDocuments from '@/components/reporter/incident-details/SupportingDocuments';
+import EvidenceDeclaration from '@/components/reporter/incident-details/EvidenceDeclaration';
 
 
 export interface CaseData {
@@ -61,6 +63,9 @@ export interface CaseData {
   documents: { name: string; size: string; uploadedBy: string; uploadDate: string }[];
   // Legacy
   impactIndicators?: string[];
+  // Declaration (Step 6)
+  declarationAgreed?: boolean;
+  declarationDate?: string;
 }
 
 const statusColors: Record<string, string> = {
@@ -96,21 +101,25 @@ interface Props {
 export default function CaseDetailsView({ incident, children }: Props) {
   return (
     <div className="space-y-6">
-      {/* Reporter Information */}
+      {/* Section 1: Reporter Information (Step 1) */}
       <BasicCaseInfo incident={incident} getStatusColor={getStatusColor} getSeverityColor={getSeverityColor} />
 
-      {/* Incident Information */}
+      {/* Section 2: Incident Classification (Step 2) */}
+      <IncidentClassification incident={incident} />
+
+      {/* Section 3: Incident Details (Step 3) — excludes parcel/sender/recipient */}
       <IncidentDescription incident={incident} />
 
-      {/* Actions Taken */}
+      {/* Section 4: Logistics Data — Parcel, Sender, Recipient (Step 3 parcel fields) */}
+      <LogisticsData incident={incident} />
+
+      {/* Section 5: Action & Authority Tracking (Step 4) */}
       <ActionsTaken incident={incident} />
 
-      {/* Supporting Documents */}
-      <SupportingDocuments documents={incident.documents} />
+      {/* Section 6: Evidence & Declaration (Steps 5 & 6) */}
+      <EvidenceDeclaration incident={incident} />
 
       {children}
     </div>
   );
 }
-
-

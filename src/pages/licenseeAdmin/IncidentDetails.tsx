@@ -64,6 +64,7 @@ const mapToCaseData = (inc: typeof incidents[0]): CaseData => ({
   severity: inc.severity,
   leaEscalation: inc.escalated ? 'Yes' : 'No',
   description: inc.description,
+  primaryIncidentType: inc.type,
   immediateActions: '—',
   incidentControlStatus: '—',
   reportedToAuthority: inc.escalated ? 'Yes' : 'No',
@@ -75,6 +76,8 @@ const mapToCaseData = (inc: typeof incidents[0]): CaseData => ({
     sender: { name: '—', address: '—', stateCountry: '—', contact: '—' },
     receiver: { name: '—', address: '—', stateCountry: '—', contact: '—' },
   }] : undefined,
+  declarationAgreed: true,
+  declarationDate: inc.submitted,
 });
 
 export default function LicenseeAdminIncidentDetails() {
