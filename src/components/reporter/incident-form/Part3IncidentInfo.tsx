@@ -1,6 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { IncidentFormData, StaffDetected, SenderRecipientInfo } from './types';
 
 interface Props {
@@ -70,6 +71,34 @@ export default function Part3IncidentInfo({ data, onChange }: Props) {
             <Input type="email" value={data.staffDetected.email} onChange={(e) => updateStaff('email', e.target.value)} />
           </div>
         </div>
+      </div>
+
+      {/* Affected Systems/Services */}
+      <div className="space-y-2">
+        <Label>Affected Systems/Services (if any)</Label>
+        <Textarea
+          value={data.systemServiceAffected}
+          onChange={(e) => onChange('systemServiceAffected', e.target.value)}
+          placeholder="Describe any systems or services impacted by the incident..."
+          rows={3}
+        />
+      </div>
+
+      {/* Estimated Impact */}
+      <div className="space-y-3">
+        <Label>Estimated Impact *</Label>
+        <RadioGroup
+          value={data.observedImpact}
+          onValueChange={(value) => onChange('observedImpact', value)}
+          className="flex gap-6"
+        >
+          {['Low', 'Medium', 'High'].map((level) => (
+            <div key={level} className="flex items-center space-x-2">
+              <RadioGroupItem value={level} id={`impact-${level}`} />
+              <Label htmlFor={`impact-${level}`} className="font-normal cursor-pointer">{level}</Label>
+            </div>
+          ))}
+        </RadioGroup>
       </div>
 
       {/* Parcel Details */}
