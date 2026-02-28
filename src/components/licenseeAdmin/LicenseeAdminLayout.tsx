@@ -22,7 +22,6 @@ const navItems = [
   { title: 'Analytics & Report', path: '/licensee-admin/analytics', icon: BarChart3 },
   { title: 'Reporter Management', path: '/licensee-admin/users', icon: Users },
   { title: 'Profile', path: '/licensee-admin/security', icon: Shield },
-  { title: 'Testing', path: '/licensee-admin/testing', icon: Shield },
 ];
 
 export default function LicenseeAdminLayout() {
