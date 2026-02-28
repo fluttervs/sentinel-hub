@@ -38,6 +38,7 @@ import LicenseeAdminProfile from "./pages/licenseeAdmin/Profile";
 import LicenseeAdminAnalytics from "./pages/licenseeAdmin/Analytics";
 import LicenseeAdminNotifications from "./pages/licenseeAdmin/Notifications";
 import LicenseeAdminSecuritySettings from "./pages/licenseeAdmin/SecuritySettings";
+import LicenseeAdminTesting from "./pages/licenseeAdmin/Testing";
 import SupervisorLayout from "./components/supervisor/SupervisorLayout";
 import ValidatorDashboard from "./pages/validator/Dashboard";
 import CaseMonitoring from "./pages/validator/AllCases";
@@ -120,6 +121,7 @@ const App = () => (
                   <Route path="analytics" element={<LicenseeAdminAnalytics />} />
                   <Route path="notifications" element={<LicenseeAdminNotifications />} />
                   <Route path="security" element={<LicenseeAdminSecuritySettings />} />
+                  <Route path="testing" element={<LicenseeAdminTesting />} />
                 </Route>
                 
                 {/* Case Officer Routes - with sidebar layout */}
