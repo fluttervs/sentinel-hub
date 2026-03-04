@@ -71,6 +71,7 @@ import LEACaseDetail from "./pages/lea/CaseDetail";
 import LEANotifications from "./pages/lea/Notifications";
 import LEASecurity from "./pages/lea/Security";
 import LEAAnalytics from "./pages/lea/Analytics";
+import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -99,6 +100,7 @@ const App = () => (
                 <Route path="/choose-role" element={<ChooseRole />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/otp" element={<OtpVerification />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 
                 {/* Reporter Routes - with sidebar layout */}
                 <Route path="/reporter" element={<ProtectedRoute><ReporterLayout /></ProtectedRoute>}>

@@ -115,9 +115,13 @@ export default function Login() {
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
               <div className="text-center">
-                <a href="#" className="text-sm text-muted-foreground hover:text-primary">
+                <button
+                  type="button"
+                  onClick={() => navigate('/forgot-password')}
+                  className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
+                >
                   Forgot Password?
-                </a>
+                </button>
               </div>
               <div className="text-xs text-muted-foreground text-center pt-4 border-t">
                 For demo purposes, click the email field to auto-fill credentials, then click Login.
