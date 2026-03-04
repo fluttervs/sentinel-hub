@@ -170,6 +170,36 @@ export default function LEADashboard() {
           ))}
         </CardContent>
       </Card>
+
+      {/* Announcements */}
+      <Card className="border-primary/20">
+        <CardHeader>
+          <CardTitle className="text-primary">Announcements</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {[
+            { id: '1', title: 'System Maintenance Scheduled', message: 'The system will undergo maintenance this Saturday from 2 AM to 6 AM.', from: 'System Admin', time: '2 hours ago', priority: 'high' },
+            { id: '2', title: 'New Reporting Guidelines', message: 'Please review the updated incident reporting guidelines effective next month.', from: 'MCMC', time: '1 day ago', priority: 'normal' },
+            { id: '3', title: 'Training Session Available', message: 'Join our monthly training session on best practices for incident documentation.', from: 'MCMC', time: '3 days ago', priority: 'normal' },
+          ].map((announcement) => (
+            <div
+              key={announcement.id}
+              className={`p-3 rounded-lg border transition-all ${
+                announcement.priority === 'high'
+                  ? 'border-destructive/40 bg-destructive/5'
+                  : 'border-border bg-secondary/30'
+              }`}
+            >
+              <p className="text-sm font-medium mb-1">{announcement.title}</p>
+              <p className="text-xs text-muted-foreground mb-2">{announcement.message}</p>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>From: {announcement.from}</span>
+                <span>{announcement.time}</span>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }
