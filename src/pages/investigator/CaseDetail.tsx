@@ -5,16 +5,25 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Lock } from 'lucide-react';
 import CaseDetailsView, { getStatusColor, getSeverityColor, type CaseData } from '@/components/shared/CaseDetailsView';
+import CaseClarificationThread, { type ClarificationMessage } from '@/components/shared/CaseClarificationThread';
+import CaseTimeline, { type TimelineEvent } from '@/components/shared/CaseTimeline';
 
-const timelineEvents = [
-  { date: '2025-06-10', time: '14:30', actor: 'System', action: 'Case assigned to Raj Kumar' },
-  { date: '2025-06-10', time: '09:15', actor: 'System', action: 'Case submitted by Ali Hassan' },
-  { date: '2025-06-11', time: '10:00', actor: 'Raj Kumar', action: 'Classification: Package Theft — Severity: Medium' },
-  { date: '2025-06-12', time: '11:45', actor: 'Raj Kumar', action: 'Clarification requested from reporter' },
-  { date: '2025-06-13', time: '09:30', actor: 'Ali Hassan', action: 'Clarification response submitted' },
-  { date: '2025-06-14', time: '16:00', actor: 'Raj Kumar', action: 'Escalation proposed to PDRM' },
-  { date: '2025-06-14', time: '17:30', actor: 'Supervisor', action: 'Escalation approved' },
-  { date: '2025-06-15', time: '08:00', actor: 'System', action: 'Case escalated to PDRM' },
+const timelineEvents: TimelineEvent[] = [
+  { event: 'Case assigned to Raj Kumar', actor: 'System', time: '2025-06-10 14:30', type: 'system' },
+  { event: 'Case submitted by Ali Hassan', actor: 'System', time: '2025-06-10 09:15', type: 'submission' },
+  { event: 'Classification: Package Theft — Severity: Medium', actor: 'Raj Kumar', time: '2025-06-11 10:00', type: 'update' },
+  { event: 'Clarification requested from reporter', actor: 'Raj Kumar', time: '2025-06-12 11:45', type: 'rfi' },
+  { event: 'Clarification response submitted', actor: 'Ali Hassan', time: '2025-06-13 09:30', type: 'response' },
+  { event: 'Escalation proposed to PDRM', actor: 'Raj Kumar', time: '2025-06-14 16:00', type: 'escalation' },
+  { event: 'Escalation approved', actor: 'Supervisor', time: '2025-06-14 17:30', type: 'update' },
+  { event: 'Case escalated to PDRM', actor: 'System', time: '2025-06-15 08:00', type: 'system' },
+];
+
+const clarificationMessages: ClarificationMessage[] = [
+  { id: 1, from: 'Case Officer (Raj Kumar)', role: 'officer', message: 'Please confirm the exact time the parcel was last scanned in the system and provide the shift roster for sorting lane 3.', timestamp: '2025-06-12 11:45', status: 'Responded' },
+  { id: 2, from: 'Licensee Reporter (Ali Hassan)', role: 'reporter', message: 'Last scan recorded at 14:22:45. Shift roster attached — 3 staff members assigned to lane 3 between 14:00–16:00.', timestamp: '2025-06-13 09:30' },
+  { id: 3, from: 'Case Officer (Raj Kumar)', role: 'officer', message: 'Thank you. Can you also get confirmation from the Licensee Admin on internal disciplinary actions taken?', timestamp: '2025-06-13 15:00', status: 'Responded' },
+  { id: 4, from: 'Licensee Admin', role: 'admin', message: 'Internal review completed. Staff member has been suspended pending investigation. Documentation attached.', timestamp: '2025-06-14 10:00' },
 ];
 
 export default function InvestigatorCaseDetail() {
@@ -83,6 +92,7 @@ export default function InvestigatorCaseDetail() {
         <TabsList>
           <TabsTrigger value="details">Case Details</TabsTrigger>
           <TabsTrigger value="assessment">Officer Assessment</TabsTrigger>
+          <TabsTrigger value="clarification">Clarification</TabsTrigger>
           <TabsTrigger value="escalation">Escalation History</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
         </TabsList>
@@ -96,7 +106,7 @@ export default function InvestigatorCaseDetail() {
             <CardHeader><CardTitle>Officer Assessment</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
-                
+
                 <div><p className="text-xs text-muted-foreground">Severity</p><p className="text-sm font-medium">Medium</p></div>
                 <div><p className="text-xs text-muted-foreground">Risk Indicator</p><p className="text-sm font-medium">Moderate</p></div>
                 <div><p className="text-xs text-muted-foreground">Assigned Officer</p><p className="text-sm font-medium">Raj Kumar</p></div>
@@ -120,6 +130,10 @@ export default function InvestigatorCaseDetail() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="clarification">
+          <CaseClarificationThread messages={clarificationMessages} />
         </TabsContent>
 
         <TabsContent value="escalation">
@@ -151,25 +165,7 @@ export default function InvestigatorCaseDetail() {
         </TabsContent>
 
         <TabsContent value="timeline">
-          <Card>
-            <CardHeader><CardTitle>Full Case Timeline</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-0">
-                {timelineEvents.map((ev, idx) => (
-                  <div key={idx} className="flex gap-4 pb-4 last:pb-0">
-                    <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-role-investigator/60 border-2 border-role-investigator mt-1" />
-                      {idx < timelineEvents.length - 1 && <div className="w-px flex-1 bg-border mt-1" />}
-                    </div>
-                    <div className="pb-4">
-                      <p className="text-xs text-muted-foreground">{ev.date} at {ev.time} — <span className="font-medium text-foreground">{ev.actor}</span></p>
-                      <p className="text-sm mt-0.5">{ev.action}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <CaseTimeline events={timelineEvents} />
         </TabsContent>
       </Tabs>
     </div>

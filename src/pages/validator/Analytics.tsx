@@ -97,7 +97,6 @@ export default function SupervisorAnalyticsReport() {
               { label: 'Total Cases (6mo)', value: 104, icon: TrendingUp, color: 'text-role-validator' },
               { label: 'Escalated', value: 24, icon: AlertTriangle, color: 'text-destructive' },
               { label: 'Closed', value: 81, icon: CheckCircle2, color: 'text-status-closed' },
-              { label: 'Avg Resolution (days)', value: 4.2, icon: Clock, color: 'text-primary' },
             ].map((kpi) => (
               <Card key={kpi.label}>
                 <CardContent className="p-4">

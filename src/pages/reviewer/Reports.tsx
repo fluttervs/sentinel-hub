@@ -3,7 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, FileBarChart, Printer, TrendingUp, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Download, FileBarChart, TrendingUp, AlertTriangle, CheckCircle2, Clock, FileSpreadsheet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   PieChart, Pie, Cell, BarChart, Bar, LineChart, Line,
@@ -55,9 +57,29 @@ const orgBreakdown = [
 export default function CaseOfficerReports() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('analytics');
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [selectedCases, setSelectedCases] = useState<Record<string, boolean>>(
+    Object.fromEntries(caseSummary.map(c => [c.id, true]))
+  );
 
-  const handleExport = (format: string) => {
-    toast({ title: `Exporting as ${format}`, description: 'Your report is being generated.' });
+  const toggleCase = (id: string) => {
+    setSelectedCases(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const allSelected = caseSummary.every(c => selectedCases[c.id]);
+  const toggleAll = () => {
+    const next = !allSelected;
+    setSelectedCases(Object.fromEntries(caseSummary.map(c => [c.id, next])));
+  };
+
+  const handleConfirmExport = () => {
+    const selected = caseSummary.filter(c => selectedCases[c.id]);
+    if (selected.length === 0) {
+      toast({ title: 'No cases selected', description: 'Please select at least one case to export.', variant: 'destructive' });
+      return;
+    }
+    toast({ title: 'Exporting as Excel', description: `Exporting ${selected.length} case${selected.length > 1 ? 's' : ''} to Excel.` });
+    setExportModalOpen(false);
   };
 
   const getStatusColor = (s: string) => {
@@ -79,9 +101,7 @@ export default function CaseOfficerReports() {
           <p className="text-muted-foreground">Incident trend analytics and reports</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => handleExport('PDF')}><Download className="mr-2 h-4 w-4" />Export PDF</Button>
-          <Button variant="outline" onClick={() => handleExport('Excel')}><Download className="mr-2 h-4 w-4" />Export Excel</Button>
-          <Button variant="outline" onClick={() => handleExport('Print')}><Printer className="mr-2 h-4 w-4" />Print</Button>
+          <Button variant="outline" onClick={() => setExportModalOpen(true)}><FileSpreadsheet className="mr-2 h-4 w-4" />Export Excel</Button>
         </div>
       </div>
 
@@ -215,7 +235,6 @@ export default function CaseOfficerReports() {
                       <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
                       <th className="px-4 py-3 text-left font-medium text-muted-foreground">Severity</th>
                       <th className="px-4 py-3 text-left font-medium text-muted-foreground">Organisation</th>
-                      <th className="px-4 py-3 text-left font-medium text-muted-foreground">Officer</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -225,7 +244,6 @@ export default function CaseOfficerReports() {
                         <td className="px-4 py-3"><Badge variant="outline" className={getStatusColor(c.status)}>{c.status}</Badge></td>
                         <td className="px-4 py-3">{c.severity}</td>
                         <td className="px-4 py-3">{c.organisation}</td>
-                        <td className="px-4 py-3 font-mono text-xs">{c.officer}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -235,6 +253,59 @@ export default function CaseOfficerReports() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Export Excel Modal */}
+      <Dialog open={exportModalOpen} onOpenChange={setExportModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileSpreadsheet className="h-5 w-5 text-role-reviewer" />
+              Export to Excel
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-1 py-2">
+            <p className="text-sm text-muted-foreground mb-3">Select the cases you want to include in the export:</p>
+            <label
+              htmlFor="export-select-all"
+              className="flex items-center gap-3 rounded-md px-3 py-2.5 hover:bg-muted/50 cursor-pointer transition-colors border-b border-border mb-1"
+            >
+              <input
+                type="checkbox"
+                id="export-select-all"
+                checked={allSelected}
+                onChange={toggleAll}
+                className="rounded border-border h-4 w-4 accent-[hsl(var(--primary))]"
+              />
+              <Label htmlFor="export-select-all" className="text-sm cursor-pointer flex-1 font-medium">Select All</Label>
+            </label>
+            {caseSummary.map(c => (
+              <label
+                key={c.id}
+                htmlFor={`export-${c.id}`}
+                className="flex items-center gap-3 rounded-md px-3 py-2.5 hover:bg-muted/50 cursor-pointer transition-colors"
+              >
+                <input
+                  type="checkbox"
+                  id={`export-${c.id}`}
+                  checked={selectedCases[c.id]}
+                  onChange={() => toggleCase(c.id)}
+                  className="rounded border-border h-4 w-4 accent-[hsl(var(--primary))]"
+                />
+                <div className="flex-1">
+                  <Label htmlFor={`export-${c.id}`} className="text-sm cursor-pointer font-mono text-role-reviewer">{c.id}</Label>
+                  <p className="text-xs text-muted-foreground">{c.organisation} · {c.severity} · {c.status}</p>
+                </div>
+              </label>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setExportModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleConfirmExport}>
+              <Download className="h-4 w-4 mr-2" /> Confirm Export
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

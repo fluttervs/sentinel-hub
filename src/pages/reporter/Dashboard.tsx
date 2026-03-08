@@ -1,6 +1,16 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Plus, MessageSquare, Clock, CheckCircle2, Trash2, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import { FileText, Plus, MessageSquare, Clock, CheckCircle2, Trash2, ArrowUpRight, ShieldCheck, Megaphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -39,10 +49,14 @@ export default function ReporterDashboard() {
   ];
 
   const announcements = [
-    { id: '1', title: 'System Maintenance Scheduled', message: 'The system will undergo maintenance this Saturday from 2 AM to 6 AM.', from: 'System Admin', time: '2 hours ago', priority: 'high' },
-    { id: '2', title: 'New Reporting Guidelines', message: 'Please review the updated incident reporting guidelines effective next month.', from: 'Licensee Admin', time: '1 day ago', priority: 'normal' },
-    { id: '3', title: 'Training Session Available', message: 'Join our monthly training session on best practices for incident documentation.', from: 'Licensee Admin', time: '3 days ago', priority: 'normal' },
+    { id: '1', title: 'System Maintenance Scheduled', message: 'The system will undergo scheduled maintenance this Saturday from 2:00 AM to 6:00 AM (MYT). During this window, the platform will be temporarily unavailable. Please ensure all pending drafts are saved before the maintenance period begins. We apologise for any inconvenience and appreciate your understanding.', from: 'System Admin', time: '2 hours ago', date: '8 Mar 2026', priority: 'high' as const },
+    { id: '2', title: 'New Reporting Guidelines', message: 'Please review the updated incident reporting guidelines effective next month. Key changes include revised classification categories for postal security incidents, updated evidence requirements for escalation cases, and new mandatory fields in the incident submission form. A detailed document has been shared via email. All reporters must acknowledge receipt by 15 March 2026.', from: 'Licensee Admin', time: '1 day ago', date: '7 Mar 2026', priority: 'normal' as const },
+    { id: '3', title: 'Training Session Available', message: 'Join our monthly training session on best practices for incident documentation. This session will cover: proper evidence attachment guidelines, how to write effective incident descriptions, common mistakes to avoid, and a live Q&A with the MCMC review team. Register through the Learning portal by 10 March 2026.', from: 'Licensee Admin', time: '3 days ago', date: '5 Mar 2026', priority: 'normal' as const },
+    { id: '4', title: 'Holiday Closure Notice', message: 'Please note that the support helpdesk will be closed on 12 March 2026 in observance of a public holiday. Any urgent incidents should be submitted through the platform as usual — they will be reviewed on the next business day. For critical security matters, please contact the emergency hotline.', from: 'System Admin', time: '5 days ago', date: '3 Mar 2026', priority: 'normal' as const },
+    { id: '5', title: 'Platform Update v2.4 Released', message: 'We are pleased to announce the release of Platform Update v2.4. This update includes performance improvements to the dashboard, enhanced search filters on the incidents page, and a new bulk-export feature for analytics reports. Please clear your browser cache if you experience any display issues after the update.', from: 'System Admin', time: '1 week ago', date: '1 Mar 2026', priority: 'normal' as const },
   ];
+
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<(typeof announcements)[number] | null>(null);
 
   return (
     <div className="space-y-6">
@@ -147,7 +161,7 @@ export default function ReporterDashboard() {
         </Card>
       </div>
 
-      {/* Pending RFI Alert */}
+      {/* Pending Clarification Alert */}
       <Card className="border-destructive/40 bg-destructive/5 cursor-pointer hover:border-destructive/60 transition-all" onClick={() => navigate('/reporter/incidents?filter=rfi')}>
         <CardContent className="flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
@@ -155,8 +169,8 @@ export default function ReporterDashboard() {
               <MessageSquare className="h-5 w-5 text-destructive" />
             </div>
             <div>
-              <p className="font-semibold text-destructive">2 Pending RFI Responses</p>
-              <p className="text-sm text-muted-foreground">You have requests for information awaiting your response</p>
+              <p className="font-semibold text-destructive">2 Pending Clarification Responses</p>
+              <p className="text-sm text-muted-foreground">You have clarification requests awaiting your response</p>
             </div>
           </div>
           <Button variant="outline" className="border-destructive/30 text-destructive hover:bg-destructive/10">
@@ -192,13 +206,12 @@ export default function ReporterDashboard() {
                     <p className="font-medium">{draft.title}</p>
                     <div className="flex items-center gap-3 mt-1">
                       <p className="text-sm text-muted-foreground">Last updated: {draft.updated}</p>
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                        draft.daysLeft <= 2
-                          ? 'bg-destructive/15 text-destructive'
-                          : draft.daysLeft <= 4
-                            ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
-                            : 'bg-primary/15 text-primary'
-                      }`}>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${draft.daysLeft <= 2
+                        ? 'bg-destructive/15 text-destructive'
+                        : draft.daysLeft <= 4
+                          ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                          : 'bg-primary/15 text-primary'
+                        }`}>
                         {draft.daysLeft} {draft.daysLeft === 1 ? 'day' : 'days'} left
                       </span>
                     </div>
@@ -220,28 +233,58 @@ export default function ReporterDashboard() {
         {/* Announcements */}
         <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle className="text-primary">Announcements</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-primary">
+              <Megaphone className="h-4 w-4" />
+              Announcements
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {announcements.map((announcement) => (
-              <div
-                key={announcement.id}
-                className={`p-3 rounded-lg border transition-all ${
-                  announcement.priority === 'high'
-                    ? 'border-destructive/40 bg-destructive/5'
-                    : 'border-border bg-secondary/30'
-                }`}
-              >
-                <p className="text-sm font-medium mb-1">{announcement.title}</p>
-                <p className="text-xs text-muted-foreground mb-2">{announcement.message}</p>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>From: {announcement.from}</span>
-                  <span>{announcement.time}</span>
-                </div>
-              </div>
-            ))}
+          <CardContent>
+            <div className="space-y-3 max-h-[340px] overflow-y-auto pr-1">
+              {announcements.map((announcement) => (
+                <button
+                  key={announcement.id}
+                  type="button"
+                  onClick={() => setSelectedAnnouncement(announcement)}
+                  className={`w-full text-left p-3 rounded-lg border transition-all cursor-pointer hover:ring-1 hover:ring-primary/30 hover:shadow-sm ${announcement.priority === 'high'
+                    ? 'border-destructive/40 bg-destructive/5 hover:bg-destructive/10'
+                    : 'border-border bg-secondary/30 hover:bg-secondary/60'
+                    }`}
+                >
+                  <p className="text-sm font-medium mb-1">{announcement.title}</p>
+                  <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{announcement.message}</p>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>From: {announcement.from}</span>
+                    <span>{announcement.time}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </CardContent>
         </Card>
+
+        {/* Announcement Detail Modal */}
+        <Dialog open={!!selectedAnnouncement} onOpenChange={(open) => { if (!open) setSelectedAnnouncement(null); }}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>{selectedAnnouncement?.title}</DialogTitle>
+              <DialogDescription asChild>
+                <div className="flex items-center gap-3 pt-1">
+                  <span>From: {selectedAnnouncement?.from}</span>
+                  <span className="text-muted-foreground/50">•</span>
+                  <span>{selectedAnnouncement?.date}</span>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+            <div className="text-sm leading-relaxed text-foreground/90 py-2 whitespace-pre-line">
+              {selectedAnnouncement?.message}
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline" className="w-full sm:w-auto">Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

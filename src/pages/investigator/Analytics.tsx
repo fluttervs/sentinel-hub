@@ -88,7 +88,6 @@ export default function InvestigatorAnalytics() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total Cases', value: '137', icon: BarIcon },
-          { label: 'Avg Resolution', value: '7.3d', icon: TrendingUp },
           { label: 'Organisations', value: '12', icon: PieIcon },
           { label: 'Closed This Month', value: '30', icon: FileBarChart },
         ].map((kpi) => (

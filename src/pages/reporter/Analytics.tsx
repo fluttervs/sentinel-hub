@@ -118,15 +118,6 @@ export default function ReporterAnalytics() {
             <div className="text-2xl font-bold">11</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-muted-foreground">Avg Resolution (days)</span>
-              <Clock className="h-4 w-4 text-primary" />
-            </div>
-            <div className="text-2xl font-bold">3.8</div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* ====== Charts: Category & Severity ====== */}

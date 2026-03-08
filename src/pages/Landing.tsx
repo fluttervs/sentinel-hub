@@ -33,7 +33,7 @@ export default function Landing() {
             </div>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Report, track, and analyze postal security incidents securely with real-time collaboration and AI-powered insights.
+              Report, track, and analyze postal security incidents securely with real-time collaboration and centralized governance oversight.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
@@ -76,7 +76,7 @@ export default function Landing() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Fast Reporting</h3>
                 <p className="text-muted-foreground">
-                  Submit incidents quickly with guided forms and AI-assisted classification
+                  Submit incidents quickly with guided forms and structured classification workflows
                 </p>
               </CardContent>
             </Card>

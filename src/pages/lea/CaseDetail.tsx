@@ -5,21 +5,30 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Lock, CheckCircle, Send, FileText, Download, Share2 } from 'lucide-react';
+import { ArrowLeft, Lock, CheckCircle, Send, Share2, Copy, CheckCircle2, Mail, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import CaseDetailsView, { getStatusColor, type CaseData } from '@/components/shared/CaseDetailsView';
+import CaseClarificationThread, { type ClarificationMessage } from '@/components/shared/CaseClarificationThread';
+import CaseTimeline, { type TimelineEvent } from '@/components/shared/CaseTimeline';
 
-const timelineEvents = [
-  { date: '2025-06-15', time: '08:00', actor: 'System', action: 'Case escalated to PDRM' },
-  { date: '2025-06-15', time: '10:30', actor: 'LEA Officer', action: 'Case receipt acknowledged' },
-  { date: '2025-06-16', time: '09:00', actor: 'LEA Officer', action: 'Investigation status: Under Investigation' },
-  { date: '2025-06-18', time: '14:00', actor: 'LEA Officer', action: 'Evidence seized from sorting hub' },
-  { date: '2025-06-19', time: '11:30', actor: 'LEA Officer', action: 'Clarification requested from MCMC' },
-  { date: '2025-06-20', time: '09:15', actor: 'MCMC', action: 'Clarification response provided' },
-  { date: '2025-06-22', time: '16:00', actor: 'LEA Officer', action: 'Investigation report uploaded' },
+const timelineEvents: TimelineEvent[] = [
+  { event: 'Case escalated to PDRM', actor: 'System', time: '2025-06-15 08:00', type: 'escalation' },
+  { event: 'Case receipt acknowledged', actor: 'LEA Officer', time: '2025-06-15 10:30', type: 'update' },
+  { event: 'Investigation status: Under Investigation', actor: 'LEA Officer', time: '2025-06-16 09:00', type: 'update' },
+  { event: 'Evidence seized from sorting hub', actor: 'LEA Officer', time: '2025-06-18 14:00', type: 'update' },
+  { event: 'Clarification requested from MCMC', actor: 'LEA Officer', time: '2025-06-19 11:30', type: 'rfi' },
+  { event: 'Clarification response provided', actor: 'MCMC', time: '2025-06-20 09:15', type: 'response' },
+  { event: 'Investigation report uploaded', actor: 'LEA Officer', time: '2025-06-22 16:00', type: 'submission' },
+];
+
+const clarificationMessages: ClarificationMessage[] = [
+  { id: 1, from: 'LEA Officer', role: 'officer', message: 'Can you confirm the exact time the parcel was last scanned in the sorting system? Also, please provide the shift roster for sorting lane 3 on that date.', timestamp: '2025-06-19 11:30', status: 'Responded' },
+  { id: 2, from: 'MCMC Case Officer', role: 'supervisor', message: 'Last scan recorded at 14:22:45. Shift roster attached — 3 staff members were assigned to lane 3 between 14:00–16:00.', timestamp: '2025-06-20 09:15' },
+  { id: 3, from: 'LEA Officer', role: 'officer', message: 'Thank you. We need the original CCTV footage (not screenshots) from cameras covering lanes 3 and 4 for the period 13:00–17:00.', timestamp: '2025-06-21 10:00', status: 'Awaiting Response', isNew: true },
 ];
 
 export default function LEACaseDetail() {
@@ -28,8 +37,8 @@ export default function LEACaseDetail() {
   const { toast } = useToast();
   const [investigationStatus, setInvestigationStatus] = useState('Under Investigation');
   const [acknowledged, setAcknowledged] = useState(true);
-  const [clarificationMsg, setClarificationMsg] = useState('');
   const [internalNotes, setInternalNotes] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const incident: CaseData = {
     id: id || 'ESC-2025-001',
@@ -81,15 +90,29 @@ export default function LEACaseDetail() {
   };
 
 
-  const handleClarification = () => {
-    if (!clarificationMsg.trim()) return;
-    toast({ title: 'Clarification Sent', description: 'Request sent to MCMC. You will be notified when they respond.' });
-    setClarificationMsg('');
-  };
 
   const handleSaveNotes = () => {
     if (!internalNotes.trim()) return;
     toast({ title: 'Notes Saved', description: 'Internal notes have been saved successfully.' });
+  };
+
+  const caseUrl = `https://portal.mcmc.gov.my/cases/${incident.id}`;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(caseUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShareWhatsApp = () => {
+    const text = encodeURIComponent(`Case Report: ${incident.id} — ${incident.title}\n${caseUrl}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  };
+
+  const handleShareEmail = () => {
+    const subject = encodeURIComponent(`Case Report: ${incident.id}`);
+    const body = encodeURIComponent(`Hi,\n\nPlease find the case report for ${incident.id} — ${incident.title}.\n\nLink: ${caseUrl}\n\nRegards`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -121,31 +144,60 @@ export default function LEACaseDetail() {
                 <Share2 className="h-4 w-4 mr-2" /> Share Report
               </Button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader><DialogTitle>Share Report with LEA Agency</DialogTitle></DialogHeader>
-              <div className="space-y-4 py-4">
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader><DialogTitle>Share Report</DialogTitle></DialogHeader>
+              <div className="space-y-5 py-4">
+                {/* Share buttons row */}
                 <div>
-                  <Label>Recipient Agency</Label>
-                  <Select>
-                    <SelectTrigger><SelectValue placeholder="Select agency" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pdrm-ccid">PDRM — CCID</SelectItem>
-                      <SelectItem value="pdrm-narcotics">PDRM — Narcotics</SelectItem>
-                      <SelectItem value="kastam">Royal Malaysian Customs (KASTAM)</SelectItem>
-                      <SelectItem value="macc">MACC</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <p className="text-sm font-medium mb-3">Share via</p>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={handleShareWhatsApp}
+                      className="flex-1 gap-2 text-white"
+                      style={{ backgroundColor: '#25D366' }}
+                    >
+                      <MessageSquare className="h-4 w-4" /> WhatsApp
+                    </Button>
+                    <Button
+                      onClick={handleShareEmail}
+                      variant="outline"
+                      className="flex-1 gap-2"
+                    >
+                      <Mail className="h-4 w-4" /> Email
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Divider */}
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
+                  <div className="relative flex justify-center text-xs"><span className="bg-background px-2 text-muted-foreground">or copy link</span></div>
+                </div>
+
+                {/* Copy link section */}
                 <div>
-                  <Label>Message (optional)</Label>
-                  <Textarea placeholder="Add context for the receiving agency..." rows={3} />
+                  <Label className="text-sm font-medium mb-2 block">Page Link</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      readOnly
+                      value={caseUrl}
+                      className="text-sm bg-muted/40 cursor-default"
+                      onClick={(e) => (e.target as HTMLInputElement).select()}
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className={`shrink-0 transition-colors ${copied ? 'border-status-closed/50 text-status-closed' : ''}`}
+                      onClick={handleCopyLink}
+                    >
+                      {copied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  {copied && (
+                    <p className="text-xs text-status-closed mt-1.5 animate-in fade-in">Link copied to clipboard!</p>
+                  )}
                 </div>
               </div>
-              <DialogFooter>
-                <Button onClick={() => toast({ title: 'Report Shared', description: 'Case report has been shared with the selected agency.' })}>
-                  <Share2 className="h-4 w-4 mr-2" /> Share
-                </Button>
-              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
@@ -155,7 +207,6 @@ export default function LEACaseDetail() {
         <TabsList className="flex-wrap">
           <TabsTrigger value="details">Case Details</TabsTrigger>
           <TabsTrigger value="investigation">Case Update</TabsTrigger>
-          <TabsTrigger value="uploads">Reports & Evidence</TabsTrigger>
           <TabsTrigger value="clarification">Clarification</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
         </TabsList>
@@ -223,86 +274,16 @@ export default function LEACaseDetail() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="uploads">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Investigation Reports & Evidence</CardTitle>
-                <Badge variant="outline" className="gap-1" style={{ color: 'hsl(220 70% 50%)', borderColor: 'hsl(220 70% 50% / 0.3)' }}>
-                  <Lock className="h-3 w-3" /> Read-Only
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <p className="text-sm font-medium">Files</p>
-              {[
-                { name: 'Investigation_Report_ESC001.pdf', date: '2025-06-22', user: 'Insp. Razak' },
-                { name: 'Evidence_Photo_001.jpg', date: '2025-06-18', user: 'Insp. Razak' },
-                { name: 'Witness_Statement.pdf', date: '2025-06-20', user: 'Insp. Razak' },
-              ].map((f) => (
-                <div key={f.name} className="flex items-center justify-between p-2 border border-border/40 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm">{f.name}</p>
-                      <p className="text-xs text-muted-foreground">{f.date} — {f.user}</p>
-                    </div>
-                  </div>
-                  <Button size="sm" variant="ghost"><Download className="h-4 w-4" /></Button>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="clarification">
-          <Card>
-            <CardHeader><CardTitle>Clarification Requests</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="p-3 border border-border/40 rounded-lg">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-xs font-medium">LEA Officer — 2025-06-19 11:30</p>
-                    <Badge variant="outline" className="text-xs border-status-closed/50 text-status-closed">Responded</Badge>
-                  </div>
-                  <p className="text-sm">Can you confirm the exact time the parcel was last scanned in the sorting system? Also, please provide the shift roster for sorting lane 3 on that date.</p>
-                </div>
-                <div className="p-3 border border-primary/30 rounded-lg bg-primary/5 ml-6">
-                  <p className="text-xs font-medium text-primary">MCMC Response — 2025-06-20 09:15</p>
-                  <p className="text-sm mt-1">Last scan recorded at 14:22:45. Shift roster attached — 3 staff members were assigned to lane 3 between 14:00–16:00.</p>
-                </div>
-              </div>
-              <div className="border-t border-border pt-4 space-y-3">
-                <Label>New Clarification Request</Label>
-                <Textarea placeholder="Enter your clarification request to MCMC or Licensee..." value={clarificationMsg} onChange={(e) => setClarificationMsg(e.target.value)} rows={3} />
-                <Button onClick={handleClarification} disabled={!clarificationMsg.trim()}>
-                  <Send className="h-4 w-4 mr-2" /> Send Request
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <CaseClarificationThread
+            messages={clarificationMessages}
+            replyPlaceholder="Enter your clarification request to MCMC or Licensee..."
+          />
         </TabsContent>
 
         <TabsContent value="timeline">
-          <Card>
-            <CardHeader><CardTitle>Case Timeline</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-0">
-                {timelineEvents.map((ev, idx) => (
-                  <div key={idx} className="flex gap-4 pb-4 last:pb-0">
-                    <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full border-2 mt-1" style={{ backgroundColor: 'hsl(220 70% 50% / 0.6)', borderColor: 'hsl(220 70% 50%)' }} />
-                      {idx < timelineEvents.length - 1 && <div className="w-px flex-1 bg-border mt-1" />}
-                    </div>
-                    <div className="pb-4">
-                      <p className="text-xs text-muted-foreground">{ev.date} at {ev.time} — <span className="font-medium text-foreground">{ev.actor}</span></p>
-                      <p className="text-sm mt-0.5">{ev.action}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <CaseTimeline events={timelineEvents} />
         </TabsContent>
       </Tabs>
     </div>

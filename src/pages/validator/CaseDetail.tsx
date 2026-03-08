@@ -4,62 +4,26 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Clock, User, Send, Paperclip, MessageSquare } from 'lucide-react';
 import CaseDetailsView, { getStatusColor, getSeverityColor, type CaseData } from '@/components/shared/CaseDetailsView';
+import CaseClarificationThread, { type ClarificationMessage } from '@/components/shared/CaseClarificationThread';
+import CaseTimeline, { type TimelineEvent } from '@/components/shared/CaseTimeline';
 
-const timelineEvents = [
-  { date: '2025-06-09', time: '09:15', actor: 'System', action: 'Incident submitted by Licensee Reporter' },
-  { date: '2025-06-09', time: '10:30', actor: 'System', action: 'Assigned to Case Officer Ahmad Razif' },
-  { date: '2025-06-09', time: '14:00', actor: 'Ahmad Razif', action: 'Initial assessment completed – Severity: Critical' },
-  { date: '2025-06-10', time: '09:00', actor: 'Ahmad Razif', action: 'Escalation request submitted to Supervisor' },
-  { date: '2025-06-10', time: '11:45', actor: 'System', action: 'Status changed to Escalation Pending Approval' },
+const timelineEvents: TimelineEvent[] = [
+  { event: 'Incident submitted by Licensee Reporter', actor: 'System', time: '2025-06-09 09:15', type: 'submission' },
+  { event: 'Assigned to Case Officer Ahmad Razif', actor: 'System', time: '2025-06-09 10:30', type: 'system' },
+  { event: 'Initial assessment completed – Severity: Critical', actor: 'Ahmad Razif', time: '2025-06-09 14:00', type: 'update' },
+  { event: 'Escalation request submitted to Supervisor', actor: 'Ahmad Razif', time: '2025-06-10 09:00', type: 'escalation' },
+  { event: 'Status changed to Escalation Pending Approval', actor: 'System', time: '2025-06-10 11:45', type: 'system' },
 ];
 
-function RFICommunication() {
-  const [replyText, setReplyText] = useState('');
-  const communications = [
-    { id: 1, from: 'Case Officer (Ahmad Razif)', fromRole: 'reviewer', type: 'rfi', message: 'Please provide the access control logs for the past 48 hours and confirm whether CCTV footage from Camera 3 and 7 is available.', timestamp: '2025-06-09 09:30' },
-    { id: 2, from: 'Licensee Reporter (Ali Hassan)', fromRole: 'reporter', type: 'reply', message: 'Access control logs attached. CCTV footage from Camera 3 is available and being prepared for secure transfer.', timestamp: '2025-06-09 10:15' },
-    { id: 3, from: 'Licensee Admin', fromRole: 'admin', type: 'reply', message: 'Confirmed internal review of the incident. All relevant documentation has been gathered.', timestamp: '2025-06-09 14:00' },
-  ];
+const clarificationMessages: ClarificationMessage[] = [
+  { id: 1, from: 'Case Officer (Ahmad Razif)', role: 'officer', message: 'Please provide the access control logs for the past 48 hours and confirm whether CCTV footage from Camera 3 and 7 is available.', timestamp: '2025-06-09 09:30', status: 'Responded' },
+  { id: 2, from: 'Licensee Reporter (Ali Hassan)', role: 'reporter', message: 'Access control logs attached. CCTV footage from Camera 3 is available and being prepared for secure transfer.', timestamp: '2025-06-09 10:15' },
+  { id: 3, from: 'Licensee Admin', role: 'admin', message: 'Confirmed internal review of the incident. All relevant documentation has been gathered.', timestamp: '2025-06-09 14:00' },
+  { id: 4, from: 'Case Officer (Ahmad Razif)', role: 'officer', message: 'Thank you. Can you also provide the visitor log for the restricted zone during 01:00–05:00?', timestamp: '2025-06-10 08:00', status: 'Awaiting Response', isNew: true },
+];
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2"><MessageSquare className="h-5 w-5" />RFIs & Communication</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
-          {communications.map((comm) => (
-            <div key={comm.id} className={`flex ${comm.fromRole === 'reviewer' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] rounded-lg p-3 ${
-                comm.fromRole === 'reviewer' ? 'bg-role-reviewer/10 border border-role-reviewer/20' :
-                comm.fromRole === 'admin' ? 'bg-role-validator/10 border border-role-validator/20' :
-                'bg-muted border border-border'
-              }`}>
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-xs font-semibold">{comm.from}</p>
-                  {comm.type === 'rfi' && <Badge variant="destructive" className="text-[10px] px-1 py-0">RFI</Badge>}
-                </div>
-                <p className="text-xs leading-relaxed">{comm.message}</p>
-                <p className="text-[10px] text-muted-foreground mt-1">{comm.timestamp}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="border-t pt-3 space-y-2">
-          <p className="text-xs text-muted-foreground">Respond as MCMC Supervisor — visible to Officer, Reporter, and Licensee Admin.</p>
-          <Textarea placeholder="Send a message..." value={replyText} onChange={(e) => setReplyText(e.target.value)} rows={3} className="resize-none text-sm" />
-          <div className="flex justify-between">
-            <Button variant="outline" size="sm"><Paperclip className="h-4 w-4 mr-1" />Attach</Button>
-            <Button onClick={() => { if (replyText.trim()) setReplyText(''); }} disabled={!replyText.trim()} size="sm"><Send className="h-4 w-4 mr-1" />Send</Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+
 
 export default function CaseDetail() {
   const { id } = useParams();
@@ -108,7 +72,7 @@ export default function CaseDetail() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-          <ArrowLeft className="h-4 w-4 mr-1" /> Back
+          Back
         </Button>
         <div>
           <h1 className="text-2xl font-bold">{incident.id}</h1>
@@ -121,7 +85,7 @@ export default function CaseDetail() {
         <TabsList>
           <TabsTrigger value="details">Case Details</TabsTrigger>
           <TabsTrigger value="assessment">Officer Assessment</TabsTrigger>
-          <TabsTrigger value="rfis">RFIs & Communication</TabsTrigger>
+          <TabsTrigger value="rfis">Clarification</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="escalation">Escalation Info</TabsTrigger>
         </TabsList>
@@ -135,7 +99,7 @@ export default function CaseDetail() {
             <CardHeader><CardTitle>Case Officer Assessment</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               {[
-                
+
                 ['Severity Level', 'Critical'],
                 ['Preliminary Findings', 'Evidence suggests organised theft ring operating within the hub. Pattern matches 3 prior incidents in Q1. CCTV evidence confirms unauthorized entry at 02:15 AM.'],
                 ['Risk Indicator', 'High – Potential for recurrence'],
@@ -161,35 +125,14 @@ export default function CaseDetail() {
         </TabsContent>
 
         <TabsContent value="rfis">
-          <RFICommunication />
+          <CaseClarificationThread
+            messages={clarificationMessages}
+            replyPlaceholder="Send a message as MCMC Supervisor..."
+          />
         </TabsContent>
 
         <TabsContent value="timeline">
-          <Card>
-            <CardHeader><CardTitle>Case Timeline</CardTitle></CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {timelineEvents.map((ev, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className="h-3 w-3 rounded-full bg-role-validator border-2 border-background" />
-                      {i < timelineEvents.length - 1 && <div className="w-px flex-1 bg-border" />}
-                    </div>
-                    <div className="pb-4">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{ev.date} {ev.time}</span>
-                        <Badge variant="outline" className="text-xs px-1.5 py-0">
-                          <User className="h-3 w-3 mr-1" />{ev.actor}
-                        </Badge>
-                      </div>
-                      <p className="text-sm mt-1">{ev.action}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <CaseTimeline events={timelineEvents} />
         </TabsContent>
 
         <TabsContent value="escalation">

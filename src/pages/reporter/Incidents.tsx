@@ -3,14 +3,19 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Search, Download, Filter } from 'lucide-react';
+import { Plus, Search, Download, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ReporterIncidents() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [exportMode, setExportMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const incidents = [
     { id: 'PSIRP-2025-0025', title: 'High-Value Package Theft', category: 'Theft', status: 'In Review', submitted: '2025-01-15', lastUpdated: '2 hours ago' },
@@ -36,6 +41,51 @@ export default function ReporterIncidents() {
       'Closed': 'bg-status-closed/20 text-status-closed border-status-closed/30',
     };
     return colors[status] || 'bg-secondary';
+  };
+
+  /* ── Export mode helpers ── */
+  const handleToggleExportMode = () => {
+    if (exportMode) {
+      // Cancel export mode
+      setExportMode(false);
+      setSelectedIds(new Set());
+    } else {
+      setExportMode(true);
+      setSelectedIds(new Set());
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((i) => i.id)));
+    }
+  };
+
+  const allSelected = filtered.length > 0 && selectedIds.size === filtered.length;
+  const someSelected = selectedIds.size > 0 && selectedIds.size < filtered.length;
+
+  const handleDownloadSelected = () => {
+    if (selectedIds.size === 0) return;
+    toast({
+      title: 'Export Started',
+      description: `Exporting ${selectedIds.size} report${selectedIds.size > 1 ? 's' : ''}…`,
+    });
+    setExportMode(false);
+    setSelectedIds(new Set());
   };
 
   return (
@@ -78,14 +128,47 @@ export default function ReporterIncidents() {
               </SelectContent>
             </Select>
             <Input type="date" className="w-[160px]" />
-            <Input type="date" className="w-[160px]" />
-            <Button variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
+
+            {/* Export / Cancel + Download */}
+            {!exportMode ? (
+              <Button variant="outline" onClick={handleToggleExportMode}>
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  variant="default"
+                  disabled={selectedIds.size === 0}
+                  onClick={handleDownloadSelected}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Download ({selectedIds.size})
+                </Button>
+                <Button variant="ghost" onClick={handleToggleExportMode}>
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
+
+      {/* Export mode banner */}
+      {exportMode && (
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-primary/30 bg-primary/5 text-sm">
+          <Download className="h-4 w-4 text-primary shrink-0" />
+          <span className="text-muted-foreground">
+            Select the reports you want to export, then click <strong className="text-foreground">Download</strong>.
+          </span>
+          {selectedIds.size > 0 && (
+            <Badge variant="outline" className="ml-auto border-primary/30 text-primary">
+              {selectedIds.size} selected
+            </Badge>
+          )}
+        </div>
+      )}
 
       {/* Table */}
       <Card>
@@ -94,6 +177,17 @@ export default function ReporterIncidents() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border text-left">
+                  {exportMode && (
+                    <th className="pb-3 pr-3 w-10">
+                      <Checkbox
+                        checked={allSelected}
+                        ref={undefined}
+                        onCheckedChange={toggleSelectAll}
+                        aria-label="Select all"
+                        {...(someSelected ? { 'data-state': 'indeterminate' } : {})}
+                      />
+                    </th>
+                  )}
                   <th className="pb-3 font-medium text-muted-foreground">Reference</th>
                   <th className="pb-3 font-medium text-muted-foreground">Title</th>
                   <th className="pb-3 font-medium text-muted-foreground">Category</th>
@@ -107,8 +201,23 @@ export default function ReporterIncidents() {
                   <tr
                     key={incident.id}
                     className="hover:bg-accent/30 cursor-pointer transition-colors"
-                    onClick={() => navigate(`/reporter/incidents/${incident.id}`)}
+                    onClick={() => {
+                      if (exportMode) {
+                        toggleSelectOne(incident.id);
+                      } else {
+                        navigate(`/reporter/incidents/${incident.id}`);
+                      }
+                    }}
                   >
+                    {exportMode && (
+                      <td className="py-3 pr-3" onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedIds.has(incident.id)}
+                          onCheckedChange={() => toggleSelectOne(incident.id)}
+                          aria-label={`Select ${incident.id}`}
+                        />
+                      </td>
+                    )}
                     <td className="py-3 font-mono text-primary">{incident.id}</td>
                     <td className="py-3 font-medium">{incident.title}</td>
                     <td className="py-3 text-muted-foreground">{incident.category}</td>

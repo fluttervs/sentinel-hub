@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Plus, Edit2, Trash2, Megaphone, Pin, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+type TargetAudience = 'reporter-only' | 'licensee-admin-only' | 'both' | 'all-users';
+
 interface Announcement {
   id: string;
   title: string;
@@ -19,13 +21,32 @@ interface Announcement {
   createdAt: string;
   author: string;
   target: string[];
+  targetAudience: TargetAudience;
 }
 
+const audienceToTarget = (audience: TargetAudience): string[] => {
+  switch (audience) {
+    case 'reporter-only': return ['reporter'];
+    case 'licensee-admin-only': return ['licensee-admin'];
+    case 'both': return ['licensee-admin', 'reporter'];
+    case 'all-users': return ['licensee-admin', 'reporter', 'all-users'];
+  }
+};
+
+const targetToAudience = (target: string[]): TargetAudience => {
+  if (target.includes('all-users')) return 'all-users';
+  const hasReporter = target.includes('reporter');
+  const hasAdmin = target.includes('licensee-admin');
+  if (hasReporter && hasAdmin) return 'both';
+  if (hasAdmin) return 'licensee-admin-only';
+  return 'reporter-only';
+};
+
 const initialAnnouncements: Announcement[] = [
-  { id: '1', title: 'New SOP for Critical Case Escalation', content: 'All critical severity cases must now be escalated within 24 hours of receipt. Updated guidelines are available in the knowledge base.', priority: 'high', pinned: true, createdAt: '2025-01-18', author: 'CO-2024-015', target: ['licensee-admin', 'reporter'] },
-  { id: '2', title: 'System Maintenance — 25 Jan 2025', content: 'Scheduled maintenance window from 02:00 to 06:00 MYT. The portal will be unavailable during this period.', priority: 'medium', pinned: true, createdAt: '2025-01-17', author: 'CO-2024-015', target: ['licensee-admin', 'reporter'] },
-  { id: '3', title: 'Q4 2024 Incident Report Published', content: 'The quarterly incident summary for all licensees has been published. Case officers are encouraged to review trends.', priority: 'low', pinned: false, createdAt: '2025-01-15', author: 'CO-2024-015', target: ['licensee-admin'] },
-  { id: '4', title: 'Training: Advanced Case Assessment Techniques', content: 'Mandatory training session on 28 Jan 2025 at 10:00 MYT. All case officers must attend via the internal training portal.', priority: 'medium', pinned: false, createdAt: '2025-01-14', author: 'CO-2024-015', target: ['reporter'] },
+  { id: '1', title: 'New SOP for Critical Case Escalation', content: 'All critical severity cases must now be escalated within 24 hours of receipt. Updated guidelines are available in the knowledge base.', priority: 'high', pinned: true, createdAt: '2025-01-18', author: 'CO-2024-015', target: ['licensee-admin', 'reporter'], targetAudience: 'both' },
+  { id: '2', title: 'System Maintenance — 25 Jan 2025', content: 'Scheduled maintenance window from 02:00 to 06:00 MYT. The portal will be unavailable during this period.', priority: 'medium', pinned: true, createdAt: '2025-01-17', author: 'CO-2024-015', target: ['licensee-admin', 'reporter', 'all-users'], targetAudience: 'all-users' },
+  { id: '3', title: 'Q4 2024 Incident Report Published', content: 'The quarterly incident summary for all licensees has been published. Case officers are encouraged to review trends.', priority: 'low', pinned: false, createdAt: '2025-01-15', author: 'CO-2024-015', target: ['licensee-admin'], targetAudience: 'licensee-admin-only' },
+  { id: '4', title: 'Training: Advanced Case Assessment Techniques', content: 'Mandatory training session on 28 Jan 2025 at 10:00 MYT. All case officers must attend via the internal training portal.', priority: 'medium', pinned: false, createdAt: '2025-01-14', author: 'CO-2024-015', target: ['reporter'], targetAudience: 'reporter-only' },
 ];
 
 export default function CaseOfficerAnnouncements() {
@@ -33,7 +54,7 @@ export default function CaseOfficerAnnouncements() {
   const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: '', content: '', priority: 'medium' as 'high' | 'medium' | 'low', pinned: false, target: ['licensee-admin', 'reporter'] });
+  const [form, setForm] = useState({ title: '', content: '', priority: 'medium' as 'high' | 'medium' | 'low', pinned: false, target: ['licensee-admin', 'reporter'] as string[], targetAudience: 'both' as TargetAudience });
 
   const getPriorityStyle = (p: string) => {
     const styles: Record<string, string> = {
@@ -55,13 +76,13 @@ export default function CaseOfficerAnnouncements() {
 
   const openNew = () => {
     setEditingId(null);
-    setForm({ title: '', content: '', priority: 'medium', pinned: false, target: ['licensee-admin', 'reporter'] });
+    setForm({ title: '', content: '', priority: 'medium', pinned: false, target: ['licensee-admin', 'reporter'], targetAudience: 'both' });
     setDialogOpen(true);
   };
 
   const openEdit = (a: Announcement) => {
     setEditingId(a.id);
-    setForm({ title: a.title, content: a.content, priority: a.priority, pinned: a.pinned, target: a.target });
+    setForm({ title: a.title, content: a.content, priority: a.priority, pinned: a.pinned, target: a.target, targetAudience: a.targetAudience ?? targetToAudience(a.target) });
     setDialogOpen(true);
   };
 
@@ -144,7 +165,7 @@ export default function CaseOfficerAnnouncements() {
                     {a.target.map(t => (
                       <Badge key={t} variant="outline" className="text-xs bg-muted/50">
                         <Eye className="h-3 w-3 mr-1" />
-                        {t === 'licensee-admin' ? 'Licensee Admin' : 'Reporter'}
+                        {t === 'licensee-admin' ? 'Licensee Admin' : t === 'reporter' ? 'Reporter' : 'All Users'}
                       </Badge>
                     ))}
                   </div>
@@ -182,6 +203,18 @@ export default function CaseOfficerAnnouncements() {
             <div>
               <Label>Content</Label>
               <Textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} placeholder="Write your announcement..." rows={4} />
+            </div>
+            <div>
+              <Label>Visible To</Label>
+              <Select value={form.targetAudience} onValueChange={(v: string) => setForm(f => ({ ...f, targetAudience: v as TargetAudience, target: audienceToTarget(v as TargetAudience) }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="reporter-only">Reporter only</SelectItem>
+                  <SelectItem value="licensee-admin-only">Licensee Admin only</SelectItem>
+                  <SelectItem value="both">Both (Reporter & Licensee Admin)</SelectItem>
+                  <SelectItem value="all-users">All Users</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label>Priority</Label>

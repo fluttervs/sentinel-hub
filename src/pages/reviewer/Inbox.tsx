@@ -3,15 +3,20 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Download, Eye } from 'lucide-react';
+import { Search, Download, Eye, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 export default function CaseOfficerInbox() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [exportMode, setExportMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const incidents = [
     { id: 'PSIRP-2025-0028', title: 'Critical Security Breach', organisation: 'Express Courier Sdn Bhd', severity: 'Critical', status: 'Pending Review', escalation: 'None', submitted: '2025-01-16' },
@@ -52,6 +57,47 @@ export default function CaseOfficerInbox() {
     return colors[severity] || 'bg-secondary';
   };
 
+  /* ── Export mode helpers ── */
+  const handleToggleExportMode = () => {
+    if (exportMode) {
+      setExportMode(false);
+      setSelectedIds(new Set());
+    } else {
+      setExportMode(true);
+      setSelectedIds(new Set());
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((i) => i.id)));
+    }
+  };
+
+  const allSelected = filtered.length > 0 && selectedIds.size === filtered.length;
+  const someSelected = selectedIds.size > 0 && selectedIds.size < filtered.length;
+
+  const handleDownloadSelected = () => {
+    if (selectedIds.size === 0) return;
+    toast({
+      title: 'Export Started',
+      description: `Exporting ${selectedIds.size} case${selectedIds.size > 1 ? 's' : ''}…`,
+    });
+    setExportMode(false);
+    setSelectedIds(new Set());
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -59,7 +105,6 @@ export default function CaseOfficerInbox() {
           <h1 className="text-3xl font-bold mb-2">Assignment Inbox</h1>
           <p className="text-muted-foreground">Cases assigned to you</p>
         </div>
-        <Button variant="outline"><Download className="mr-2 h-4 w-4" />Export</Button>
       </div>
 
       {/* Filters */}
@@ -91,10 +136,47 @@ export default function CaseOfficerInbox() {
               </SelectContent>
             </Select>
             <Input type="date" className="w-[160px]" />
-            <Input type="date" className="w-[160px]" />
+
+            {/* Export / Cancel + Download */}
+            {!exportMode ? (
+              <Button variant="outline" onClick={handleToggleExportMode}>
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  variant="default"
+                  disabled={selectedIds.size === 0}
+                  onClick={handleDownloadSelected}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Download ({selectedIds.size})
+                </Button>
+                <Button variant="ghost" onClick={handleToggleExportMode}>
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
+
+      {/* Export mode banner */}
+      {exportMode && (
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-primary/30 bg-primary/5 text-sm">
+          <Download className="h-4 w-4 text-primary shrink-0" />
+          <span className="text-muted-foreground">
+            Select the cases you want to export, then click <strong className="text-foreground">Download</strong>.
+          </span>
+          {selectedIds.size > 0 && (
+            <Badge variant="outline" className="ml-auto border-primary/30 text-primary">
+              {selectedIds.size} selected
+            </Badge>
+          )}
+        </div>
+      )}
 
       {/* Table */}
       <Card>
@@ -103,6 +185,17 @@ export default function CaseOfficerInbox() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/50">
+                  {exportMode && (
+                    <th className="px-4 py-3 w-10">
+                      <Checkbox
+                        checked={allSelected}
+                        ref={undefined}
+                        onCheckedChange={toggleSelectAll}
+                        aria-label="Select all"
+                        {...(someSelected ? { 'data-state': 'indeterminate' } : {})}
+                      />
+                    </th>
+                  )}
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Reference</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Title</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Organisation</th>
@@ -115,7 +208,26 @@ export default function CaseOfficerInbox() {
               </thead>
               <tbody className="divide-y divide-border">
                 {filtered.map((incident) => (
-                  <tr key={incident.id} className="hover:bg-muted/30 transition-colors">
+                  <tr
+                    key={incident.id}
+                    className="hover:bg-muted/30 transition-colors cursor-pointer"
+                    onClick={() => {
+                      if (exportMode) {
+                        toggleSelectOne(incident.id);
+                      } else {
+                        navigate(`/reviewer/cases/${incident.id}`);
+                      }
+                    }}
+                  >
+                    {exportMode && (
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedIds.has(incident.id)}
+                          onCheckedChange={() => toggleSelectOne(incident.id)}
+                          aria-label={`Select ${incident.id}`}
+                        />
+                      </td>
+                    )}
                     <td className="px-4 py-3 font-mono text-role-reviewer">{incident.id}</td>
                     <td className="px-4 py-3 font-medium">{incident.title}</td>
                     <td className="px-4 py-3 text-muted-foreground">{incident.organisation}</td>
@@ -124,7 +236,9 @@ export default function CaseOfficerInbox() {
                     <td className="px-4 py-3 text-muted-foreground">{incident.escalation}</td>
                     <td className="px-4 py-3 text-muted-foreground">{incident.submitted}</td>
                     <td className="px-4 py-3">
-                      <Button size="sm" variant="outline" onClick={() => navigate(`/reviewer/cases/${incident.id}`)}><Eye className="mr-1 h-3 w-3" />Review</Button>
+                      <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); navigate(`/reviewer/cases/${incident.id}`); }}>
+                        <Eye className="mr-1 h-3 w-3" />Review
+                      </Button>
                     </td>
                   </tr>
                 ))}

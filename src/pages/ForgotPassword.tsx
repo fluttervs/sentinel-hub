@@ -4,7 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PasswordInput } from '@/components/shared/PasswordInput';
 import { ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
+import {
+  usePasswordStrength,
+  PasswordStrengthBar,
+  PasswordRequirementChecklist,
+  PasswordStrengthAnnouncer,
+} from '@/components/shared/PasswordStrengthValidator';
 
 type View = 'request' | 'sent' | 'reset' | 'success';
 
@@ -15,8 +22,12 @@ export default function ForgotPassword() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [newPasswordTouched, setNewPasswordTouched] = useState(false);
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
-  const passwordValid = newPassword.length >= 8 && newPassword === confirmPassword;
+  const { criteria, metCount, strength, allMet } = usePasswordStrength(newPassword);
+  const passwordsMatch = newPassword === confirmPassword;
+  const passwordValid = allMet && passwordsMatch;
 
   const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,34 +138,45 @@ export default function ForgotPassword() {
                 <form onSubmit={handleResetPassword} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="new-password">New Password</Label>
-                    <Input
+                    <PasswordInput
                       id="new-password"
-                      type="password"
                       placeholder="••••••••"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
+                      onBlur={() => setNewPasswordTouched(true)}
                       required
-                      minLength={8}
+                      aria-describedby="password-requirements"
+                      aria-invalid={newPasswordTouched && !allMet ? true : undefined}
                     />
-                    {newPassword.length > 0 && newPassword.length < 8 && (
-                      <p className="text-xs text-destructive">Password must be at least 8 characters.</p>
+                    {newPassword.length > 0 && (
+                      <>
+                        <PasswordStrengthBar metCount={metCount} />
+                        <PasswordRequirementChecklist criteria={criteria} id="password-requirements" />
+                      </>
                     )}
+                    <PasswordStrengthAnnouncer level={newPassword.length > 0 ? strength.level : ''} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">Confirm Password</Label>
-                    <Input
+                    <PasswordInput
                       id="confirm-password"
-                      type="password"
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
+                      onBlur={() => setConfirmPasswordTouched(true)}
                       required
+                      aria-invalid={confirmPasswordTouched && !passwordsMatch ? true : undefined}
                     />
-                    {confirmPassword.length > 0 && newPassword !== confirmPassword && (
+                    {confirmPassword.length > 0 && !passwordsMatch && (
                       <p className="text-xs text-destructive">Passwords do not match.</p>
                     )}
                   </div>
-                  <Button type="submit" className="w-full" disabled={!passwordValid || isLoading}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={!passwordValid || isLoading}
+                    aria-disabled={!passwordValid || isLoading}
+                  >
                     {isLoading ? 'Updating…' : 'Update Password'}
                   </Button>
                 </form>
